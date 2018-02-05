@@ -1,4 +1,4 @@
-package com.springui;
+package com.springui.i18n;
 
 /**
  * @author Stephan Grundner

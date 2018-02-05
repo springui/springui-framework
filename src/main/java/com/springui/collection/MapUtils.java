@@ -1,4 +1,4 @@
-package com.springui;
+package com.springui.collection;
 
 import org.springframework.util.Assert;
 

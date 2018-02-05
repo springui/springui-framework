@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @author Stephan Grundner
  */
-public class ComponentDialect extends AbstractProcessorDialect {
+public class UIDialect extends AbstractProcessorDialect {
 
     private static final String PREFIX = "ui";
 
@@ -44,7 +44,7 @@ public class ComponentDialect extends AbstractProcessorDialect {
         return processors;
     }
 
-    public ComponentDialect() {
-        super("Component Dialect", PREFIX, 900);
+    public UIDialect() {
+        super("UI dialect", PREFIX, 900);
     }
 }

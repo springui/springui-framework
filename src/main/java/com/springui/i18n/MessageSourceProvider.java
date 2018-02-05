@@ -1,4 +1,4 @@
-package com.springui;
+package com.springui.i18n;
 
 import org.springframework.context.MessageSource;
 

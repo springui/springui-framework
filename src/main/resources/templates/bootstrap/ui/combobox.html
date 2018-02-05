@@ -1,0 +1,15 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+
+<select class="form-control"
+        th:id="${self.id}"
+        th:field="*{components[__${self.id}__].value}">
+    <option th:each="item,itemItr : ${self.items}"
+            th:with="idvp = ${self.itemDisplayValueProvider}"
+            th:value="${itemItr.index}">
+        [[${idvp.getDisplayValue(item)}]]
+    </option>
+</select>
+
+</html>

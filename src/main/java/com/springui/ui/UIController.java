@@ -1,10 +1,14 @@
 package com.springui.ui;
 
-import com.springui.WebRequestUtils;
 import com.springui.event.Action;
 import com.springui.ui.component.Component;
 import com.springui.ui.component.UI;
 import com.springui.ui.component.View;
+import com.springui.web.UITheme;
+import com.springui.web.UIThemeSource;
+import com.springui.web.WebRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -23,6 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class UIController {
 
     public abstract UI createUi();
+
+    @Autowired
+    private UIThemeSource themeSource;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
 
     @ModelAttribute("ui")
     protected UI init(HttpServletRequest request) {
@@ -58,7 +69,8 @@ public abstract class UIController {
 
         model.addAttribute("self", ui);
 
-        return ui.getTemplate();
+        UITheme theme = ui.getTheme();
+        return theme.getTemplate(ui);
     }
 
     @PostMapping(path = "action")

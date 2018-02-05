@@ -1,49 +1,47 @@
 package com.springui.ui.component;
 
-import com.springui.data.Binding;
+import com.springui.event.ValueChange;
+import com.springui.event.ValueChangeListener;
 
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author Stephan Grundner
  */
-public abstract class Field<T, V> extends Component {
+public abstract class Field<T> extends Component {
 
-    private Binding<T, V> binding;
+    private final Set<ValueChangeListener<T>> valueChangeListeners = new LinkedHashSet<>();
 
-    private Binding<T, V> getBinding() {
-        if (binding == null) {
-            binding = new Binding<>();
+    private T value;
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        T oldValue = this.value;
+        this.value = value;
+
+        if (!Objects.equals(oldValue, value)) {
+            notifyValueChanged(new ValueChange<>(this, oldValue));
         }
-
-        return binding;
     }
 
-    public V getValue() {
-        return getBinding().getValue();
+    private void notifyValueChanged(ValueChange<T> change) {
+        for (ValueChangeListener<T> valueChangeListener : valueChangeListeners) {
+            valueChangeListener.valueChanged(change);
+        }
     }
 
-    public void setValue(V value) {
-        getBinding().setValue(value);
+    public boolean addValueChangeListener(ValueChangeListener<T> valueChangeListener) {
+        return valueChangeListeners.add(valueChangeListener);
     }
 
-    public void setObject(T object) {
-        getBinding().setObject(object);
+    public boolean removeValueChangeListener(ValueChangeListener<T> valueChangeListener) {
+        return valueChangeListeners.remove(valueChangeListener);
     }
 
     public Field() { }
-
-    public Field(Binding<T, V> binding) {
-        this.binding = binding;
-    }
-
-    public Field(Function<T, V> getter, BiConsumer<T, V> setter) {
-        this(new Binding<>(getter, setter));
-    }
-
-    public Field(T object, Function<T, V> getter, BiConsumer<T, V> setter) {
-        this(getter, setter);
-        binding.setObject(object);
-    }
 }

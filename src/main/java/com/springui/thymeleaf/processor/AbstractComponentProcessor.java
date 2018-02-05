@@ -2,6 +2,8 @@ package com.springui.thymeleaf.processor;
 
 import com.springui.ui.component.Component;
 import com.springui.ui.component.Layout;
+import com.springui.ui.component.UI;
+import com.springui.web.UITheme;
 import org.springframework.util.StringUtils;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.engine.AttributeName;
@@ -41,7 +43,11 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
 
         if (result instanceof Component) {
             Component component = (Component) result;
-            template = component.getTemplate();
+
+            UI ui = component.getUi();
+            UITheme theme = ui.getTheme();
+            template = theme.getTemplate(component);
+//            template = component.getTemplate();
 
             if (StringUtils.isEmpty(template)) {
                 throw new TemplateProcessingException(String.format("Unable to resolve template for expression %s",

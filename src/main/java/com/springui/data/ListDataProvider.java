@@ -7,5 +7,5 @@ import java.util.List;
  */
 public interface ListDataProvider<T> extends DataProvider {
 
-    List<T> getObjects();
+    List<T> getItems();
 }

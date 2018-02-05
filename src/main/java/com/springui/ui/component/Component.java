@@ -1,6 +1,6 @@
 package com.springui.ui.component;
 
-import com.springui.Message;
+import com.springui.i18n.Message;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
 import org.springframework.util.StringUtils;

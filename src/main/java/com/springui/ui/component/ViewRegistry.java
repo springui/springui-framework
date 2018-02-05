@@ -1,7 +1,7 @@
 package com.springui.ui.component;
 
-import com.springui.PathUtils;
-import com.springui.WebRequestUtils;
+import com.springui.web.PathUtils;
+import com.springui.web.WebRequestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;

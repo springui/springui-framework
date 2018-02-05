@@ -1,6 +1,5 @@
 package com.springui.ui.component;
 
-import com.springui.data.Binding;
 import com.springui.data.ListDataProvider;
 
 import java.util.*;
@@ -12,15 +11,7 @@ public class Table<T> extends Component {
 
     public static class Column<T, V> extends Component {
 
-        private Binding<T, V> binding;
 
-        public Binding<T, V> getBinding() {
-            return binding;
-        }
-
-        public void setBinding(Binding<T, V> binding) {
-            this.binding = binding;
-        }
     }
 
     public static class Cell<T, V> extends Component {
@@ -45,15 +36,7 @@ public class Table<T> extends Component {
         }
 
         public V getValue() {
-            Binding<T, V> binding = column.getBinding();
-            T object = row.getObject();
-            try {
-                binding.setObject(object);
-                binding.fromObject();
-                return binding.getValue();
-            } finally {
-                binding.setObject(null);
-            }
+            return null;
         }
 
     }
@@ -127,7 +110,7 @@ public class Table<T> extends Component {
     public List<Row<T>> getRows() {
         ListDataProvider<T> dataProvider = getDataProvider();
         rows.clear();
-        ListIterator<T> objectItr = dataProvider.getObjects().listIterator();
+        ListIterator<T> objectItr = dataProvider.getItems().listIterator();
         while (objectItr.hasNext()) {
             addRow(objectItr.next());
         }

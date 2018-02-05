@@ -1,6 +1,6 @@
 package com.springui.ui.component;
 
-import com.springui.MapUtils;
+import com.springui.collection.MapUtils;
 
 import java.util.Collections;
 import java.util.HashMap;

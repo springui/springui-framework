@@ -1,15 +1,21 @@
 package com.springui.ui.component;
 
-import com.springui.MessageSourceProvider;
-import com.springui.PathUtils;
+import com.springui.i18n.MessageSourceProvider;
+import com.springui.web.PathUtils;
+import com.springui.web.UITheme;
+import com.springui.web.UIThemeSource;
+import com.springui.web.WebRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.ui.context.Theme;
+import org.springframework.ui.context.ThemeSource;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +47,8 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
     @Deprecated
     private ViewRegistry viewRegistry;
     private View activeView;
+
+    private UIThemeSource themeSource;
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -86,6 +94,21 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
         return activeView;
     }
 
+    private UIThemeSource getThemeSource() {
+        if (themeSource == null) {
+            themeSource = applicationContext.getBean(UIThemeSource.class);
+        }
+
+        return themeSource;
+    }
+
+    public UITheme getTheme() {
+        UIThemeSource themeSource = getThemeSource();
+        ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
+        String themeName = themeResolver.resolveThemeName(WebRequestUtils.getCurrentServletRequest());
+        return themeSource.getTheme(themeName);
+    }
+
     public Map<String, Component> getComponents() {
         return Collections.unmodifiableMap(components);
     }
@@ -125,7 +148,10 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
         return LocaleContextHolder.getLocale();
     }
 
-    public abstract void init(HttpServletRequest request);
+    public void init(HttpServletRequest request) {
+        ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
+        String themeName = themeResolver.resolveThemeName(request);
+    }
 
     public UI(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
