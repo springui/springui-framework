@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:cp="http://www.getwebseed/dialect/cp"
+      th:remove="tag">
+
+<input type="checkbox" class="form-check-input"
+       th:id="${self.id}"
+       th:field="*{components[__${self.id}__].value}">
+</html>

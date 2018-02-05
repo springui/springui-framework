@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+
+<div th:fragment="default" class="form-group">
+    <label th:for="${self.field.id}" th:text="${self.field?.caption?.value}">Label</label>
+    <th:block ui:replace="${self.field}" />
+</div>
+
+<div th:fragment="boolean" class="form-check">
+    <th:block ui:replace="${self.field}" />
+    <label class="form-check-label" th:for="${self.field.id}"
+           th:text="${self.field?.caption?.value}">Label</label>
+</div>
+
+</html>

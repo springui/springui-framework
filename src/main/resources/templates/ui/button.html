@@ -1,0 +1,10 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+<a class="btn btn-primary component" href="#"
+   th:data-events="'click'"
+   th_data-action="@{__${self.ui.path}__/action(component=${self.id})}"
+   th:data-action="@{__${self.ui.actionPath}__(component=${self.id})}">
+    <th:block ui:replace="${self.caption}" />
+</a>
+</html>

@@ -1,0 +1,114 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.4.RELEASE'
+    }
+    repositories {
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+group "com.springui"
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+    mavenCentral()
+}
+
+dependencies {
+
+//    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+//    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-web')
+
+    compile group: 'org.thymeleaf', name: 'thymeleaf', version: '3.0.1.RELEASE'
+    compile group: 'org.thymeleaf', name: 'thymeleaf-spring4', version: '3.0.6.RELEASE'
+
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+//    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.1'
+
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.39'
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile group: 'mysql', name: 'mysql-connector-java', version: '5.1.39'
+
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.192'
+}
+
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.artifactId = 'springui-framework'
+
+            pom.project {
+                name 'Spring UI framework'
+                packaging 'jar'
+                description 'A UI framework on top of Spring'
+                url 'https://github.com/springui/springui-framework'
+
+                scm {
+                    url 'https://github.com/springui/springui-framework.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'stephangrundner'
+                        name 'Stephan Grundner'
+                        email 'stephan.grundner@gmail.com'
+                    }
+                }
+            }
+        }
+    }
+}
+

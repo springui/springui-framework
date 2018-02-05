@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+
+<div th:each="fieldContainer : ${self}">
+    <th:block ui:replace="${fieldContainer}" />
+</div>
+</html>

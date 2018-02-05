@@ -1,0 +1,25 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th th:each="column : ${self.columns}">
+            <th:block ui:replace="${column.caption}" />
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="row : ${self.rows}">
+        <th:block th:each="column : ${self.columns}"
+                  th:with="cell = ${row.getCell(column)}">
+            <td th:text="${cell.value}">
+                ???
+            </td>
+        </th:block>
+    </tr>
+    </tbody>
+</table>
+
+</html>
