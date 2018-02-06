@@ -5,5 +5,5 @@ package com.springui.data;
  */
 public interface ValueResolver<T, V> {
 
-    V resolve(T t);
+    V resolve(T o);
 }

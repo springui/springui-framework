@@ -5,10 +5,7 @@ import com.springui.event.Action;
 import com.springui.event.ActionListener;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author Stephan Grundner
@@ -22,6 +19,8 @@ public abstract class Component {
     private Text caption;
 
     private Message message;
+
+    private final Set<String> styles = new LinkedHashSet<>();
 
     private final Set<ActionListener> actionListeners = new LinkedHashSet<>();
 
@@ -105,6 +104,18 @@ public abstract class Component {
         this.message = message;
     }
 
+    public Set<String> getStyles() {
+        return Collections.unmodifiableSet(styles);
+    }
+
+    public boolean addStyle(String style) {
+        return styles.add(style);
+    }
+
+    public boolean removeStyle(String style) {
+        return styles.remove(style);
+    }
+
     public Set<ActionListener> getActionListeners() {
         return Collections.unmodifiableSet(actionListeners);
     }
@@ -115,7 +126,7 @@ public abstract class Component {
 
     public void performAction(Action action) {
         for (ActionListener actionListener : actionListeners) {
-            actionListener.onAction(action);
+            actionListener.performAction(action);
         }
     }
 }

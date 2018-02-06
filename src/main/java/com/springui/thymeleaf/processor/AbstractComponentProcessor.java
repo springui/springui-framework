@@ -66,7 +66,6 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
 
             String newAttributeName = "th:" + currentAttributeName.getAttributeName();
             structureHandler.replaceAttribute(currentAttributeName, newAttributeName, template);
-
         } else {
             throw new RuntimeException("No component");
         }

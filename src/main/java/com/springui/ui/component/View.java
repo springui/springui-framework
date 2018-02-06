@@ -43,7 +43,7 @@ public abstract class View extends SingleComponentContainer<Component> {
         this.path = path;
     }
 
-    protected void activate() {
+    protected void activate(MultiValueMap<String, String> params) {
         UI ui = getUi();
         ui.setComponent(this);
     }

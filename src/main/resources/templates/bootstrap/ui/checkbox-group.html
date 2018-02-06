@@ -2,12 +2,12 @@
       xmlns:ui="http://www.springui/dialect/ui"
       th:remove="tag">
 
-<select class="form-control"
+<select class="form-control" multiple="multiple"
         th:id="${self.id}"
-        th:field="*{components[__${self.id}__].value}">
-    <option th:each="item,itemItr : ${self.items}"
+        th:field="*{components[__${self.id}__].selectedKeys}">
+    <option th:each="item : ${self.items}"
             th:with="idvp = ${self.itemDisplayValueProvider}"
-            th:value="${itemItr.index}">
+            th:value="${self.itemToKey(item)}">
         [[${idvp.getDisplayValue(item)}]]
     </option>
 </select>

@@ -5,6 +5,7 @@ import com.springui.web.WebRequestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.Assert;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.WebRequest;
 
 import java.util.HashMap;
@@ -96,7 +97,9 @@ public class ViewRegistry {
         View view = getOrCreateView(path);
         if (view != null) {
             view.setPath(path);
-            view.activate();
+            MultiValueMap<String, String> params =
+                    WebRequestUtils.getQueryParams(request);
+            view.activate(params);
         } else {
             throw new RuntimeException(String.format("No view registered for path [%s]", path));
         }

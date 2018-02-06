@@ -14,17 +14,15 @@ public abstract class Field<T> extends Component {
 
     private final Set<ValueChangeListener<T>> valueChangeListeners = new LinkedHashSet<>();
 
-    private T value;
+    public abstract T getValue();
 
-    public T getValue() {
-        return value;
-    }
+    protected abstract void valueChanged(T newValue, T oldValue);
 
     public void setValue(T value) {
-        T oldValue = this.value;
-        this.value = value;
+        T oldValue = getValue();
 
         if (!Objects.equals(oldValue, value)) {
+            valueChanged(value, oldValue);
             notifyValueChanged(new ValueChange<>(this, oldValue));
         }
     }

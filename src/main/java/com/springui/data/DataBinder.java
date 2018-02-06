@@ -1,70 +1,68 @@
 package com.springui.data;
 
-import com.springui.event.ValueChangeListener;
 import com.springui.ui.component.Field;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * @author Stephan Grundner
  */
-public class DataBinder<O, T> {
+public class DataBinder<T> {
 
-    private ValueApplier<O, T> applier;
-    private ValueResolver<O, T> resolver;
-    private Field<T> field;
-    private O object;
+    private T object;
+    private final Set<DataBinding<T, ?>> bindings = new LinkedHashSet<>();
 
-    private ValueChangeListener<T> valueChangeListener;
-
-    public ValueApplier<O, T> getApplier() {
-        return applier;
-    }
-
-    public void setApplier(ValueApplier<O, T> applier) {
-        this.applier = applier;
-    }
-
-    public ValueResolver<O, T> getResolver() {
-        return resolver;
-    }
-
-    public void setResolver(ValueResolver<O, T> resolver) {
-        this.resolver = resolver;
-    }
-
-    public Field<T> getField() {
-        return field;
-    }
-
-    public O getObject() {
+    public T getObject() {
         return object;
     }
 
-    public void setObject(O object) {
+    public void setObject(T object) {
+        this.object = object;
+
+        fromObject();
+    }
+
+    public <V> DataBinding<T, V> bind(Field<V> field, ValueResolver<T, V> resolver, ValueApplier<T, V> applier) {
+        DataBinding<T, V> binding = new DataBinding<>(this, field);
+        binding.setResolver(resolver);
+        binding.setApplier(applier);
+
+        binding.setChangeListener(change -> binding.apply());
+        field.addValueChangeListener(binding.getChangeListener());
+
+        bindings.add(binding);
+
+        if (object != null) {
+            binding.resolve();
+        }
+
+        return binding;
+    }
+
+    public <V> boolean unbind(DataBinding<T, V> binding) {
+        if (bindings.remove(binding)) {
+            Field<V> field = binding.getField();
+            field.removeValueChangeListener(binding.getChangeListener());
+            binding.setChangeListener(null);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public void fromObject() {
+        bindings.forEach(DataBinding::resolve);
+    }
+
+    public void toObject() {
+        bindings.forEach(DataBinding::apply);
+    }
+
+    public DataBinder(T object) {
         this.object = object;
     }
 
-    public void apply() {
-        T value = field.getValue();
-        applier.apply(object, value);
-    }
-
-    public void resolve() {
-        T value = resolver.resolve(object);
-        field.setValue(value);
-    }
-
-    public void bind(Field<T> field, ValueApplier<O, T> applier, ValueResolver<O, T> resolver, O object) {
-        this.field = field;
-        this.applier = applier;
-        this.resolver = resolver;
-        this.object = object;
-        valueChangeListener = change -> apply();
-        field.addValueChangeListener(valueChangeListener);
-        resolve();
-    }
-
-    public void unbind() {
-        field.removeValueChangeListener(valueChangeListener);
-        field = null;
-    }
+    public DataBinder() { }
 }

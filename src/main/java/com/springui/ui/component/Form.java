@@ -38,7 +38,7 @@ public class Form extends ComponentsContainer<Form.FieldContainer> {
             FieldContainer fieldContainer = new FieldContainer();
             fieldContainer.setField(field);
 
-            if (field instanceof BooleanField) {
+            if (field instanceof CheckBox) {
                 fieldContainer.setTemplate("ui/field-container::boolean");
             } else {
                 fieldContainer.setTemplate("ui/field-container::default");

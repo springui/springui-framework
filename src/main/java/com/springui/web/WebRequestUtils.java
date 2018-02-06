@@ -1,8 +1,13 @@
 package com.springui.web;
 
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Iterator;
 
 /**
  * @author Stephan Grundner
@@ -75,6 +80,18 @@ public final class WebRequestUtils {
         }
 
         return null;
+    }
+
+    public static MultiValueMap<String, String> getQueryParams(WebRequest request) {
+        MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
+        Iterator<String> paramNameItr = request.getParameterNames();
+        while (paramNameItr.hasNext()) {
+            String paramName = paramNameItr.next();
+            String[] paramValues = request.getParameterValues(paramName);
+            queryParams.put(paramName, Arrays.asList(paramValues));
+        }
+
+        return queryParams;
     }
 
     private WebRequestUtils() {}

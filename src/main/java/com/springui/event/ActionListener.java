@@ -5,5 +5,5 @@ package com.springui.event;
  */
 public interface ActionListener {
 
-    void onAction(Action action);
+    void performAction(Action action);
 }

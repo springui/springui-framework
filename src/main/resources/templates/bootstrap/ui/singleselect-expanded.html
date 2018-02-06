@@ -1,0 +1,21 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+
+<div class="form-check disabled"
+     th:each="item : ${self.items}"
+     th:with="idvp = ${self.itemDisplayValueProvider}">
+
+    <input class="form-check-input"
+           type="radio"
+           th:field="*{components[__${self.id}__].selectedKey}"
+           th:id="${#ids.seq(self.id)}"
+           th:value="${self.itemToKey(item)}">
+    <label class="form-check-label"
+           th:for="${#ids.prev(self.id)}">
+        [[${idvp.getDisplayValue(item)}]]
+    </label>
+</div>
+
+
+</html>
