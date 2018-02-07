@@ -12,6 +12,11 @@ import java.util.Set;
  */
 public class MultiSelect<T> extends Select<T> {
 
+    public static final String DEFAULT = "ui/multi-select-default";
+    public static final String CHECK_BOXES = "ui/multi-select-with-check-boxes";
+
+    {setTemplate(DEFAULT);}
+
     private Set<String> selectedKeys;
 
     @Override

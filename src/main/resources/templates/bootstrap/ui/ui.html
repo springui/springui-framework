@@ -27,17 +27,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/locales/bootstrap-datepicker.de.min.js"></script>
 
 <style type="text/css">
+.hidden {
+    display:none;
+}
 </style>
 
 </head>
 <body>
 
-<form th:object="${ui}" method="post">
+<form th:object="${ui}" method="post" enctype="multipart/form-data">
     <th:block ui:replace="${self.component}" />
 </form>
 
 <script>
 $(document).ready(function() {
+
+    // Component events
     $('.component').each(function(i) {
         var events = $(this).data('events');
         var action = $(this).data('action');
@@ -51,6 +56,16 @@ $(document).ready(function() {
             return false;
         });
     });
+
+    // File upload
+    $('input[type=file]').change(function() {
+        var input = $(this);
+        var form = $('form');
+        var action = input.data('action');
+        form.attr('action', action);
+        form.submit();
+    });
+
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" ></script>

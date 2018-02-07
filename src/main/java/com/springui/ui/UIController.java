@@ -3,6 +3,7 @@ package com.springui.ui;
 import com.springui.event.Action;
 import com.springui.ui.component.Component;
 import com.springui.ui.component.UI;
+import com.springui.ui.component.Upload;
 import com.springui.ui.component.View;
 import com.springui.web.UITheme;
 import com.springui.web.UIThemeSource;
@@ -14,6 +15,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -73,8 +76,20 @@ public abstract class UIController {
         return theme.getTemplate(ui);
     }
 
+    private String redirect(UI ui) {
+        View view = ui.getActiveView();
+
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromPath(ui.getPath() + "/" + view.getPath());
+
+        builder.queryParams(view.getParams());
+        String uri = builder.build().toUriString();
+
+        return "redirect:" + uri;
+    }
+
     @PostMapping(path = "action")
-    protected String request(@ModelAttribute("ui") UI ui,
+    protected String action(@ModelAttribute("ui") UI ui,
                              BindingResult bindingResult,
                              @RequestParam(name = "component") String componentId,
                              @RequestParam(name = "event") String event,
@@ -92,14 +107,29 @@ public abstract class UIController {
             return "redirect:" + redirectUrl;
         }
 
-        View view = ui.getActiveView();
+        return redirect(ui);
+    }
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromPath(ui.getPath() + "/" + view.getPath());
+    @PostMapping(path = "upload")
+    protected String upload(@ModelAttribute("ui") UI ui,
+                            BindingResult bindingResult,
+                            @RequestParam(name = "component") String componentId,
+                            @RequestParam(name = "token") String token,
+                            WebRequest request,
+                            MultipartRequest files) {
 
-        builder.queryParams(view.getParams());
-        String uri = builder.build().toUriString();
+        request.setAttribute(UI.class.getName(), ui, WebRequest.SCOPE_REQUEST);
 
-        return "redirect:" + uri;
+        Upload upload = (Upload) ui.getComponent(componentId);
+
+        MultipartFile file = files.getFile(token);
+        if (!file.isEmpty()) {
+            Upload.UploadHandler handler = upload.getHandler();
+            if (handler != null) {
+                handler.receive(request, file);
+            }
+        }
+
+        return redirect(ui);
     }
 }

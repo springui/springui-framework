@@ -7,39 +7,12 @@ import org.springframework.util.StringUtils;
  */
 public class SingleSelect<T> extends Select<T> {
 
-    public enum Appearance {
-        COMPACT,
-        EXPANDED
-    }
+    public static final String DEFAULT = "ui/single-select-default";
+    public static final String RADIO_BUTTONS = "ui/single-select-with-radio-buttons";
 
-    private Appearance appearance = Appearance.COMPACT;
+    {setTemplate(DEFAULT);}
 
     private String selectedKey;
-
-    public Appearance getAppearance() {
-        return appearance;
-    }
-
-    public void setAppearance(Appearance appearance) {
-        this.appearance = appearance;
-    }
-
-    @Override
-    public String getTemplate() {
-        String template = super.getTemplate();
-        if (StringUtils.isEmpty(template)) {
-            switch (appearance) {
-                case EXPANDED:
-                    template = "ui/singleselect-expanded";
-                    break;
-                case COMPACT:
-                default:
-                    template = "ui/singleselect-compact";
-            }
-        }
-
-        return template;
-    }
 
     public String getSelectedKey() {
         return selectedKey;

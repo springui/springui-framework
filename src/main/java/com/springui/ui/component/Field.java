@@ -2,6 +2,7 @@ package com.springui.ui.component;
 
 import com.springui.event.ValueChange;
 import com.springui.event.ValueChangeListener;
+import com.springui.i18n.Message;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -12,7 +13,17 @@ import java.util.Set;
  */
 public abstract class Field<T> extends Component {
 
+    private Message help;
+
     private final Set<ValueChangeListener<T>> valueChangeListeners = new LinkedHashSet<>();
+
+    public Message getHelp() {
+        return help;
+    }
+
+    public void setHelp(Message help) {
+        this.help = help;
+    }
 
     public abstract T getValue();
 

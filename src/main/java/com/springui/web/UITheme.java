@@ -22,6 +22,7 @@ public class UITheme implements Theme {
         return delegate.getMessageSource();
     }
 
+    @Deprecated
     public String getTemplate(Component component) {
         String template = component.getTemplate();
         template = SlashUtils.removeLeadingAndTrailingSlashes(template);

@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+
+<th:block th:with="token=${#ids.seq('upload')}">
+
+    <div class="btn btn-primary btn-file">
+        Upload
+        <input type="file" class="hidden"
+               th:name="${token}"
+               th:data-action="@{__${self.ui.uploadPath}__(component=${self.id},token=${token})}">
+    </div>
+
+</th:block>
+
+</html>

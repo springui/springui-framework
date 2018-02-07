@@ -71,6 +71,13 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
                 .toUriString();
     }
 
+    public String getUploadPath() {
+        return UriComponentsBuilder
+                .fromPath(getPath())
+                .pathSegment("upload")
+                .toUriString();
+    }
+
     @Deprecated
     private ViewRegistry getViewRegistry() {
         if (viewRegistry == null) {
