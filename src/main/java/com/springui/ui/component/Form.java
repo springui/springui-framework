@@ -1,14 +1,17 @@
 package com.springui.ui.component;
 
 import com.springui.collection.MapUtils;
+import com.springui.ui.Template;
 
 import java.util.*;
 
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/ui/form")
 public class Form extends ComponentsContainer<Form.FieldContainer> {
 
+//    @Template("{theme}/ui/field-container")
     public static class FieldContainer extends Component {
 
         private Field field;
@@ -38,18 +41,14 @@ public class Form extends ComponentsContainer<Form.FieldContainer> {
             FieldContainer fieldContainer = new FieldContainer();
             fieldContainer.setField(field);
 
-            if (field instanceof CheckBox) {
-                fieldContainer.setTemplate("ui/field-container::boolean");
+            if (field instanceof BooleanField) {
+                fieldContainer.setTemplate("{theme}/ui/field-container::boolean");
             } else {
-                fieldContainer.setTemplate("ui/field-container::default");
+                fieldContainer.setTemplate("{theme}/ui/field-container::default");
             }
 
             return fieldContainer;
         }
-    }
-
-    {
-        setTemplate("ui/form");
     }
 
     private final Map<Field, FieldContainer> fields = new IdentityHashMap<>();

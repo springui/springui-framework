@@ -1,6 +1,7 @@
 package com.springui.ui.component;
 
 import com.springui.i18n.MessageSourceProvider;
+import com.springui.ui.Template;
 import com.springui.web.PathUtils;
 import com.springui.web.UITheme;
 import com.springui.web.UIThemeSource;
@@ -10,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.ui.context.Theme;
-import org.springframework.ui.context.ThemeSource;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
@@ -27,6 +26,7 @@ import java.util.Map;
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/ui/ui")
 public abstract class UI extends SingleComponentContainer<Component> implements MessageSourceProvider {
 
     public static UI getCurrent() {
@@ -35,10 +35,6 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(UI.class);
-
-    {
-        setTemplate("ui/ui");
-    }
 
     private ApplicationContext applicationContext;
 

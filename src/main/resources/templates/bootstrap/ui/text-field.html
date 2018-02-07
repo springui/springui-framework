@@ -4,6 +4,6 @@
 
 <input type="text" class="form-control"
        th:id="${self.id}"
-       th_disabled="${self.readOnly} ? disabled : _"
+       th:disabled="${self.disabled} ? disabled : _"
        th:field="*{components[__${self.id}__].value}">
 </html>

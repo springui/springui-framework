@@ -1,24 +1,22 @@
 package com.springui.ui.component;
 
 import com.springui.event.ActionListener;
+import com.springui.ui.Template;
 
 /**
  * @author Stephan Grundner
  */
-public class Button extends Component {
+@Template("{theme}/ui/button")
+public class Trigger extends Component {
 
-    {
-        setTemplate("ui/button");
-    }
+    public Trigger() { }
 
-    public Button() { }
-
-    public Button(Text caption) {
+    public Trigger(Text caption) {
         setCaption(caption);
     }
 
     @Deprecated
-    public Button(String caption, ActionListener actionListener) {
+    public Trigger(String caption, ActionListener actionListener) {
         this(new Text(caption));
         addActionListener("", actionListener);
     }

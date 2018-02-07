@@ -1,6 +1,7 @@
 package com.springui.ui.component;
 
 import com.springui.collection.MapUtils;
+import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ public final class Layout extends ComponentsContainer<Component> {
     }
 
     public Layout(String template) {
+        Assert.hasLength(template, "[template] must not be null");
         setTemplate(template);
     }
 

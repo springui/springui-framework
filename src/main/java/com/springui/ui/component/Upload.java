@@ -1,11 +1,13 @@
 package com.springui.ui.component;
 
+import com.springui.ui.Template;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author Stephan Grundner
  */
+@Template(Upload.DEFAULT)
 public class Upload extends Component {
 
     public interface UploadHandler {
@@ -13,9 +15,7 @@ public class Upload extends Component {
         void receive(WebRequest request, MultipartFile multipartFile);
     }
 
-    public static final String DEFAULT = "ui/upload";
-
-    {setTemplate(DEFAULT);}
+    public static final String DEFAULT = "{theme}/ui/upload";
 
     private UploadHandler handler;
 

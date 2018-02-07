@@ -1,6 +1,7 @@
 package com.springui.ui.component;
 
 import com.springui.collection.CollectionUtils;
+import com.springui.ui.Template;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
@@ -10,12 +11,11 @@ import java.util.Set;
 /**
  * @author Stephan Grundner
  */
+@Template(MultiSelect.DEFAULT)
 public class MultiSelect<T> extends Select<T> {
 
-    public static final String DEFAULT = "ui/multi-select-default";
-    public static final String CHECK_BOXES = "ui/multi-select-with-check-boxes";
-
-    {setTemplate(DEFAULT);}
+    public static final String DEFAULT = "{theme}/ui/multi-select-default";
+    public static final String CHECK_BOXES = "{theme}/ui/multi-select-with-check-boxes";
 
     private Set<String> selectedKeys;
 
@@ -66,5 +66,4 @@ public class MultiSelect<T> extends Select<T> {
     protected void valueChanged(T newValue, T oldValue) {
         throw new UnsupportedOperationException();
     }
-
 }

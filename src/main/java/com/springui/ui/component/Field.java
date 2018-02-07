@@ -13,9 +13,18 @@ import java.util.Set;
  */
 public abstract class Field<T> extends Component {
 
+    private Message placeholder;
     private Message help;
 
     private final Set<ValueChangeListener<T>> valueChangeListeners = new LinkedHashSet<>();
+
+    public Message getPlaceholder() {
+        return placeholder;
+    }
+
+    public void setPlaceholder(Message placeholder) {
+        this.placeholder = placeholder;
+    }
 
     public Message getHelp() {
         return help;

@@ -1,15 +1,13 @@
 package com.springui.ui.component;
 
 import com.springui.i18n.Message;
+import com.springui.ui.Template;
 
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/ui/text")
 public class Text extends Component {
-
-    {
-        setTemplate("ui/text");
-    }
 
     private final Message message;
 

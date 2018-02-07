@@ -1,13 +1,12 @@
 package com.springui.ui.component;
 
+import com.springui.ui.Template;
+
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/ui/text-field")
 public class TextField extends Field<String> {
-
-    {
-        setTemplate("ui/text-field");
-    }
 
     private String value;
 
@@ -20,6 +19,4 @@ public class TextField extends Field<String> {
     protected void valueChanged(String newValue, String oldValue) {
         value = newValue;
     }
-
-    public TextField() { }
 }

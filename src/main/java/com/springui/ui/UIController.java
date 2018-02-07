@@ -1,10 +1,7 @@
 package com.springui.ui;
 
 import com.springui.event.Action;
-import com.springui.ui.component.Component;
-import com.springui.ui.component.UI;
-import com.springui.ui.component.Upload;
-import com.springui.ui.component.View;
+import com.springui.ui.component.*;
 import com.springui.web.UITheme;
 import com.springui.web.UIThemeSource;
 import com.springui.web.WebRequestUtils;
@@ -13,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +20,8 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.beans.PropertyEditorSupport;
+import java.util.Date;
 
 /**
  * @author Stephan Grundner
@@ -53,6 +53,39 @@ public abstract class UIController {
         return ui;
     }
 
+    @InitBinder("ui")
+    private void initBinder(WebDataBinder webDataBinder) {
+        UI ui = (UI) webDataBinder.getTarget();
+
+        ui.getComponents().forEach( (id, component) -> {
+            if (component instanceof Field) {
+
+                Field field = (Field) component;
+                String propertyPath = String.format("components[%s].value", field.getId());
+                if (field instanceof DateField) {
+                    DateField dateField = (DateField) field;
+                    webDataBinder.registerCustomEditor(Date.class, propertyPath, new PropertyEditorSupport() {
+                        @Override
+                        public String getAsText() {
+                            Date date = (Date) getValue();
+                            if (date != null) {
+                                return date.toString();
+                            }
+
+                            return null;
+                        }
+
+                        @Override
+                        public void setAsText(String text) throws IllegalArgumentException {
+                            setValue(new Date());
+                        }
+                    });
+                }
+
+            }
+        });
+    }
+
     @GetMapping(path = "/**")
     protected String respond(@ModelAttribute("ui") UI ui,
                              BindingResult bindingResult,
@@ -73,7 +106,7 @@ public abstract class UIController {
         model.addAttribute("self", ui);
 
         UITheme theme = ui.getTheme();
-        return theme.getTemplate(ui);
+        return theme.resolveTemplatePath(ui);
     }
 
     private String redirect(UI ui) {

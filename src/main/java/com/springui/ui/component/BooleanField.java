@@ -1,13 +1,12 @@
 package com.springui.ui.component;
 
+import com.springui.ui.Template;
+
 /**
  * @author Stephan Grundner
  */
-public class CheckBox extends Field<Boolean> {
-
-    {
-        setTemplate("ui/checkbox");
-    }
+@Template("{theme}/ui/boolean-field")
+public class BooleanField extends Field<Boolean> {
 
     private Boolean value;
 
@@ -20,6 +19,4 @@ public class CheckBox extends Field<Boolean> {
     protected void valueChanged(Boolean newValue, Boolean oldValue) {
         value = newValue;
     }
-
-    public CheckBox() { }
 }

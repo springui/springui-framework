@@ -1,12 +1,14 @@
 package com.springui.ui.component;
 
 import com.springui.data.ListDataProvider;
+import com.springui.ui.Template;
 
 import java.util.*;
 
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/ui/table")
 public class Table<T> extends Component {
 
     public static class Column<T, V> extends Component {
@@ -70,8 +72,6 @@ public class Table<T> extends Component {
             return cell;
         }
     }
-
-    { setTemplate("ui/table"); }
 
     private final List<Column<T, ?>> columns = new ArrayList<>();
     private final List<Row<T>> rows = new ArrayList<>();

@@ -46,8 +46,8 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
 
             UI ui = component.getUi();
             UITheme theme = ui.getTheme();
-            template = theme.getTemplate(component);
-//            template = component.getTemplate();
+            template = theme.resolveTemplatePath(component);
+//            template = component.resolveTemplatePath();
 
             if (StringUtils.isEmpty(template)) {
                 throw new TemplateProcessingException(String.format("Unable to resolve template for expression %s",

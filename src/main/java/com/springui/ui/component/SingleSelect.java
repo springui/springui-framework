@@ -1,14 +1,16 @@
 package com.springui.ui.component;
 
+import com.springui.ui.Template;
 import org.springframework.util.StringUtils;
 
 /**
  * @author Stephan Grundner
  */
+@Template(SingleSelect.DEFAULT)
 public class SingleSelect<T> extends Select<T> {
 
-    public static final String DEFAULT = "ui/single-select-default";
-    public static final String RADIO_BUTTONS = "ui/single-select-with-radio-buttons";
+    public static final String DEFAULT = "{theme}/ui/single-select-default";
+    public static final String RADIO_BUTTONS = "{theme}/ui/single-select-with-radio-buttons";
 
     {setTemplate(DEFAULT);}
 

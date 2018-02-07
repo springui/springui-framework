@@ -22,9 +22,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote-bs4.min.js"></script>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/css/bootstrap-datepicker3.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/js/bootstrap-datepicker.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/locales/bootstrap-datepicker.de.min.js"></script>
+    <!--Date picker-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.de.min.js"></script>
 
 <style type="text/css">
 .hidden {
@@ -57,7 +58,7 @@ $(document).ready(function() {
         });
     });
 
-    // File upload
+    // Upload components
     $('input[type=file]').change(function() {
         var input = $(this);
         var form = $('form');
@@ -65,6 +66,26 @@ $(document).ready(function() {
         form.attr('action', action);
         form.submit();
     });
+
+    // Rich text fields
+    $('.summernote').each(function() {
+        var textarea = $(this);
+        textarea.summernote({
+            height:125,
+            toolbar:[
+                ['font', ['bold', 'italic', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'hr', 'table']],
+                ['view', ['fullscreen', 'codeview']]
+            ],
+            onCreateLink : function(originalLink) {
+                return originalLink; // return original link
+            }
+        });
+    });
+
+    $('.datepicker').datepicker({});
 
 });
 </script>

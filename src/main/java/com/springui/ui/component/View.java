@@ -1,15 +1,13 @@
 package com.springui.ui.component;
 
+import com.springui.ui.Template;
 import org.springframework.util.MultiValueMap;
 
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/ui/view")
 public abstract class View extends SingleComponentContainer<Component> {
-
-    {
-        setTemplate("ui/view");
-    }
 
     private boolean initialized;
     private MultiValueMap<String, String> params;

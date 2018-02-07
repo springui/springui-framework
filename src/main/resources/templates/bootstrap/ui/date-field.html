@@ -1,0 +1,16 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:cp="http://www.getwebseed/dialect/cp"
+      th:remove="tag">
+
+<div class="input-group " >
+    <input type="text" class="form-control datepicker"
+           th:id="${self.id}"
+           th:disabled="${self.disabled} ? disabled : _"
+           th:field="*{components[__${self.id}__].value}"
+           th:data-date-format="${self.dateFormat} ?: _"
+           >
+    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+</div>
+
+
+</html>

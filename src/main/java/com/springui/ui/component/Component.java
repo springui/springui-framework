@@ -3,6 +3,8 @@ package com.springui.ui.component;
 import com.springui.i18n.Message;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
+import com.springui.ui.Template;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -16,8 +18,9 @@ public abstract class Component {
     private String template;
     private Component parent;
 
+    private boolean disabled;
+    private int tabIndex;
     private Text caption;
-
     private Message message;
 
     private final Set<String> styles = new LinkedHashSet<>();
@@ -37,6 +40,12 @@ public abstract class Component {
     }
 
     public String getTemplate() {
+        if (StringUtils.isEmpty(template)) {
+            Template annotation = AnnotationUtils
+                    .findAnnotation(this.getClass(), Template.class);
+            return (String) AnnotationUtils.getValue(annotation, "name");
+        }
+
         return template;
     }
 
@@ -86,6 +95,22 @@ public abstract class Component {
         }
 
         return false;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public int getTabIndex() {
+        return tabIndex;
+    }
+
+    public void setTabIndex(int tabIndex) {
+        this.tabIndex = tabIndex;
     }
 
     public Text getCaption() {
