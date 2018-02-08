@@ -2,15 +2,13 @@
       xmlns:cp="http://www.getwebseed/dialect/cp"
       th:remove="tag">
 
-<div class="input-group " >
-    <input type="text" class="form-control datepicker"
-           th:id="${self.id}"
-           th:disabled="${self.disabled} ? disabled : _"
-           th:field="*{components[__${self.id}__].value}"
-           th:data-date-format="${self.dateFormat} ?: _"
-           >
-    <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-</div>
-
+<input type="text" class="form-control datepicker"
+       th:id="${self.id}"
+       th_data-date-format="${#themes.code('datepicker.date-format.__${self.dateFormatStyle}__')} ?: _"
+       th:disabled="${self.disabled} ? disabled : _"
+       th:data-autoclose="true"
+       th:data-language="${#locale.language}"
+       th:data-today="linked"
+       th:field="*{components[__${self.id}__].value}">
 
 </html>

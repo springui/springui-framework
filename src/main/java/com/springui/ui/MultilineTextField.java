@@ -1,6 +1,4 @@
-package com.springui.ui.component;
-
-import com.springui.ui.Template;
+package com.springui.ui;
 
 /**
  * @author Stephan Grundner

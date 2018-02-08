@@ -1,7 +1,7 @@
 package com.springui.data;
 
 import com.springui.event.ValueChangeListener;
-import com.springui.ui.component.Field;
+import com.springui.ui.Field;
 
 /**
  * @author Stephan Grundner

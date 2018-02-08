@@ -1,12 +1,11 @@
-package com.springui.ui;
+package com.springui.web;
 
 import com.springui.event.Action;
-import com.springui.ui.component.*;
-import com.springui.web.UITheme;
-import com.springui.web.UIThemeSource;
-import com.springui.web.WebRequestUtils;
+import com.springui.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -15,43 +14,34 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import java.beans.PropertyEditorSupport;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * @author Stephan Grundner
  */
+@Controller
 @SessionAttributes("ui")
-public abstract class UIController {
-
-    public abstract UI createUi();
+public class UIController {
 
     @Autowired
-    private UIThemeSource themeSource;
+    protected ApplicationContext applicationContext;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
-
-    @ModelAttribute("ui")
-    protected UI init(HttpServletRequest request) {
-        UI ui = createUi();
-
-        request.setAttribute(UI.class.getName(), ui);
-
-        UriComponents uriComponents = MvcUriComponentsBuilder
-                .fromController(this.getClass()).build();
-        ui.setPath(uriComponents.getPath());
-
-        ui.init(request);
-
-        return ui;
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
     }
+
+    public UI createUi(Class<? extends UI> uiClass) {
+        return applicationContext.getBean(uiClass);
+    }
+
+    @Autowired
+    private ThemeResolver themeResolver;
 
     @InitBinder("ui")
     private void initBinder(WebDataBinder webDataBinder) {
@@ -63,23 +53,10 @@ public abstract class UIController {
                 Field field = (Field) component;
                 String propertyPath = String.format("components[%s].value", field.getId());
                 if (field instanceof DateField) {
-                    DateField dateField = (DateField) field;
-                    webDataBinder.registerCustomEditor(Date.class, propertyPath, new PropertyEditorSupport() {
-                        @Override
-                        public String getAsText() {
-                            Date date = (Date) getValue();
-                            if (date != null) {
-                                return date.toString();
-                            }
-
-                            return null;
-                        }
-
-                        @Override
-                        public void setAsText(String text) throws IllegalArgumentException {
-                            setValue(new Date());
-                        }
-                    });
+                    // ISO 8601
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    webDataBinder.registerCustomEditor(Date.class, propertyPath,
+                            new CustomDateEditor(dateFormat, true));
                 }
 
             }
@@ -105,8 +82,7 @@ public abstract class UIController {
 
         model.addAttribute("self", ui);
 
-        UITheme theme = ui.getTheme();
-        return theme.resolveTemplatePath(ui);
+        return TemplateUtils.resolveTemplate(request, themeResolver, ui);
     }
 
     private String redirect(UI ui) {
@@ -121,7 +97,7 @@ public abstract class UIController {
         return "redirect:" + uri;
     }
 
-    @PostMapping(path = "action")
+    @PostMapping(path = "/ui/action")
     protected String action(@ModelAttribute("ui") UI ui,
                              BindingResult bindingResult,
                              @RequestParam(name = "component") String componentId,
@@ -143,7 +119,7 @@ public abstract class UIController {
         return redirect(ui);
     }
 
-    @PostMapping(path = "upload")
+    @PostMapping(path = "/ui/upload")
     protected String upload(@ModelAttribute("ui") UI ui,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,

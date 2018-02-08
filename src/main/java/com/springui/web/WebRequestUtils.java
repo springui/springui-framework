@@ -50,7 +50,7 @@ public final class WebRequestUtils {
         }
     }
 
-    public static HttpServletRequest getServletRequest(WebRequest request) {
+    public static HttpServletRequest toServletRequest(WebRequest request) {
         if (request instanceof ServletWebRequest) {
             return (HttpServletRequest) ((ServletWebRequest) request).getNativeRequest();
         } else {

@@ -1,4 +1,4 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 import com.springui.event.ValueChange;
 import com.springui.event.ValueChangeListener;

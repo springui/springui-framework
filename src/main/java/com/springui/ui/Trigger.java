@@ -1,7 +1,6 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 import com.springui.event.ActionListener;
-import com.springui.ui.Template;
 
 /**
  * @author Stephan Grundner
@@ -18,6 +17,6 @@ public class Trigger extends Component {
     @Deprecated
     public Trigger(String caption, ActionListener actionListener) {
         this(new Text(caption));
-        addActionListener("", actionListener);
+        addActionListener(actionListener);
     }
 }

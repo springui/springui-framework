@@ -1,7 +1,6 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 import com.springui.i18n.Message;
-import com.springui.ui.Template;
 
 /**
  * @author Stephan Grundner

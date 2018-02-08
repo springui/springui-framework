@@ -1,6 +1,4 @@
-package com.springui.ui.component;
-
-import com.springui.ui.Template;
+package com.springui.ui;
 
 import java.util.Date;
 
@@ -11,7 +9,6 @@ import java.util.Date;
 public class DateField extends Field<Date> {
 
     private Date value;
-    private String dateFormat;
 
     @Override
     public Date getValue() {
@@ -21,13 +18,5 @@ public class DateField extends Field<Date> {
     @Override
     protected void valueChanged(Date newValue, Date oldValue) {
         value = newValue;
-    }
-
-    public String getDateFormat() {
-        return dateFormat;
-    }
-
-    public void setDateFormat(String dateFormat) {
-        this.dateFormat = dateFormat;
     }
 }

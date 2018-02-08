@@ -1,4 +1,4 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 import com.springui.web.PathUtils;
 import com.springui.web.WebRequestUtils;

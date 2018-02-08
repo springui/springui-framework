@@ -1,6 +1,6 @@
 package com.springui.data;
 
-import com.springui.ui.component.Field;
+import com.springui.ui.Field;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

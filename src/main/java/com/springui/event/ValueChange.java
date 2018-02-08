@@ -1,6 +1,6 @@
 package com.springui.event;
 
-import com.springui.ui.component.Field;
+import com.springui.ui.Field;
 
 /**
  * @author Stephan Grundner

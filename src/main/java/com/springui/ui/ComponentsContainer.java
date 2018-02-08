@@ -1,4 +1,4 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 /**
  * @author Stephan Grundner

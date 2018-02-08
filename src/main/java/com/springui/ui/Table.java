@@ -1,7 +1,6 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 import com.springui.data.ListDataProvider;
-import com.springui.ui.Template;
 
 import java.util.*;
 

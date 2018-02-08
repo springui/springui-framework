@@ -36,6 +36,7 @@
 </head>
 <body>
 
+_s:[[${param.keySet()}]]<br />
 <form th:object="${ui}" method="post" enctype="multipart/form-data">
     <th:block ui:replace="${self.component}" />
 </form>
@@ -85,8 +86,14 @@ $(document).ready(function() {
         });
     });
 
-    $('.datepicker').datepicker({});
-
+    $('.datepicker').each(function() {
+        $(this).datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: $(this).data('autoclose'),
+            language: $(this).data('language') || 'en',
+            todayBtn: $(this).data('today') || 'false'
+        });
+    });
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" ></script>

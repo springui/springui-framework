@@ -4,7 +4,9 @@
 
 <th:block th:with="token=${#ids.seq('upload')}">
     <div class="btn btn-primary btn-file">
-        <span th:text="${self.caption?.text} ?: _">Upload</span>
+        <span th:text="${self.caption?.value} ?: _">
+            <i class="fa fa-upload"></i>
+        </span>
         <input type="file" class="hidden"
                th:name="${token}"
                th:data-action="@{__${self.ui.uploadPath}__(component=${self.id},token=${token})}">

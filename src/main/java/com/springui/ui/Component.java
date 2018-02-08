@@ -1,9 +1,8 @@
-package com.springui.ui.component;
+package com.springui.ui;
 
 import com.springui.i18n.Message;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
-import com.springui.ui.Template;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
@@ -145,7 +144,7 @@ public abstract class Component {
         return Collections.unmodifiableSet(actionListeners);
     }
 
-    public void addActionListener(String event, ActionListener actionListener) {
+    public void addActionListener(ActionListener actionListener) {
         actionListeners.add(actionListener);
     }
 
