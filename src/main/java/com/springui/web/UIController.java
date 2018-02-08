@@ -26,7 +26,7 @@ import java.util.Date;
  * @author Stephan Grundner
  */
 @Controller
-@SessionAttributes("ui")
+//@SessionAttributes("ui")
 public class UIController {
 
     @Autowired
@@ -43,7 +43,7 @@ public class UIController {
     @Autowired
     private ThemeResolver themeResolver;
 
-    @InitBinder("ui")
+    @InitBinder
     private void initBinder(WebDataBinder webDataBinder) {
         UI ui = (UI) webDataBinder.getTarget();
 

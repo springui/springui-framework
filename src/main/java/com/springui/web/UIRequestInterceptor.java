@@ -30,15 +30,20 @@ public class UIRequestInterceptor extends HandlerInterceptorAdapter {
             if (UIController.class.isAssignableFrom(controllerClass)) {
                 UIController controller = (UIController) method.getBean();
 
+                HttpSession session = request.getSession(false);
                 Class<? extends UI> uiClass = uiClassRegistry.getMapping().find(request);
                 if (uiClass == null) {
+                    session.setAttribute(UI.SESSION_ATTRIBUTE_NAME, null);
                     return true;
                 }
 
                 UIPathMapping mapping = AnnotationUtils.findAnnotation(uiClass, UIPathMapping.class);
                 String path = (String) AnnotationUtils.getValue(mapping, "path");
 
-                HttpSession session = request.getSession(true);
+                if (session == null) {
+                    session = request.getSession(true);
+                }
+
                 Map<String, UI> uiRegistry = (Map<String, UI>) session.getAttribute("uiRegistry");
                 if (uiRegistry == null) {
                     uiRegistry = new HashMap<>();
@@ -60,10 +65,10 @@ public class UIRequestInterceptor extends HandlerInterceptorAdapter {
             }
         }
 
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.removeAttribute(UI.SESSION_ATTRIBUTE_NAME);
-        }
+//        HttpSession session = request.getSession(false);
+//        if (session != null) {
+//            session.removeAttribute(UI.SESSION_ATTRIBUTE_NAME);
+//        }
 
         return true;
     }
