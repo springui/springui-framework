@@ -52,10 +52,6 @@ public abstract class Component {
         this.template = template;
     }
 
-    public UI getUi() {
-        return UI.getCurrent();
-    }
-
     protected Component getRoot() {
         if (parent != null) {
             return parent.getRoot();
@@ -63,6 +59,21 @@ public abstract class Component {
             return this;
         }
     }
+
+    @Deprecated
+    public UI getUi() {
+//        Component root = getRoot();
+//        if (root instanceof UI) {
+//            return (UI) root;
+//        } else {
+//            return null;
+//        }
+        return UI.getCurrent();
+    }
+
+    protected void attached() {}
+
+    protected void detached() {}
 
     protected void walk(ComponentVisitor visitor) {
         visitor.visit(this);
@@ -75,25 +86,13 @@ public abstract class Component {
     protected void setParent(Component parent) {
         this.parent = parent;
 
+        UIContext context = UIContext.getCurrent();
         Component root = getRoot();
         if (root instanceof UI) {
-            walk(getUi()::attach);
+            walk(context::attach);
         } else {
-            walk(getUi()::detach);
+            walk(context::detach);
         }
-    }
-
-    protected void attached() {}
-
-    protected void detached() {}
-
-    public final boolean isAttached() {
-        UI ui = getUi();
-        if (ui != null) {
-            return ui.getComponent(id) == this;
-        }
-
-        return false;
     }
 
     public boolean isDisabled() {

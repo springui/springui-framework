@@ -4,7 +4,6 @@ import com.springui.i18n.MessageSourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
@@ -15,19 +14,17 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ThemeResolver;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * @author Stephan Grundner
  */
 @Template("{theme}/ui/ui")
-public abstract class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
+public abstract class UI extends SingleComponentContainer<Component> implements MessageSourceProvider {
 
     public static final String SESSION_ATTRIBUTE_NAME = "ui";
 
+    @Deprecated
     public static UI getCurrent() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         return (UI) requestAttributes.getAttribute(UI.class.getName(), RequestAttributes.SCOPE_REQUEST);
@@ -35,23 +32,33 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
 
     private static final Logger LOG = LoggerFactory.getLogger(UI.class);
 
-    private ApplicationContext applicationContext;
+    private UIContext context;
     private String path;
+
+
     private Theme theme;
 
     @Deprecated
     private ViewRegistry viewRegistry;
     private View activeView;
 
-    private final Map<String, Component> components = new HashMap<>();
 
+    @Deprecated
     public ApplicationContext getApplicationContext() {
-        return applicationContext;
+        return context.getApplicationContext();
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    @Deprecated
+    public MessageSource getMessageSource() {
+        return getApplicationContext();
+    }
+
+    public UIContext getContext() {
+        return context;
+    }
+
+    protected void setContext(UIContext context) {
+        this.context = context;
     }
 
     public String getPath() {
@@ -71,19 +78,11 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
     }
 
     public String getActionPath() {
-//        return UriComponentsBuilder
-//                .fromPath(getPath())
-//                .pathSegment("action")
-//                .toUriString();
-        return "/ui/action";
+        return "action";
     }
 
     public String getUploadPath() {
-//        return UriComponentsBuilder
-//                .fromPath(getPath())
-//                .pathSegment("upload")
-//                .toUriString();
-        return "/ui/upload";
+        return "upload";
     }
 
     @Deprecated
@@ -109,39 +108,9 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
         return activeView;
     }
 
-    public Map<String, Component> getComponents() {
-        return Collections.unmodifiableMap(components);
-    }
-
-    public Component getComponent(String componentId) {
-        return components.get(componentId);
-    }
-
-    protected boolean attach(Component component) {
-        if (components.put(component.getId(), component) == null) {
-            component.attached();
-            return true;
-        }
-
-        return false;
-    }
-
-    protected boolean detach(Component component) {
-        if (components.remove(component.getId(), component)) {
-            component.detached();
-            return true;
-        }
-
-        return false;
-    }
-
     @Override
     public final void setParent(Component parent) {
         throw new RuntimeException("UI must not have a parent");
-    }
-
-    public MessageSource getMessageSource() {
-        return applicationContext;
     }
 
     public Locale getLocale() {
@@ -150,16 +119,21 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
 
     public void init(HttpServletRequest request) {
         request.setAttribute(UI.class.getName(), this);
-
-        ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
+        ThemeResolver themeResolver = getApplicationContext().getBean(ThemeResolver.class);
         String themeName = themeResolver.resolveThemeName(request);
-        ThemeSource themeSource = applicationContext.getBean(ThemeSource.class);
+        ThemeSource themeSource = getApplicationContext().getBean(ThemeSource.class);
         Theme theme = themeSource.getTheme(themeName);
         setTheme(theme);
     }
 
-//    public UI(ApplicationContext applicationContext, String path) {
-//        this.applicationContext = applicationContext;
-//        this.path = path;
-//    }
+    public void setCurrent() {
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        requestAttributes.setAttribute(UI.class.getName(), this, RequestAttributes.SCOPE_REQUEST);
+    }
+
+    public UI(String path) {
+        this.path = path;
+    }
+
+    public UI() { }
 }

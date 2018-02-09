@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * @author Stephan Grundner
  */
-public class UrlMapping<T> implements Map<String, T> {
+public class URLMapping<T> implements Map<String, T> {
 
     private final Map<String, T> map;
     private final UrlPathHelper pathHelper = new UrlPathHelper();
@@ -101,11 +101,11 @@ public class UrlMapping<T> implements Map<String, T> {
         return Collections.unmodifiableSet(map.entrySet());
     }
 
-    public UrlMapping(Map<String, T> map) {
+    public URLMapping(Map<String, T> map) {
         this.map = map;
     }
 
-    public UrlMapping() {
+    public URLMapping() {
         this(new HashMap<>());
     }
 }

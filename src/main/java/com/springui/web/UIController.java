@@ -5,7 +5,6 @@ import com.springui.ui.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -18,6 +17,7 @@ import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -25,29 +25,45 @@ import java.util.Date;
 /**
  * @author Stephan Grundner
  */
-@Controller
-//@SessionAttributes("ui")
+@SessionAttributes("uiContext")
 public class UIController {
 
     @Autowired
-    protected ApplicationContext applicationContext;
-
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
-
-    public UI createUi(Class<? extends UI> uiClass) {
-        return applicationContext.getBean(uiClass);
-    }
+    private ApplicationContext applicationContext;
 
     @Autowired
     private ThemeResolver themeResolver;
 
+    protected void initContext(UIContext context) {}
+
+    @ModelAttribute("uiContext")
+    protected UIContext uiForCurrentSession(HttpServletRequest request) {
+        UIContext context = UIContext.forRequest(request);
+        if (context == null) {
+            context = new UIContext();
+            context.setApplicationContext(applicationContext);
+            context.bindTo(request);
+            initContext(context);
+        }
+
+        return context;
+    }
+
+    @ModelAttribute("ui")
+    protected UI uiForCurrentRequest(@ModelAttribute("uiContext") UIContext context,
+                                     BindingResult bindingResult,
+                                     WebRequest request) {
+
+        UI ui = context.findUi(request);
+        ui.setCurrent();
+
+        return ui;
+    }
+
     @InitBinder
     private void initBinder(WebDataBinder webDataBinder) {
-        UI ui = (UI) webDataBinder.getTarget();
-
-        ui.getComponents().forEach( (id, component) -> {
+        UIContext uiContext = UIContext.getCurrent();
+        uiContext.getComponents().forEach((id, component) -> {
             if (component instanceof Field) {
 
                 Field field = (Field) component;
@@ -64,12 +80,12 @@ public class UIController {
     }
 
     @GetMapping(path = "/**")
-    protected String respond(@ModelAttribute("ui") UI ui,
+    protected String respond(@ModelAttribute("uiContext") UIContext uiContext,
                              BindingResult bindingResult,
                              WebRequest request,
                              Model model) {
 
-        request.setAttribute(UI.class.getName(), ui, WebRequest.SCOPE_REQUEST);
+        UI ui = uiContext.findUi(request);
 
         View view = ui.navigate(request);
 
@@ -80,6 +96,7 @@ public class UIController {
 
         view.setParams(uriComponents.getQueryParams());
 
+        model.addAttribute("uiContext", uiContext);
         model.addAttribute("self", ui);
 
         return TemplateUtils.resolveTemplate(request, themeResolver, ui);
@@ -97,16 +114,16 @@ public class UIController {
         return "redirect:" + uri;
     }
 
-    @PostMapping(path = "/ui/action")
-    protected String action(@ModelAttribute("ui") UI ui,
-                             BindingResult bindingResult,
-                             @RequestParam(name = "component") String componentId,
-                             @RequestParam(name = "event") String event,
-                             WebRequest request) {
+    @PostMapping(path = "action")
+    protected String action(@ModelAttribute("uiContext") UIContext uiContext,
+                            BindingResult bindingResult,
+                            @RequestParam(name = "component") String componentId,
+                            @RequestParam(name = "event") String event,
+                            WebRequest request) {
 
-        request.setAttribute(UI.class.getName(), ui, WebRequest.SCOPE_REQUEST);
+        UI ui = uiContext.findUi(request);
 
-        Component component = ui.getComponent(componentId);
+        Component component = uiContext.getComponent(componentId);
         component.performAction(new Action(request, componentId, event));
 
         String redirectUrl;
@@ -119,17 +136,17 @@ public class UIController {
         return redirect(ui);
     }
 
-    @PostMapping(path = "/ui/upload")
-    protected String upload(@ModelAttribute("ui") UI ui,
+    @PostMapping(path = "upload")
+    protected String upload(@ModelAttribute("uiContext") UIContext uiContext,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,
                             @RequestParam(name = "token") String token,
                             WebRequest request,
                             MultipartRequest files) {
 
-        request.setAttribute(UI.class.getName(), ui, WebRequest.SCOPE_REQUEST);
+        UI ui = uiContext.findUi(request);
 
-        Upload upload = (Upload) ui.getComponent(componentId);
+        Upload upload = (Upload) uiContext.getComponent(componentId);
 
         MultipartFile file = files.getFile(token);
         if (!file.isEmpty()) {

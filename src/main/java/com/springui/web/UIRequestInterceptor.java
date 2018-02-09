@@ -1,5 +1,6 @@
 package com.springui.web;
 
+import com.springui.ui.UIContext;
 import com.springui.ui.UIPathMapping;
 import com.springui.ui.UI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,8 @@ import java.util.Map;
  */
 public class UIRequestInterceptor extends HandlerInterceptorAdapter {
 
-    @Autowired
-    private UIRegistry uiClassRegistry;
+//    @Autowired
+//    private UIRegistry uiClassRegistry;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -31,35 +32,36 @@ public class UIRequestInterceptor extends HandlerInterceptorAdapter {
                 UIController controller = (UIController) method.getBean();
 
                 HttpSession session = request.getSession(false);
-                Class<? extends UI> uiClass = uiClassRegistry.getMapping().find(request);
-                if (uiClass == null) {
-                    session.setAttribute(UI.SESSION_ATTRIBUTE_NAME, null);
-                    return true;
-                }
+//                Class<? extends UI> uiClass = uiClassRegistry.getMapping().find(request);
+//                if (uiClass == null) {
+//                    session.setAttribute(UI.SESSION_ATTRIBUTE_NAME, null);
+//                    return true;
+//                }
 
-                UIPathMapping mapping = AnnotationUtils.findAnnotation(uiClass, UIPathMapping.class);
-                String path = (String) AnnotationUtils.getValue(mapping, "path");
+//                UIPathMapping mapping = AnnotationUtils.findAnnotation(uiClass, UIPathMapping.class);
+//                String path = (String) AnnotationUtils.getValue(mapping, "path");
 
                 if (session == null) {
                     session = request.getSession(true);
                 }
 
-                Map<String, UI> uiRegistry = (Map<String, UI>) session.getAttribute("uiRegistry");
-                if (uiRegistry == null) {
-                    uiRegistry = new HashMap<>();
-                    session.setAttribute("uiRegistry", uiRegistry);
-                }
+//                Map<String, UI> uiRegistry = (Map<String, UI>) session.getAttribute("uiRegistry");
+//                if (uiRegistry == null) {
+//                    uiRegistry = new HashMap<>();
+//                    session.setAttribute("uiRegistry", uiRegistry);
+//                }
 
-                UI ui = uiRegistry.get(path);
-                if (ui == null) {
-                    ui = controller.createUi(uiClass);
-                    ui.setPath(path);
-                    ui.init(request);
-                    uiRegistry.put(path, ui);
-                }
-                ui.setPath(path);
+//                UI ui = uiRegistry.get(path);
+//                if (ui == null) {
+//                    UIContext context = UIContext.forRequest(request);
+//                    ui = controller.createUi(uiClass, context);
+//                    ui.setPath(path);
+//                    ui.init(request);
+//                    uiRegistry.put(path, ui);
+//                }
+//                ui.setPath(path);
 
-                session.setAttribute(UI.SESSION_ATTRIBUTE_NAME, ui);
+//                session.setAttribute(UI.SESSION_ATTRIBUTE_NAME, ui);
 
                 return true;
             }
