@@ -1,7 +1,6 @@
 package com.springui.ui;
 
 import com.springui.collection.MapUtils;
-import com.springui.util.BeanUtils;
 import com.springui.web.PathMappings;
 import com.springui.web.UIMapping;
 import com.springui.web.WebRequestUtils;
@@ -41,19 +40,13 @@ public class UIContext implements ApplicationContextAware {
         return (UIContext) requestAttributes.getAttribute(UIContext.class.getName(), RequestAttributes.SCOPE_SESSION);
     }
 
-    public static void setCurrent(UIContext current) {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        requestAttributes.setAttribute(UIContext.class.getName(), current, RequestAttributes.SCOPE_SESSION);
-    }
+//    public static void setCurrent(UIContext current) {
+//        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+//        requestAttributes.setAttribute(UIContext.class.getName(), current, RequestAttributes.SCOPE_SESSION);
+//    }
 
     private ApplicationContext applicationContext;
-
-//    private PathMappings<UI> mappings = new PathMappings<>();
     private PathMappings<UIMapping> mappings = new PathMappings<>();
-
-    private final Map<String, Component> components = new HashMap<>();
-
-    private boolean initialized;
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -70,11 +63,10 @@ public class UIContext implements ApplicationContextAware {
         MapUtils.putValueOnce(mappings, path, new UIMapping(path, uiClass));
     }
 
-
-    public UI findUi(String path) {
+    public UI getUi(String path, boolean create) {
         UIMapping mapping = mappings.find(path);
         UI ui = mapping.getUi();
-        if (ui == null) {
+        if (ui == null && create) {
             ui = org.springframework.beans.BeanUtils.instantiate(mapping.getUiClass());
             ui.setPath(mapping.getPath());
             ui.setContext(this);
@@ -85,42 +77,16 @@ public class UIContext implements ApplicationContextAware {
         return ui;
     }
 
-    public UI findUi(WebRequest request) {
-        return findUi(WebRequestUtils.getPath(request));
+    public UI getUi(String path) {
+        return getUi(path, true);
     }
 
-    public Map<String, Component> getComponents() {
-        return Collections.unmodifiableMap(components);
+    public UI getUi(WebRequest request, boolean create) {
+        return getUi(WebRequestUtils.getPath(request), create);
     }
 
-    public Component getComponent(String componentId) {
-        return components.get(componentId);
-    }
-
-    protected boolean attach(Component component) {
-        if (components.put(component.getId(), component) == null) {
-            component.attached();
-            return true;
-        }
-
-        return false;
-    }
-
-    protected boolean detach(Component component) {
-        if (components.remove(component.getId(), component)) {
-            component.detached();
-            return true;
-        }
-
-        return false;
-    }
-
-    protected synchronized void init() {
-        if (!initialized) {
-            initialized = true;
-
-
-        }
+    public UI getUi(WebRequest request) {
+        return getUi(request, true);
     }
 
     public void bindTo(HttpServletRequest request) {

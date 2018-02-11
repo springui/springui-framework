@@ -16,6 +16,7 @@ public abstract class Component {
     private String id;
     private String template;
     private Component parent;
+    private UI ui;
 
     private boolean disabled;
     private int tabIndex;
@@ -52,23 +53,25 @@ public abstract class Component {
         this.template = template;
     }
 
-    protected Component getRoot() {
+    protected Component findRoot() {
         if (parent != null) {
-            return parent.getRoot();
+            return parent.findRoot();
         } else {
             return this;
         }
     }
 
-    @Deprecated
     public UI getUi() {
-//        Component root = getRoot();
-//        if (root instanceof UI) {
-//            return (UI) root;
-//        } else {
-//            return null;
-//        }
-        return UI.getCurrent();
+        Component root = findRoot();
+        if (root instanceof UI) {
+            return (UI) root;
+        } else {
+            return null;
+        }
+    }
+
+    void setUi(UI ui) {
+        this.ui = ui;
     }
 
     protected void attached() {}
@@ -86,12 +89,9 @@ public abstract class Component {
     protected void setParent(Component parent) {
         this.parent = parent;
 
-        UIContext context = UIContext.getCurrent();
-        Component root = getRoot();
+        Component root = findRoot();
         if (root instanceof UI) {
-            walk(context::attach);
-        } else {
-            walk(context::detach);
+            walk(((UI) root)::attach);
         }
     }
 

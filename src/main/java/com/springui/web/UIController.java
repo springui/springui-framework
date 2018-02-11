@@ -54,16 +54,17 @@ public class UIController {
                     BindingResult bindingResult,
                     WebRequest request) {
 
-        UI ui = context.findUi(request);
-        ui.setCurrent();
+        UI ui = context.getUi(request);
+        ui.bindTo(request);
 
         return ui;
     }
 
     @InitBinder
-    private void initBinder(WebDataBinder webDataBinder) {
-        UIContext uiContext = UIContext.getCurrent();
-        uiContext.getComponents().forEach((id, component) -> {
+    private void initBinder(WebDataBinder webDataBinder, WebRequest request) {
+        UIContext uiContext = UIContext.forRequest(request);
+        UI ui = uiContext.getUi(request);
+        ui.getComponents().forEach((id, component) -> {
             if (component instanceof Field) {
 
                 Field field = (Field) component;
@@ -80,50 +81,41 @@ public class UIController {
     }
 
     @GetMapping(path = "/**")
-    protected String respond(@ModelAttribute("uiContext") UIContext uiContext,
+    protected String respond(@ModelAttribute("ui") UI ui,
                              BindingResult bindingResult,
                              WebRequest request,
                              Model model) {
 
-        UI ui = uiContext.findUi(request);
+        View view = ui.activate(request);
+        view.setParams(WebRequestUtils.getQueryParams(request));
 
-        View view = ui.navigate(request);
-
-        UriComponents uriComponents = UriComponentsBuilder
-                .fromPath(WebRequestUtils.getPath(request))
-                .query(WebRequestUtils.getQueryString(request))
-                .build();
-
-        view.setParams(uriComponents.getQueryParams());
-
-        model.addAttribute("uiContext", uiContext);
         model.addAttribute("self", ui);
 
         return TemplateUtils.resolveTemplate(request, themeResolver, ui);
     }
 
-    private String redirect(UI ui) {
+    protected String respond(UI ui) {
         View view = ui.getActiveView();
 
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromPath(ui.getPath() + "/" + view.getPath());
+        UriComponents uriComponents = UriComponentsBuilder.newInstance()
+                .pathSegment(ui.getPath(), view.getPath())
+                .queryParams(view.getParams())
+                .build();
 
-        builder.queryParams(view.getParams());
-        String uri = builder.build().toUriString();
+        String uri = uriComponents.toUriString();
 
         return "redirect:" + uri;
     }
 
     @PostMapping(path = "action")
-    protected String action(@ModelAttribute("uiContext") UIContext uiContext,
+    protected String action(@ModelAttribute("ui") UI ui,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,
                             @RequestParam(name = "event") String event,
                             WebRequest request) {
 
-        UI ui = uiContext.findUi(request);
-
-        Component component = uiContext.getComponent(componentId);
+//        UI ui = uiContext.getUi(request);
+        Component component = ui.getComponent(componentId);
         component.performAction(new Action(request, componentId, event));
 
         String redirectUrl;
@@ -133,20 +125,19 @@ public class UIController {
             return "redirect:" + redirectUrl;
         }
 
-        return redirect(ui);
+        return respond(ui);
     }
 
     @PostMapping(path = "upload")
-    protected String upload(@ModelAttribute("uiContext") UIContext uiContext,
+    protected String upload(@ModelAttribute("ui") UI ui,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,
                             @RequestParam(name = "token") String token,
                             WebRequest request,
                             MultipartRequest files) {
 
-        UI ui = uiContext.findUi(request);
-
-        Upload upload = (Upload) uiContext.getComponent(componentId);
+//        UI ui = uiContext.getUi(request);
+        Upload upload = (Upload) ui.getComponent(componentId);
 
         MultipartFile file = files.getFile(token);
         if (!file.isEmpty()) {
@@ -156,6 +147,6 @@ public class UIController {
             }
         }
 
-        return redirect(ui);
+        return respond(ui);
     }
 }

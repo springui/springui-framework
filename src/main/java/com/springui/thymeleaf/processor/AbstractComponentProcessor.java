@@ -44,7 +44,8 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
 
         if (result instanceof Component) {
             Component component = (Component) result;
-            UI ui = component.getUi();
+//            UI ui = component.getUi();
+            UI ui = UI.getCurrent();
             Theme theme = ui.getTheme();
             template = TemplateUtils.resolveTemplate(theme.getName(), component);
 

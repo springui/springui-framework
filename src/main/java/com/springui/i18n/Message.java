@@ -78,8 +78,6 @@ public class Message {
         this.defaultText = defaultText;
     }
 
-    public Message() {}
-
     public Message(MessageSourceProvider sourceProvider) {
         this.sourceProvider = sourceProvider;
     }
@@ -102,4 +100,6 @@ public class Message {
     public Message(String defaultText) {
         this.defaultText = defaultText;
     }
+
+    public Message() {}
 }
