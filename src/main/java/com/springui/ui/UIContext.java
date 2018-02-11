@@ -1,7 +1,9 @@
 package com.springui.ui;
 
 import com.springui.collection.MapUtils;
-import com.springui.web.URLMapping;
+import com.springui.util.BeanUtils;
+import com.springui.web.PathMappings;
+import com.springui.web.UIMapping;
 import com.springui.web.WebRequestUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -46,7 +48,8 @@ public class UIContext implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    private URLMapping<UI> mapping = new URLMapping<>();
+//    private PathMappings<UI> mappings = new PathMappings<>();
+    private PathMappings<UIMapping> mappings = new PathMappings<>();
 
     private final Map<String, Component> components = new HashMap<>();
 
@@ -61,20 +64,29 @@ public class UIContext implements ApplicationContextAware {
         this.applicationContext = applicationContext;
     }
 
-    public void registerUi(UI ui) {
-        String path = ui.getPath();
-        Assert.hasLength(path, "[ui.path] must not be null");
-        MapUtils.putValueOnce(mapping, path, ui);
-        ui.setContext(this);
-        ui.init(WebRequestUtils.getCurrentServletRequest());
+    public void registerUiClass(String path, Class<? extends UI> uiClass) {
+        Assert.hasLength(path, "[path] must not be empty");
+        Assert.notNull(uiClass, "[uiClass] must not be null");
+        MapUtils.putValueOnce(mappings, path, new UIMapping(path, uiClass));
     }
 
+
     public UI findUi(String path) {
-        return mapping.find(path);
+        UIMapping mapping = mappings.find(path);
+        UI ui = mapping.getUi();
+        if (ui == null) {
+            ui = org.springframework.beans.BeanUtils.instantiate(mapping.getUiClass());
+            ui.setPath(mapping.getPath());
+            ui.setContext(this);
+            ui.init(WebRequestUtils.getCurrentServletRequest());
+            mapping.setUi(ui);
+        }
+
+        return ui;
     }
 
     public UI findUi(WebRequest request) {
-        return mapping.find(request);
+        return findUi(WebRequestUtils.getPath(request));
     }
 
     public Map<String, Component> getComponents() {

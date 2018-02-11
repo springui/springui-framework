@@ -8,13 +8,13 @@ import com.springui.ui.UI;
  */
 public class UIRegistry {
 
-    private URLMapping<Class<? extends UI>> mapping = new URLMapping<>();
+    private PathMappings<Class<? extends UI>> mapping = new PathMappings<>();
 
     public void registerUiClass(Class<? extends UI> uiClass, String path) {
         MapUtils.putValueOnce(mapping, path, uiClass);
     }
 
-    public URLMapping<Class<? extends UI>> getMapping() {
+    public PathMappings<Class<? extends UI>> getMapping() {
         return mapping;
     }
 }

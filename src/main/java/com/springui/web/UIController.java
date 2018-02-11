@@ -34,10 +34,10 @@ public class UIController {
     @Autowired
     private ThemeResolver themeResolver;
 
-    protected void initContext(UIContext context) {}
+    protected void initContext(UIContext context) { }
 
     @ModelAttribute("uiContext")
-    protected UIContext uiForCurrentSession(HttpServletRequest request) {
+    protected final UIContext createContext(HttpServletRequest request) {
         UIContext context = UIContext.forRequest(request);
         if (context == null) {
             context = new UIContext();
@@ -50,9 +50,9 @@ public class UIController {
     }
 
     @ModelAttribute("ui")
-    protected UI uiForCurrentRequest(@ModelAttribute("uiContext") UIContext context,
-                                     BindingResult bindingResult,
-                                     WebRequest request) {
+    protected UI ui(@ModelAttribute("uiContext") UIContext context,
+                    BindingResult bindingResult,
+                    WebRequest request) {
 
         UI ui = context.findUi(request);
         ui.setCurrent();
