@@ -1,12 +1,15 @@
 package com.springui.ui;
 
-import com.springui.i18n.Message;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
+import com.springui.i18n.Message;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Stephan Grundner
@@ -16,7 +19,6 @@ public abstract class Component {
     private String id;
     private String template;
     private Component parent;
-    private UI ui;
 
     private boolean disabled;
     private int tabIndex;
@@ -62,16 +64,15 @@ public abstract class Component {
     }
 
     public UI getUi() {
-        Component root = findRoot();
-        if (root instanceof UI) {
-            return (UI) root;
-        } else {
-            return null;
+        UI ui = UI.forCurrentSession();
+        if (ui == null) {
+            Component root = findRoot();
+            if (root instanceof UI) {
+                ui = (UI) root;
+            }
         }
-    }
 
-    void setUi(UI ui) {
-        this.ui = ui;
+        return ui;
     }
 
     protected void attached() {}

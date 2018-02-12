@@ -4,7 +4,6 @@
 
 <input type="text" class="form-control datepicker"
        th:id="${self.id}"
-       th_data-date-format="${#themes.code('datepicker.date-format.__${self.dateFormatStyle}__')} ?: _"
        th:disabled="${self.disabled} ? disabled : _"
        th:data-autoclose="true"
        th:data-language="${#locale.language}"

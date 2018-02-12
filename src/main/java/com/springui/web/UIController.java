@@ -4,10 +4,14 @@ import com.springui.event.Action;
 import com.springui.ui.*;
 import com.springui.util.TemplateUtils;
 import com.springui.util.WebRequestUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.ui.Model;
+import org.springframework.ui.context.Theme;
+import org.springframework.ui.context.ThemeSource;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -19,7 +23,6 @@ import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,7 +30,7 @@ import java.util.Date;
 /**
  * @author Stephan Grundner
  */
-@SessionAttributes("uiContext")
+@SessionAttributes("ui")
 public class UIController {
 
     @Autowired
@@ -36,36 +39,31 @@ public class UIController {
     @Autowired
     private ThemeResolver themeResolver;
 
-    protected void initContext(UIContext context) { }
+    protected void init(UI ui) { }
 
-    @ModelAttribute("uiContext")
-    protected final UIContext createContext(HttpServletRequest request) {
-        UIContext context = UIContext.forRequest(request);
-        if (context == null) {
-            context = new UIContext();
-            context.setApplicationContext(applicationContext);
-            context.bindTo(request);
-            initContext(context);
-        }
-
-        return context;
+    private void init(UI ui, WebRequest request) {
+        ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
+        String themeName = themeResolver.resolveThemeName(WebRequestUtils.toServletRequest(request));
+        ThemeSource themeSource = applicationContext.getBean(ThemeSource.class);
+        Theme theme = themeSource.getTheme(themeName);
+        ui.setTheme(theme);
+        init(ui);
     }
 
     @ModelAttribute("ui")
-    protected UI ui(@ModelAttribute("uiContext") UIContext context,
-                    BindingResult bindingResult,
-                    WebRequest request) {
-
-        UI ui = context.getUi(request);
-        ui.bindTo(request);
+    protected final UI createUi(WebRequest request) {
+        UI ui = UI.forRequest(request);
+        if (ui == null) {
+            ui = BeanUtils.instantiate(UI.class);
+            ui.setApplicationContext(applicationContext);
+            ui.bindTo(request);
+            init(ui, request);
+        }
 
         return ui;
     }
 
-    @InitBinder
-    private void initBinder(WebDataBinder webDataBinder, WebRequest request) {
-        UIContext uiContext = UIContext.forRequest(request);
-        UI ui = uiContext.getUi(request);
+    private void initBinder(UI ui, WebDataBinder webDataBinder) {
         ui.getComponents().forEach((id, component) -> {
             if (component instanceof Field) {
 
@@ -76,10 +74,20 @@ public class UIController {
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     webDataBinder.registerCustomEditor(Date.class, propertyPath,
                             new CustomDateEditor(dateFormat, true));
+
+                    webDataBinder.addCustomFormatter(new DateFormatter("yyyy-MM-dd"), propertyPath);
                 }
 
             }
         });
+    }
+
+    @InitBinder
+    private void initBinder(WebDataBinder webDataBinder) {
+        Object target = webDataBinder.getTarget();
+        if (target instanceof UI) {
+            initBinder((UI) target, webDataBinder);
+        }
     }
 
     @GetMapping(path = "/**")
@@ -100,7 +108,7 @@ public class UIController {
         View view = ui.getActiveView();
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .pathSegment(ui.getPath(), view.getPath())
+                .pathSegment(view.getPath())
                 .queryParams(view.getParams())
                 .build();
 
@@ -116,7 +124,6 @@ public class UIController {
                             @RequestParam(name = "event") String event,
                             WebRequest request) {
 
-//        UI ui = uiContext.getUi(request);
         Component component = ui.getComponent(componentId);
         component.performAction(new Action(request, componentId, event));
 
@@ -138,7 +145,6 @@ public class UIController {
                             WebRequest request,
                             MultipartRequest files) {
 
-//        UI ui = uiContext.getUi(request);
         Upload upload = (Upload) ui.getComponent(componentId);
 
         MultipartFile file = files.getFile(token);
