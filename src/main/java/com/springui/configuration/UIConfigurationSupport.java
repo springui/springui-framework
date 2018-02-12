@@ -1,6 +1,7 @@
 package com.springui.configuration;
 
 import com.springui.thymeleaf.UIDialect;
+import com.springui.ui.UI;
 import com.springui.web.AnnotationConfigViewMappingRegistry;
 import com.springui.web.UIController;
 import com.springui.web.ViewMappingRegistry;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.annotation.Order;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.SessionRepository;
@@ -72,6 +74,13 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
         viewMappingRegistry.detect();
 
         return viewMappingRegistry;
+    }
+
+    @Bean
+    @Scope("prototype")
+    @ConditionalOnMissingBean(UI.class)
+    protected UI ui() {
+        return new UI();
     }
 
     @Bean

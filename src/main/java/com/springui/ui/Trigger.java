@@ -1,6 +1,7 @@
 package com.springui.ui;
 
 import com.springui.event.ActionListener;
+import com.springui.i18n.Message;
 
 /**
  * @author Stephan Grundner
@@ -12,6 +13,11 @@ public class Trigger extends Component {
 
     public Trigger(Text caption) {
         setCaption(caption);
+    }
+
+    public Trigger(Message caption, ActionListener actionListener) {
+        this(new Text(caption));
+        addActionListener(actionListener);
     }
 
     @Deprecated

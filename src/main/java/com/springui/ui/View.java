@@ -35,7 +35,7 @@ public abstract class View extends SingleComponentContainer<Component> {
         return params;
     }
 
-    public void setParams(MultiValueMap<String, String> params) {
+    protected void setParams(MultiValueMap<String, String> params) {
         this.params = params;
     }
 
@@ -47,9 +47,7 @@ public abstract class View extends SingleComponentContainer<Component> {
         this.path = path;
     }
 
-    protected void activate(WebRequest request) {
-        UI ui = UI.forRequest(request);
-        ui.setComponent(this);
+    protected void activated(WebRequest request) {
         params = WebRequestUtils.getQueryParams(request);
     }
 }

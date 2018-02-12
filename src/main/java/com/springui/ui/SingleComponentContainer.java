@@ -11,7 +11,7 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
     private C component;
 
     @Override
-    public Iterator<C> iterator() {
+    public final Iterator<C> iterator() {
         if (component == null) {
             return Collections.emptyIterator();
         }
@@ -20,11 +20,11 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
                 .iterator();
     }
 
-    public C getComponent() {
+    public final C getComponent() {
         return component;
     }
 
-    public void setComponent(C component) {
+    protected void setComponent(C component) {
         this.component = component;
 
         if (component != null) {
@@ -33,7 +33,7 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
     }
 
     @Override
-    public void walk(ComponentVisitor visitor) {
+    public final void walk(ComponentVisitor visitor) {
         super.walk(visitor);
         if (component != null) {
             component.walk(visitor);

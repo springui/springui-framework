@@ -24,26 +24,28 @@ public final class Layout extends ComponentsContainer<Component> {
         return getComponents().values().iterator();
     }
 
-    public boolean addComponent(String name, Component component) {
-        if (!components.containsKey(name)) {
-            MapUtils.putValueOnce(components, name, component);
-            component.setParent(this);
-            return true;
-        }
-
-        return false;
+    public Component getComponent(String name) {
+        return components.get(name);
     }
 
-    public boolean removeComponent(String name) {
+    public Component setComponent(String name, Component component) {
+        Component result = removeComponent(name);
+        MapUtils.putValueOnce(components, name, component);
+        component.setParent(this);
+
+        return result;
+    }
+
+    public Component removeComponent(String name) {
         Component component = components.get(name);
         if (component != null) {
             if (components.remove(name, component)) {
                 component.setParent(null);
-                return true;
+                return component;
             }
         }
 
-        return false;
+        return null;
     }
 
     @Override

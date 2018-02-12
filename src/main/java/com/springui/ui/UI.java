@@ -12,11 +12,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ThemeResolver;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,38 +27,8 @@ import java.util.Map;
 @Template("{theme}/ui/ui")
 public class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
 
-    protected static class ViewMapping {
-
-        private final String path;
-        private final Class<? extends View> viewClass;
-        private View view;
-
-        public String getPath() {
-            return path;
-        }
-
-        public Class<? extends View> getViewClass() {
-            return viewClass;
-        }
-
-        public View getView() {
-            return view;
-        }
-
-        public void setView(View view) {
-            this.view = view;
-        }
-
-        public ViewMapping(String path, Class<? extends View> viewClass) {
-            this.path = path;
-            this.viewClass = viewClass;
-        }
-    }
-
     public static UI forRequest(WebRequest request) {
-        UI ui = (UI) request.getAttribute(UI.class.getName(), WebRequest.SCOPE_SESSION);
-
-        return ui;
+        return (UI) request.getAttribute(UI.class.getName(), WebRequest.SCOPE_SESSION);
     }
 
     public static UI forCurrentSession() {
@@ -72,7 +40,6 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     private ApplicationContext applicationContext;
 
-    private ThemeResolver themeResolver;
     private Theme theme;
 
     private ViewMappingRegistry viewMappingRegistry;
@@ -118,6 +85,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return "upload";
     }
 
+    @Deprecated
     public void registerViewClass(String path, Class<? extends View> viewClass) {
         ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
         viewMappingRegistry.register(path, viewClass);
@@ -145,7 +113,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         path = PathUtils.normalize(path);
         View view = getOrCreateView(path);
 
-        view.activate(request);
+        view.activated(request);
 
         activeView = view;
     }
@@ -153,6 +121,8 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     public final View getActiveView() {
         return activeView;
     }
+
+    public void init(WebRequest request) { }
 
     @Override
     public final void setParent(Component parent) {
@@ -175,6 +145,11 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return components.get(componentId);
     }
 
+    @Override
+    public void setComponent(Component component) {
+        super.setComponent(component);
+    }
+
     protected boolean attach(Component component) {
         if (components.put(component.getId(), component) == null) {
 //            component.setUi(this);
@@ -193,6 +168,4 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
         return false;
     }
-
-    public UI() { }
 }
