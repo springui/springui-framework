@@ -12,7 +12,7 @@ import java.util.*;
 /**
  * @author Stephan Grundner
  */
-public class PathMappings<T> implements Map<String, T> {
+public class PathLookup<T> implements Map<String, T> {
 
     private final Map<String, T> map;
     private final UrlPathHelper pathHelper = new UrlPathHelper();
@@ -42,7 +42,7 @@ public class PathMappings<T> implements Map<String, T> {
         return map.get(key);
     }
 
-    public T find(String path) {
+    public T lookup(String path) {
         AntPathMatcher pathMatcher = new AntPathMatcher();
         List<String> paths = new ArrayList<>(keySet());
         paths.sort(Comparator.comparingInt(String::length).reversed());
@@ -56,13 +56,13 @@ public class PathMappings<T> implements Map<String, T> {
         return null;
     }
 
-    public T find(HttpServletRequest request) {
+    public T lookup(HttpServletRequest request) {
         String path = pathHelper.getPathWithinApplication(request);
-        return find(path);
+        return lookup(path);
     }
 
-    public T find(WebRequest request) {
-        return find(WebRequestUtils.toServletRequest(request));
+    public T lookup(WebRequest request) {
+        return lookup(WebRequestUtils.toServletRequest(request));
     }
 
     @Override
@@ -103,11 +103,11 @@ public class PathMappings<T> implements Map<String, T> {
         return Collections.unmodifiableSet(map.entrySet());
     }
 
-    public PathMappings(Map<String, T> map) {
+    public PathLookup(Map<String, T> map) {
         this.map = map;
     }
 
-    public PathMappings() {
+    public PathLookup() {
         this(new HashMap<>());
     }
 }

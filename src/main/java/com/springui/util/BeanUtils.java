@@ -5,6 +5,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author Stephan Grundner
@@ -25,7 +26,7 @@ public class BeanUtils {
         }
     }
 
-    public static BeanDefinition getBeanDefinition(String name, AutowireCapableBeanFactory beanFactory) {
-        return getBeanDefinition(name, (ConfigurableListableBeanFactory) beanFactory);
+    public static BeanDefinition getBeanDefinition(String name, ApplicationContext applicationContext) {
+        return getBeanDefinition(name, (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory());
     }
 }

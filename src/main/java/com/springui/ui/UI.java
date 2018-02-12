@@ -1,28 +1,23 @@
 package com.springui.ui;
 
-import com.springui.collection.MapUtils;
 import com.springui.i18n.MessageSourceProvider;
 import com.springui.util.PathUtils;
 import com.springui.util.WebRequestUtils;
-import com.springui.web.PathMappings;
-import com.springui.web.ViewMapping;
+import com.springui.web.ViewMappingRegistry;
+import com.springui.web.ViewNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
-import org.springframework.ui.context.ThemeSource;
-import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ThemeResolver;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -33,6 +28,34 @@ import java.util.Map;
  */
 @Template("{theme}/ui/ui")
 public class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
+
+    protected static class ViewMapping {
+
+        private final String path;
+        private final Class<? extends View> viewClass;
+        private View view;
+
+        public String getPath() {
+            return path;
+        }
+
+        public Class<? extends View> getViewClass() {
+            return viewClass;
+        }
+
+        public View getView() {
+            return view;
+        }
+
+        public void setView(View view) {
+            this.view = view;
+        }
+
+        public ViewMapping(String path, Class<? extends View> viewClass) {
+            this.path = path;
+            this.viewClass = viewClass;
+        }
+    }
 
     public static UI forRequest(WebRequest request) {
         UI ui = (UI) request.getAttribute(UI.class.getName(), WebRequest.SCOPE_SESSION);
@@ -52,7 +75,8 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     private ThemeResolver themeResolver;
     private Theme theme;
 
-    private PathMappings<ViewMapping> viewMappings = new PathMappings<>();
+    private ViewMappingRegistry viewMappingRegistry;
+    private final Map<String, View> viewByPath = new HashMap<>();
     private View activeView;
 
     private final Map<String, Component> components = new HashMap<>();
@@ -78,6 +102,14 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         this.theme = theme;
     }
 
+    public ViewMappingRegistry getViewMappingRegistry() {
+        if (viewMappingRegistry == null) {
+            viewMappingRegistry = applicationContext.getBean(ViewMappingRegistry.class);
+        }
+
+        return viewMappingRegistry;
+    }
+
     public String getActionPath() {
         return "action";
     }
@@ -87,40 +119,35 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     }
 
     public void registerViewClass(String path, Class<? extends View> viewClass) {
-        Assert.hasLength(path, "[path] must not be empty");
-        Assert.notNull(viewClass, "[viewClass] must not be null");
-        MapUtils.putValueOnce(viewMappings, path, new ViewMapping(path, viewClass));
+        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
+        viewMappingRegistry.register(path, viewClass);
     }
 
-    private View getView(String path, boolean create) {
-        ViewMapping mapping = viewMappings.find(path);
-        if (mapping != null) {
-            View view = mapping.getView();
-            if (view == null && create) {
-                view = BeanUtils.instantiate(mapping.getViewClass());
+    private View getOrCreateView(String path) {
+        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
+        Class<? extends View> viewClass = viewMappingRegistry.lookup(path);
+        if (viewClass != null) {
+            View view = viewByPath.get(path);
+            if (view == null) {
+                view = applicationContext.getBean(viewClass);
                 view.setPath(path);
-                mapping.setView(view);
+                viewByPath.put(path, view);
             }
+
             return view;
-        } else {
-            throw new RuntimeException(String.format("No view registered for path [%s]", path));
         }
+
+        throw new ViewNotFoundException(path);
     }
 
-    public View activate(WebRequest request) {
+    public void activate(WebRequest request) {
         String path = WebRequestUtils.getPath(request);
         path = PathUtils.normalize(path);
+        View view = getOrCreateView(path);
 
-        View view = getView(path, true);
-
-        MultiValueMap<String, String> params =
-                WebRequestUtils.getQueryParams(request);
-
-        view.activate(this, params);
+        view.activate(request);
 
         activeView = view;
-
-        return view;
     }
 
     public final View getActiveView() {

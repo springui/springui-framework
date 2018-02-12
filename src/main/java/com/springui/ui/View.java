@@ -1,6 +1,9 @@
 package com.springui.ui;
 
+import com.springui.util.WebRequestUtils;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * @author Stephan Grundner
@@ -25,6 +28,10 @@ public abstract class View extends SingleComponentContainer<Component> {
     }
 
     public MultiValueMap<String, String> getParams() {
+        if (params == null) {
+            params = new LinkedMultiValueMap<>();
+        }
+
         return params;
     }
 
@@ -40,10 +47,9 @@ public abstract class View extends SingleComponentContainer<Component> {
         this.path = path;
     }
 
-    protected void activate(MultiValueMap<String, String> params) { }
-
-    protected void activate(UI ui, MultiValueMap<String, String> params) {
+    protected void activate(WebRequest request) {
+        UI ui = UI.forRequest(request);
         ui.setComponent(this);
-        activate(params);
+        params = WebRequestUtils.getQueryParams(request);
     }
 }

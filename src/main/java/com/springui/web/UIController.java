@@ -4,11 +4,14 @@ import com.springui.event.Action;
 import com.springui.ui.*;
 import com.springui.util.TemplateUtils;
 import com.springui.util.WebRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.ThemeSource;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -31,7 +35,9 @@ import java.util.Date;
  * @author Stephan Grundner
  */
 @SessionAttributes("ui")
-public class UIController {
+public abstract class UIController {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UIController.class);
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -39,7 +45,7 @@ public class UIController {
     @Autowired
     private ThemeResolver themeResolver;
 
-    protected void init(UI ui) { }
+    protected abstract void init(UI ui);
 
     private void init(UI ui, WebRequest request) {
         ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
@@ -90,14 +96,13 @@ public class UIController {
         }
     }
 
-    @GetMapping(path = "/**")
-    protected String respond(@ModelAttribute("ui") UI ui,
+    @GetMapping(path = "**")
+    protected String request(@ModelAttribute("ui") UI ui,
                              BindingResult bindingResult,
                              WebRequest request,
                              Model model) {
 
-        View view = ui.activate(request);
-        view.setParams(WebRequestUtils.getQueryParams(request));
+        ui.activate(request);
 
         model.addAttribute("self", ui);
 

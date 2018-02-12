@@ -1,34 +1,25 @@
 package com.springui.web;
 
-import com.springui.ui.View;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.core.annotation.AliasFor;
+import org.springframework.stereotype.Component;
+
+import java.lang.annotation.*;
 
 /**
  * @author Stephan Grundner
  */
-public class ViewMapping {
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Documented
+public @interface ViewMapping {
 
-    private final String path;
-    private final Class<? extends View> viewClass;
-    private View view;
+    @AliasFor("path")
+    String[] value() default {};
 
-    public String getPath() {
-        return path;
-    }
-
-    public Class<? extends View> getViewClass() {
-        return viewClass;
-    }
-
-    public View getView() {
-        return view;
-    }
-
-    public void setView(View view) {
-        this.view = view;
-    }
-
-    public ViewMapping(String path, Class<? extends View> viewClass) {
-        this.path = path;
-        this.viewClass = viewClass;
-    }
+    @AliasFor("value")
+    String[] path() default {};
 }
