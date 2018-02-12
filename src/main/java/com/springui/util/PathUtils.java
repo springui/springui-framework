@@ -1,4 +1,4 @@
-package com.springui.web;
+package com.springui.util;
 
 import org.apache.commons.lang3.StringUtils;
 

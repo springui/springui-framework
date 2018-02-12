@@ -2,7 +2,10 @@ package com.springui.ui;
 
 import com.springui.collection.MapUtils;
 import com.springui.i18n.MessageSourceProvider;
-import com.springui.web.*;
+import com.springui.web.PathMappings;
+import com.springui.util.PathUtils;
+import com.springui.web.ViewMapping;
+import com.springui.util.WebRequestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +34,6 @@ import java.util.Map;
 @Template("{theme}/ui/ui")
 public abstract class UI extends SingleComponentContainer<Component> implements MessageSourceProvider {
 
-    public static final String SESSION_ATTRIBUTE_NAME = "ui";
-
     @Deprecated
     public static UI getCurrent() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
@@ -43,7 +44,6 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
 
     private UIContext context;
     private String path;
-
     private Theme theme;
 
     private PathMappings<ViewMapping> viewMappings = new PathMappings<>();
@@ -128,6 +128,8 @@ public abstract class UI extends SingleComponentContainer<Component> implements 
                 WebRequestUtils.getQueryParams(request);
 
         view.activate(ui, params);
+
+        activeView = view;
 
         return view;
     }

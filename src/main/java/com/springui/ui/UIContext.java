@@ -3,19 +3,14 @@ package com.springui.ui;
 import com.springui.collection.MapUtils;
 import com.springui.web.PathMappings;
 import com.springui.web.UIMapping;
-import com.springui.web.WebRequestUtils;
+import com.springui.util.WebRequestUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Stephan Grundner
@@ -35,18 +30,8 @@ public class UIContext implements ApplicationContextAware {
         return null;
     }
 
-    public static UIContext getCurrent() {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        return (UIContext) requestAttributes.getAttribute(UIContext.class.getName(), RequestAttributes.SCOPE_SESSION);
-    }
-
-//    public static void setCurrent(UIContext current) {
-//        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-//        requestAttributes.setAttribute(UIContext.class.getName(), current, RequestAttributes.SCOPE_SESSION);
-//    }
-
     private ApplicationContext applicationContext;
-    private PathMappings<UIMapping> mappings = new PathMappings<>();
+    private PathMappings<UIMapping> uiMappings = new PathMappings<>();
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -60,11 +45,11 @@ public class UIContext implements ApplicationContextAware {
     public void registerUiClass(String path, Class<? extends UI> uiClass) {
         Assert.hasLength(path, "[path] must not be empty");
         Assert.notNull(uiClass, "[uiClass] must not be null");
-        MapUtils.putValueOnce(mappings, path, new UIMapping(path, uiClass));
+        MapUtils.putValueOnce(uiMappings, path, new UIMapping(path, uiClass));
     }
 
     public UI getUi(String path, boolean create) {
-        UIMapping mapping = mappings.find(path);
+        UIMapping mapping = uiMappings.find(path);
         UI ui = mapping.getUi();
         if (ui == null && create) {
             ui = org.springframework.beans.BeanUtils.instantiate(mapping.getUiClass());

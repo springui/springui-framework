@@ -1,7 +1,6 @@
-package com.springui.web;
+package com.springui.util;
 
 import com.springui.ui.Component;
-import com.springui.util.SlashUtils;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ThemeResolver;

@@ -3,7 +3,7 @@ package com.springui.thymeleaf.processor;
 import com.springui.ui.Component;
 import com.springui.ui.Layout;
 import com.springui.ui.UI;
-import com.springui.web.TemplateUtils;
+import com.springui.util.TemplateUtils;
 import org.springframework.ui.context.Theme;
 import org.springframework.util.StringUtils;
 import org.thymeleaf.context.ITemplateContext;
