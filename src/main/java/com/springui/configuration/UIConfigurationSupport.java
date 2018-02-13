@@ -84,7 +84,7 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     @Order(0)
     @ConditionalOnMissingBean(UIController.class)
     protected UIController uiController() {
-        return new WildcardUIController();
+        return new RootUIController();
     }
 
     @Override

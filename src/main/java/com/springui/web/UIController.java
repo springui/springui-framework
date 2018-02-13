@@ -8,8 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.format.datetime.DateFormatter;
+import org.springframework.http.CacheControl;
 import org.springframework.ui.Model;
 import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.ThemeSource;
@@ -21,9 +23,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -94,11 +98,16 @@ public abstract class UIController {
     protected String request(@ModelAttribute("ui") UI ui,
                              BindingResult bindingResult,
                              WebRequest request,
+                             @Deprecated
+                             HttpServletResponse response,
                              Model model) {
 
         ui.activate(request);
 
         model.addAttribute("self", ui);
+
+        CacheControl noStore = CacheControl.noStore();
+        response.addHeader("Cache-Control", noStore.getHeaderValue());
 
         return TemplateUtils.resolveTemplate(request, themeResolver, ui);
     }

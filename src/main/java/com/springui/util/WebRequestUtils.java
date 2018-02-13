@@ -1,12 +1,15 @@
 package com.springui.util;
 
+import com.springui.web.HttpServletRequestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UrlPathHelper;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,32 +19,16 @@ import java.util.Iterator;
  */
 public final class WebRequestUtils {
 
-    public static WebRequest toWebRequest(HttpServletRequest request) {
-        return new ServletWebRequest(request);
-    }
-
-    private static String getPath(HttpServletRequest request) {
-        return request.getRequestURI();
-    }
-
-    private static String getPath(ServletWebRequest request) {
-        return getPath((HttpServletRequest) request.getNativeRequest());
-    }
-
-    public static String getPath(WebRequest request) {
+    public static HttpServletRequest toServletRequest(WebRequest request) {
         if (request instanceof ServletWebRequest) {
-            return getPath((ServletWebRequest) request);
+            return (HttpServletRequest) ((ServletWebRequest) request).getNativeRequest();
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    private static String getQueryString(HttpServletRequest request) {
-        return request.getQueryString();
-    }
-
     private static String getQueryString(ServletWebRequest request) {
-        return getQueryString((HttpServletRequest) request.getNativeRequest());
+        return HttpServletRequestUtils.getQueryString((HttpServletRequest) request.getNativeRequest());
     }
 
     public static String getQueryString(WebRequest request) {
@@ -52,25 +39,32 @@ public final class WebRequestUtils {
         }
     }
 
-    public static String getUrl(WebRequest request) {
-        String url = getPath(request);
-        String queryString = getQueryString(request);
-        if (StringUtils.hasLength(queryString)) {
-            url = String.format("%s?%s", url, queryString);
-        }
-
-        return url;
+    /**
+     * @see {@link HttpServletRequestUtils#getUrl(HttpServletRequest)}
+     * @param request A servlet request
+     * @return A full URL including the query string.
+     */
+    public static String getUrl(ServletWebRequest request) {
+        return HttpServletRequestUtils.getUrl((HttpServletRequest) request.getNativeRequest());
     }
 
-    public static HttpServletRequest toServletRequest(WebRequest request) {
+    /**
+     * Get the full URL, including the query string,
+     * for the specified request.
+     *
+     * @see {@link #getUrl(ServletWebRequest)}
+     * @param request A web request
+     * @return A full URL including the query string.
+     */
+    public static String getUrl(WebRequest request) {
         if (request instanceof ServletWebRequest) {
-            return (HttpServletRequest) ((ServletWebRequest) request).getNativeRequest();
+            return getUrl((ServletWebRequest) request);
         } else {
             throw new IllegalArgumentException();
         }
     }
 
-    public static WebRequest getCurrentWebRequest() {
+    public static WebRequest getCurrentRequest() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
 
         if (requestAttributes instanceof WebRequest) {
@@ -78,17 +72,7 @@ public final class WebRequestUtils {
         }
 
         if (requestAttributes instanceof ServletRequestAttributes) {
-            return toWebRequest(((ServletRequestAttributes) requestAttributes).getRequest());
-        }
-
-        return null;
-    }
-
-    public static HttpServletRequest getCurrentServletRequest() {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            return ((ServletRequestAttributes) requestAttributes).getRequest();
+            return HttpServletRequestUtils.toWebRequest(((ServletRequestAttributes) requestAttributes).getRequest());
         }
 
         return null;

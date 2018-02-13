@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping(path = "/")
-public class WildcardUIController extends UIController {
+public class RootUIController extends UIController {
 
 }

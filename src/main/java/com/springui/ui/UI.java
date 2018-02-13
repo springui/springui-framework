@@ -15,6 +15,7 @@ import org.springframework.ui.context.Theme;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.util.UrlPathHelper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -119,13 +120,15 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         setComponent(component);
     }
 
+    private UrlPathHelper pathHelper = new UrlPathHelper();
+
     public void activate(WebRequest request) {
         if (request == null) {
             setViewComponent(null);
             return;
         }
 
-        String path = WebRequestUtils.getPath(request);
+        String path = pathHelper.getPathWithinApplication(WebRequestUtils.toServletRequest(request));
         path = PathUtils.normalize(path);
 
         View view = getOrCreateView(path);
