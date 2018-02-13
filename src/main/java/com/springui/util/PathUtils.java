@@ -9,7 +9,11 @@ public final class PathUtils {
 
     public static String normalize(String path) {
         path = StringUtils.prependIfMissing(path, "/");
-        return StringUtils.removeEnd(path, "/");
+        if (path.length() > 1) {
+            return StringUtils.removeEnd(path, "/");
+        }
+
+        return path;
     }
 
     private PathUtils() {}

@@ -3,6 +3,7 @@ package com.springui.ui;
 import com.springui.i18n.MessageSourceProvider;
 import com.springui.util.PathUtils;
 import com.springui.util.WebRequestUtils;
+import com.springui.web.PathLookup;
 import com.springui.web.ViewMappingRegistry;
 import com.springui.web.ViewNotFoundException;
 import org.slf4j.Logger;
@@ -93,7 +94,9 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     private View getOrCreateView(String path) {
         ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
+        path = PathUtils.normalize(path);
         Class<? extends View> viewClass = viewMappingRegistry.lookup(path);
+
         if (viewClass != null) {
             View view = viewByPath.get(path);
             if (view == null) {

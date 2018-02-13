@@ -4,6 +4,7 @@ import com.springui.ui.View;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +12,8 @@ import java.util.Map;
  */
 public class ViewMappingRegistry {
 
-    private final PathLookup<Class<? extends View>> registrations = new PathLookup<>();
+//    private final PathLookup<Class<? extends View>> registrations = new PathLookup<>();
+    private final Map<String, Class<? extends View>> registrations = new HashMap<>();
 
     public void register(String path, Class<? extends View> viewClass) {
         Assert.hasLength(path, "[path] must not be empty");
@@ -20,7 +22,8 @@ public class ViewMappingRegistry {
     }
 
     public Class<? extends View> lookup(String path) {
-        return registrations.lookup(path);
+//        return registrations.lookup(path);
+        return registrations.get(path);
     }
 
     public Map<String, Class<? extends View>> getMappings() {
