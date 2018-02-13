@@ -3,7 +3,6 @@ package com.springui.ui;
 import com.springui.i18n.MessageSourceProvider;
 import com.springui.util.PathUtils;
 import com.springui.util.WebRequestUtils;
-import com.springui.web.PathLookup;
 import com.springui.web.ViewMappingRegistry;
 import com.springui.web.ViewNotFoundException;
 import org.slf4j.Logger;
@@ -45,7 +44,9 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     private ViewMappingRegistry viewMappingRegistry;
     private final Map<String, View> viewByPath = new HashMap<>();
-    private View activeView;
+//    private View activeView;
+
+    private String requestUrl;
 
     private final Map<String, Component> components = new HashMap<>();
 
@@ -101,7 +102,6 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
             View view = viewByPath.get(path);
             if (view == null) {
                 view = applicationContext.getBean(viewClass);
-                view.setPath(path);
                 viewByPath.put(path, view);
             }
 
@@ -111,18 +111,40 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         throw new ViewNotFoundException(path);
     }
 
-    public void activate(WebRequest request) {
-        String path = WebRequestUtils.getPath(request);
-        path = PathUtils.normalize(path);
-        View view = getOrCreateView(path);
-
-        view.activated(request);
-
-        activeView = view;
+    protected Component getViewComponent() {
+        throw new UnsupportedOperationException();
     }
 
-    public final View getActiveView() {
-        return activeView;
+    protected void setViewComponent(Component component) {
+        setComponent(component);
+    }
+
+    public void activate(WebRequest request) {
+        if (request == null) {
+            setViewComponent(null);
+            return;
+        }
+
+        String path = WebRequestUtils.getPath(request);
+        path = PathUtils.normalize(path);
+
+        View view = getOrCreateView(path);
+        Component viewComponent = view != null
+                ? view.getComponent() : null;
+        setViewComponent(viewComponent);
+
+        String url = WebRequestUtils.getUrl(request);
+        setRequestUrl(url);
+
+        view.activated(request);
+    }
+
+    public String getRequestUrl() {
+        return requestUrl;
+    }
+
+    private void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
     }
 
     public void init(WebRequest request) { }
@@ -146,11 +168,6 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     public Component getComponent(String componentId) {
         return components.get(componentId);
-    }
-
-    @Override
-    public void setComponent(Component component) {
-        super.setComponent(component);
     }
 
     protected boolean attach(Component component) {

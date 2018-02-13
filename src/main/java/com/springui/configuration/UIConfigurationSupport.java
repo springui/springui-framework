@@ -2,10 +2,7 @@ package com.springui.configuration;
 
 import com.springui.thymeleaf.UIDialect;
 import com.springui.ui.UI;
-import com.springui.web.AnnotationConfigViewMappingRegistry;
-import com.springui.web.UIController;
-import com.springui.web.ViewMappingRegistry;
-import com.springui.web.WildcardUIController;
+import com.springui.web.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -19,6 +16,7 @@ import org.springframework.session.SessionRepository;
 import org.springframework.ui.context.ThemeSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 
@@ -59,7 +57,6 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
         return themeSource;
     }
 
-
     @Bean
     @ConditionalOnMissingBean(SessionRepository.class)
     protected SessionRepository sessionRepository() {
@@ -88,5 +85,10 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     @ConditionalOnMissingBean(UIController.class)
     protected UIController uiController() {
         return new WildcardUIController();
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addWebRequestInterceptor(new UIRequestInterceptor());
     }
 }

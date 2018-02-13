@@ -104,16 +104,7 @@ public abstract class UIController {
     }
 
     protected String respond(UI ui) {
-        View view = ui.getActiveView();
-
-        UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .pathSegment(view.getPath())
-                .queryParams(view.getParams())
-                .build();
-
-        String uri = uriComponents.toUriString();
-
-        return "redirect:" + uri;
+        return "redirect:" + ui.getRequestUrl();
     }
 
     @PostMapping(path = "**/action")
@@ -136,7 +127,7 @@ public abstract class UIController {
         return respond(ui);
     }
 
-    @PostMapping(path = "upload")
+    @PostMapping(path = "**/upload")
     protected String upload(@ModelAttribute("ui") UI ui,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,

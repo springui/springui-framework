@@ -2,6 +2,7 @@ package com.springui.util;
 
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.*;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -49,6 +50,16 @@ public final class WebRequestUtils {
         } else {
             throw new IllegalArgumentException();
         }
+    }
+
+    public static String getUrl(WebRequest request) {
+        String url = getPath(request);
+        String queryString = getQueryString(request);
+        if (StringUtils.hasLength(queryString)) {
+            url = String.format("%s?%s", url, queryString);
+        }
+
+        return url;
     }
 
     public static HttpServletRequest toServletRequest(WebRequest request) {
