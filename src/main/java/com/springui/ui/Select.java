@@ -2,9 +2,11 @@ package com.springui.ui;
 
 import com.springui.data.DataProvider;
 import com.springui.data.ItemDisplayValueProvider;
+import com.springui.data.ValueResolver;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author Stephan Grundner
@@ -12,7 +14,7 @@ import java.util.Objects;
 public abstract class Select<T> extends Field<T> {
 
     private DataProvider<T> dataProvider;
-    private ItemDisplayValueProvider<T> itemDisplayValueProvider;
+    private ValueResolver<T, String> valueResolver;
 
     public DataProvider<T> getDataProvider() {
         return dataProvider;
@@ -22,20 +24,13 @@ public abstract class Select<T> extends Field<T> {
         this.dataProvider = dataProvider;
     }
 
-    public ItemDisplayValueProvider<T> getItemDisplayValueProvider() {
-        if (itemDisplayValueProvider == null) {
-            itemDisplayValueProvider = Objects::toString;
-        }
-
-        return itemDisplayValueProvider;
-    }
-
-    public void setItemDisplayValueProvider(ItemDisplayValueProvider<T> itemDisplayValueProvider) {
-        this.itemDisplayValueProvider = itemDisplayValueProvider;
+    @Deprecated
+    public final ItemDisplayValueProvider<T> getItemDisplayValueProvider() {
+        return t -> valueResolver.resolve(t);
     }
 
     public Collection<T> getItems() {
-        return getDataProvider().getItems();
+        return getDataProvider().fetch().collect(Collectors.toList());
     }
 
     public Object itemToKey(T item) {

@@ -2,6 +2,7 @@ package com.springui.data;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.stream.Stream;
 
 /**
  * @author Stephan Grundner
@@ -12,12 +13,12 @@ public class EnumDataProvider<E extends Enum<E>> implements DataProvider<E> {
     private Collection<E> items;
 
     @Override
-    public Collection<E> getItems() {
+    public Stream<E> fetch() {
         if (items == null) {
             items = EnumSet.allOf(enumType);
         }
 
-        return items;
+        return items.stream();
     }
 
     @Override

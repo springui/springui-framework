@@ -1,6 +1,6 @@
 package com.springui.ui;
 
-import com.springui.data.ListDataProvider;
+import com.springui.data.DataProvider;
 import com.springui.data.ValueResolver;
 import com.springui.i18n.Message;
 import org.springframework.context.ApplicationContext;
@@ -144,7 +144,7 @@ public class Table<T> extends Component {
 
     private final List<Column<T, ?>> columns = new ArrayList<>();
     private final List<Row<T>> rows = new ArrayList<>();
-    private ListDataProvider<T> dataProvider;
+    private DataProvider<T> dataProvider;
 
     private int maximum = 3;
 
@@ -202,21 +202,20 @@ public class Table<T> extends Component {
     }
 
     public List<Row<T>> getRows() {
-        ListDataProvider<T> dataProvider = getDataProvider();
+        DataProvider<T> dataProvider = getDataProvider();
         rows.clear();
-        ListIterator<T> objectItr = dataProvider.getItems().listIterator();
-        while (objectItr.hasNext()) {
-            addRow(objectItr.next());
-        }
+        dataProvider.fetch().forEach(object -> {
+            addRow(object);
+        });
 
         return rows;
     }
 
-    public ListDataProvider<T> getDataProvider() {
+    public DataProvider<T> getDataProvider() {
         return dataProvider;
     }
 
-    public void setDataProvider(ListDataProvider<T> dataProvider) {
+    public void setDataProvider(DataProvider<T> dataProvider) {
         this.dataProvider = dataProvider;
     }
 

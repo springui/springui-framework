@@ -1,15 +1,9 @@
 package com.springui.util;
 
-import com.springui.web.HttpServletRequestUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.*;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UrlPathHelper;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package com.springui.web;
+package com.springui.util;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.*;
