@@ -26,8 +26,8 @@ public class EnumDataProvider<E extends Enum<E>> implements DataProvider<E> {
     }
 
     @Override
-    public E getItem(String key) {
-        return Enum.valueOf(enumType, key);
+    public E getItem(Object key) {
+        return Enum.valueOf(enumType, String.valueOf(key));
     }
 
     public EnumDataProvider(Class<E> enumType, Collection<E> items) {

@@ -22,7 +22,7 @@ public abstract class Component {
 
     private boolean disabled;
     private int tabIndex;
-    private Text caption;
+    private Message caption;
     private Message message;
 
     private final Set<String> styles = new LinkedHashSet<>();
@@ -112,11 +112,11 @@ public abstract class Component {
         this.tabIndex = tabIndex;
     }
 
-    public Text getCaption() {
+    public Message getCaption() {
         return caption;
     }
 
-    public void setCaption(Text caption) {
+    public void setCaption(Message caption) {
         this.caption = caption;
     }
 

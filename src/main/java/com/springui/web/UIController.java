@@ -2,13 +2,13 @@ package com.springui.web;
 
 import com.springui.event.Action;
 import com.springui.ui.*;
+import com.springui.util.BeanFactoryUtils;
 import com.springui.util.TemplateUtils;
 import com.springui.util.WebRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.context.ApplicationContext;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.CacheControl;
@@ -23,9 +23,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyEmitter;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.DateFormat;
@@ -35,7 +32,7 @@ import java.util.Date;
 /**
  * @author Stephan Grundner
  */
-@SessionAttributes("ui")
+@SessionAttributes(UI.ATTRIBUTE_NAME)
 public abstract class UIController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UIController.class);
@@ -56,11 +53,12 @@ public abstract class UIController {
         ui.init(request);
     }
 
-    @ModelAttribute("ui")
+    @ModelAttribute(UI.ATTRIBUTE_NAME)
     protected final UI createUi(WebRequest request) {
         UI ui = UI.forRequest(request);
         if (ui == null) {
-            ui = applicationContext.getBean(UI.class);
+//            ui = applicationContext.getBean(UI.class);
+            ui = BeanFactoryUtils.getPrototypeBean(applicationContext, UI.class);
             init(ui, request);
         }
 
@@ -95,7 +93,7 @@ public abstract class UIController {
     }
 
     @RequestMapping(path = "**", method = {RequestMethod.GET, RequestMethod.POST})
-    protected String request(@ModelAttribute("ui") UI ui,
+    protected String request(@ModelAttribute(UI.ATTRIBUTE_NAME) UI ui,
                              BindingResult bindingResult,
                              WebRequest request,
                              @Deprecated
@@ -117,7 +115,7 @@ public abstract class UIController {
     }
 
     @PostMapping(path = "**/action")
-    protected String action(@ModelAttribute("ui") UI ui,
+    protected String action(@ModelAttribute(UI.ATTRIBUTE_NAME) UI ui,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,
                             @RequestParam(name = "event") String event,
@@ -137,7 +135,7 @@ public abstract class UIController {
     }
 
     @PostMapping(path = "**/upload")
-    protected String upload(@ModelAttribute("ui") UI ui,
+    protected String upload(@ModelAttribute(UI.ATTRIBUTE_NAME) UI ui,
                             BindingResult bindingResult,
                             @RequestParam(name = "component") String componentId,
                             @RequestParam(name = "token") String token,

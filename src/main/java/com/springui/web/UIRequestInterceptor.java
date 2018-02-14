@@ -20,7 +20,7 @@ public class UIRequestInterceptor implements WebRequestInterceptor {
     public void afterCompletion(WebRequest request, Exception ex) throws Exception {
         UI ui = UI.forRequest(request);
         if (ui != null) {
-            ui.activate(null);
+//            ui.activate(null);
         }
     }
 }

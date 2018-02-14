@@ -3,6 +3,7 @@ package com.springui.configuration;
 import com.springui.thymeleaf.UIDialect;
 import com.springui.ui.UI;
 import com.springui.web.*;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -74,7 +75,7 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnMissingBean(UI.class)
     protected UI ui() {
         return new UI();

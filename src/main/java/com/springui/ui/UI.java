@@ -1,6 +1,7 @@
 package com.springui.ui;
 
 import com.springui.i18n.MessageSourceProvider;
+import com.springui.util.BeanFactoryUtils;
 import com.springui.util.PathUtils;
 import com.springui.util.WebRequestUtils;
 import com.springui.web.ViewMappingRegistry;
@@ -28,13 +29,15 @@ import java.util.Map;
 @Template("{theme}/ui/ui")
 public class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
 
+    public static final String ATTRIBUTE_NAME = "ui";
+
     public static UI forRequest(WebRequest request) {
-        return (UI) request.getAttribute(UI.class.getName(), WebRequest.SCOPE_SESSION);
+        return (UI) request.getAttribute(ATTRIBUTE_NAME, WebRequest.SCOPE_SESSION);
     }
 
     public static UI forCurrentSession() {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        return (UI) requestAttributes.getAttribute(UI.class.getName(), RequestAttributes.SCOPE_SESSION);
+        return (UI) requestAttributes.getAttribute(ATTRIBUTE_NAME, RequestAttributes.SCOPE_SESSION);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(UI.class);
@@ -102,7 +105,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         if (viewClass != null) {
             View view = viewByPath.get(path);
             if (view == null) {
-                view = applicationContext.getBean(viewClass);
+                view = BeanFactoryUtils.getPrototypeBean(applicationContext, viewClass);
                 viewByPath.put(path, view);
             }
 
@@ -128,18 +131,20 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
             return;
         }
 
+        String url = WebRequestUtils.getUrl(request);
+        setRequestUrl(url);
+
         String path = pathHelper.getPathWithinApplication(WebRequestUtils.toServletRequest(request));
         path = PathUtils.normalize(path);
 
         View view = getOrCreateView(path);
-        Component viewComponent = view != null
-                ? view.getComponent() : null;
-        setViewComponent(viewComponent);
+        if (view != null) {
+            view.activated(request);
 
-        String url = WebRequestUtils.getUrl(request);
-        setRequestUrl(url);
+            setViewComponent(view.getComponent());
+        }
 
-        view.activated(request);
+
     }
 
     public String getRequestUrl() {
@@ -162,7 +167,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     }
 
     public void bindTo(WebRequest request) {
-        request.setAttribute(UI.class.getName(), this, WebRequest.SCOPE_SESSION);
+        request.setAttribute(ATTRIBUTE_NAME, this, WebRequest.SCOPE_SESSION);
     }
 
     public Map<String, Component> getComponents() {

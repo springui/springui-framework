@@ -38,7 +38,7 @@ public abstract class Select<T> extends Field<T> {
         return getDataProvider().getItems();
     }
 
-    public String itemToKey(T item) {
+    public Object itemToKey(T item) {
         return getDataProvider().getKey(item);
     }
 

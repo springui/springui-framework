@@ -1,5 +1,7 @@
 package com.springui.data;
 
+import org.springframework.util.Assert;
+
 import java.util.Collection;
 
 /**
@@ -9,6 +11,10 @@ public interface DataProvider<T> {
 
     Collection<T> getItems();
 
-    String getKey(T t);
-    T getItem(String key);
+    default Object getKey(T t) {
+        Assert.notNull(t);
+        return t;
+    }
+
+    T getItem(Object key);
 }

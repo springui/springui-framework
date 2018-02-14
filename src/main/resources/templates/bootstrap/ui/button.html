@@ -5,6 +5,6 @@
    th:data-events="'click'"
    th_data-action="@{__${self.ui.path}__/action(component=${self.id})}"
    th:data-action="@{__${self.ui.actionPath}__(component=${self.id})}">
-    <th:block ui:replace="${self.caption}" />
+    <th:block th:text="${self.caption?.text}" />
 </a>
 </html>

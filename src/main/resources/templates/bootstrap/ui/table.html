@@ -6,7 +6,7 @@
     <thead>
     <tr>
         <th th:each="column : ${self.columns}">
-            <th:block ui:replace="${column.caption}" />
+            <th:block th:text="${column.caption?.text}" />
         </th>
     </tr>
     </thead>
