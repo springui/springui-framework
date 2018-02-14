@@ -204,7 +204,7 @@ public class Table<T> extends Component {
     public List<Row<T>> getRows() {
         DataProvider<T> dataProvider = getDataProvider();
         rows.clear();
-        dataProvider.fetch().forEach(object -> {
+        dataProvider.fetch(0, getMaximum()).forEach(object -> {
             addRow(object);
         });
 

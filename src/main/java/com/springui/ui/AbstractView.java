@@ -8,6 +8,7 @@ import org.springframework.web.context.request.WebRequest;
 public abstract class AbstractView implements View {
 
     private Component component;
+
     private boolean initialized = false;
 
     @Override
@@ -19,12 +20,12 @@ public abstract class AbstractView implements View {
         this.component = component;
     }
 
-    protected abstract void init();
+    protected abstract void init(WebRequest request);
 
     public void activated(WebRequest request) {
         if (!initialized) {
             initialized = true;
-            init();
+            init(request);
         }
     }
 }

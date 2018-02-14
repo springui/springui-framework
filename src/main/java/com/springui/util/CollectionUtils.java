@@ -1,4 +1,4 @@
-package com.springui.collection;
+package com.springui.util;
 
 import java.util.Collection;
 import java.util.Iterator;

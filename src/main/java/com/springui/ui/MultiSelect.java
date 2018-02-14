@@ -1,6 +1,6 @@
 package com.springui.ui;
 
-import com.springui.collection.CollectionUtils;
+import com.springui.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashSet;

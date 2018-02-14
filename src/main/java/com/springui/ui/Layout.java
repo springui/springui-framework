@@ -1,6 +1,6 @@
 package com.springui.ui;
 
-import com.springui.collection.MapUtils;
+import com.springui.util.MapUtils;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
