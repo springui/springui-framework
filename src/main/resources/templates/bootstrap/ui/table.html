@@ -2,9 +2,9 @@
       xmlns:ui="http://www.springui/dialect/ui"
       th:remove="tag">
 
-<table class="table table-condensed">
+<table class="table table-condensed" >
     <thead>
-    <tr>
+    <tr align="left">
         <th th:each="column : ${self.columns}">
             <th:block th:text="${column.caption?.text}" />
         </th>
@@ -12,12 +12,10 @@
     </thead>
     <tbody>
     <tr th:each="row : ${self.rows}">
-        <th:block th:each="column : ${self.columns}"
+        <td th:each="column : ${self.columns}"
                   th:with="cell = ${row.getCell(column)}">
-            <td th:text="${cell.value}">
-                ???
-            </td>
-        </th:block>
+            <th:block ui:replace="${cell.component}" />
+        </td>
     </tr>
     </tbody>
 </table>

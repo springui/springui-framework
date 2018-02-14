@@ -9,7 +9,10 @@ import java.util.Collection;
  */
 public interface DataProvider<T> {
 
+    @Deprecated
     Collection<T> getItems();
+
+
 
     default Object getKey(T t) {
         Assert.notNull(t);
