@@ -21,9 +21,17 @@ public class Table<T> extends Component {
 
     public static class Column<T, V> extends Component {
 
+        public enum Alignment {
+            LEFT,
+            CENTER,
+            RIGHT
+        }
+
         private Message caption;
         private ValueResolver<T, V> valueResolver;
         private CellComponentProvider<T, V> cellComponentProvider;
+
+        private Alignment alignment = Alignment.LEFT;
 
         @Override
         public Message getCaption() {
@@ -57,6 +65,14 @@ public class Table<T> extends Component {
 
         public void setCellComponentProvider(CellComponentProvider<T, V> cellComponentProvider) {
             this.cellComponentProvider = cellComponentProvider;
+        }
+
+        public Alignment getAlignment() {
+            return alignment;
+        }
+
+        public void setAlignment(Alignment alignment) {
+            this.alignment = alignment;
         }
     }
 
@@ -204,9 +220,7 @@ public class Table<T> extends Component {
     public List<Row<T>> getRows() {
         DataProvider<T> dataProvider = getDataProvider();
         rows.clear();
-        dataProvider.fetch(0, getMaximum()).forEach(object -> {
-            addRow(object);
-        });
+        dataProvider.fetch(0, getMaximum()).forEach(this::addRow);
 
         return rows;
     }

@@ -4,8 +4,8 @@
 
 <table class="table table-condensed" >
     <thead>
-    <tr align="left">
-        <th th:each="column : ${self.columns}">
+    <tr>
+        <th th:each="column : ${self.columns}" th:align="${column.alignment}">
             <th:block th:text="${column.caption?.text}" />
         </th>
     </tr>
@@ -13,7 +13,7 @@
     <tbody>
     <tr th:each="row : ${self.rows}">
         <td th:each="column : ${self.columns}"
-                  th:with="cell = ${row.getCell(column)}">
+                  th:with="cell = ${row.getCell(column)}" th:align="${column.alignment}">
             <th:block ui:replace="${cell.component}" />
         </td>
     </tr>

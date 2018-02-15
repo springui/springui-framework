@@ -1,10 +1,10 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:ui="http://www.springui/dialect/ui"
       th:remove="tag">
-<a class="btn btn-primary component" href="#"
+<a href="#" class="btn btn-primary component"
+   th:classappend="${#strings.setJoin(self.styles, ' ')}"
    th:data-events="'click'"
-   th_data-action="@{__${self.ui.path}__/action(component=${self.id})}"
-   th:data-action="@{__${self.ui.actionPath}__(component=${self.id})}">
+   th:data-action="@{action(component=${self.id})}">
     <th:block th:text="${self.caption?.text}" />
 </a>
 </html>

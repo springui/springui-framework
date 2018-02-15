@@ -93,6 +93,12 @@ $(document).ready(function() {
             todayBtn: $(this).data('today') || 'false'
         });
     });
+
+    // Workaround for <th align="..." />
+    $('th[align]').each(function() {
+        var align = $(this).attr('align');
+        $(this).css('text-align', align);
+    });
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" ></script>
