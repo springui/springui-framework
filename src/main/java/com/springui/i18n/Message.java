@@ -1,5 +1,6 @@
 package com.springui.i18n;
 
+import com.springui.ui.UI;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -17,6 +18,10 @@ public class Message {
     private String defaultText;
 
     public MessageSourceProvider getSourceProvider() {
+        if (sourceProvider == null) {
+            sourceProvider = UI.forCurrentSession();
+        }
+
         return sourceProvider;
     }
 
@@ -25,6 +30,7 @@ public class Message {
     }
 
     private MessageSource getSource() {
+        MessageSourceProvider sourceProvider = getSourceProvider();
         if (sourceProvider != null) {
             return sourceProvider.getMessageSource();
         }
@@ -78,10 +84,6 @@ public class Message {
         this.defaultText = defaultText;
     }
 
-    public Message(MessageSourceProvider sourceProvider) {
-        this.sourceProvider = sourceProvider;
-    }
-
     public Message(MessageSourceProvider sourceProvider, String code, Object[] args, String defaultText) {
         this.sourceProvider = sourceProvider;
         this.code = code;
@@ -89,16 +91,24 @@ public class Message {
         this.defaultText = defaultText;
     }
 
+    public Message(String code, Object[] args, String defaultText) {
+        this(null, code, args, defaultText);
+    }
+
     public Message(MessageSourceProvider sourceProvider, String code, String defaultText) {
         this(sourceProvider, code, null, defaultText);
+    }
+
+    public Message(String code, String defaultText) {
+        this(null, code, null, defaultText);
     }
 
     public Message(MessageSourceProvider sourceProvider, String code) {
         this(sourceProvider, code, null, null);
     }
 
-    public Message(String defaultText) {
-        this.defaultText = defaultText;
+    public Message(String code) {
+        this((MessageSourceProvider) null, code);
     }
 
     public Message() {}

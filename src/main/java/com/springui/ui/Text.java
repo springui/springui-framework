@@ -8,11 +8,16 @@ import com.springui.i18n.Message;
 @Template("{theme}/ui/text")
 public class Text extends Component {
 
-    private final Message message;
+    private Message message;
 
     @Override
     public Message getMessage() {
         return message;
+    }
+
+    @Override
+    public void setMessage(Message message) {
+        this.message = message;
     }
 
     public String getValue() {
@@ -41,4 +46,6 @@ public class Text extends Component {
     public Text(String messageCode) {
         this(messageCode, null, String.format("??%s??", messageCode));
     }
+
+    public Text() { }
 }

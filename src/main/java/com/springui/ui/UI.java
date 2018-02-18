@@ -131,14 +131,14 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
             return;
         }
 
-        String url = WebRequestUtils.getUrl(request);
-        setRequestUrl(url);
-
         String path = pathHelper.getPathWithinApplication(WebRequestUtils.toServletRequest(request));
         path = PathUtils.normalize(path);
 
         View view = getOrCreateView(path);
         if (view != null) {
+            String url = WebRequestUtils.getUrl(request);
+            setRequestUrl(url);
+
             view.activated(request);
 
             setViewComponent(view.getComponent());

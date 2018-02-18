@@ -2,22 +2,24 @@
       xmlns:ui="http://www.springui/dialect/ui"
       th:remove="tag">
 
-<table class="table table-condensed" >
-    <thead>
-    <tr>
-        <th th:each="column : ${self.columns}" th:align="${column.alignment}">
-            <th:block th:text="${column.caption?.text}" />
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="row : ${self.rows}">
-        <td th:each="column : ${self.columns}"
-                  th:with="cell = ${row.getCell(column)}" th:align="${column.alignment}">
-            <th:block ui:replace="${cell.component}" />
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="table-responsive-sm">
+    <table class="table table-sm" >
+        <thead>
+        <tr>
+            <th th:each="column : ${self.columns}" th:align="${column.alignment}">
+                <th:block th:text="${column.caption?.text}" />
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="row : ${self.rows}">
+            <td th:each="column : ${self.columns}"
+                th:with="cell = ${row.getCell(column)}" th:align="${column.alignment}">
+                <th:block ui:replace="${cell.component}" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 
 </html>

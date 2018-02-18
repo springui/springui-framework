@@ -5,8 +5,10 @@ import com.springui.data.ValueResolver;
 import com.springui.i18n.Message;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.util.Assert;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Stephan Grundner
@@ -32,6 +34,7 @@ public class Table<T> extends Component {
         private CellComponentProvider<T, V> cellComponentProvider;
 
         private Alignment alignment = Alignment.LEFT;
+        private int ordinal;
 
         @Override
         public Message getCaption() {
@@ -73,6 +76,14 @@ public class Table<T> extends Component {
 
         public void setAlignment(Alignment alignment) {
             this.alignment = alignment;
+        }
+
+        public int getOrdinal() {
+            return ordinal;
+        }
+
+        public void setOrdinal(int ordinal) {
+            this.ordinal = ordinal;
         }
     }
 
@@ -127,11 +138,13 @@ public class Table<T> extends Component {
         }
     }
 
+    @Template("{theme}/ui/table-row")
     public static class Row<T> extends Component {
 
         private T object;
         private final Map<Column<T, ?>, Cell<T, ?>> cellByColumn = new IdentityHashMap<>();
 
+        @SuppressWarnings("unchecked")
         public Table<T> getTable() {
             return (Table<T>) getParent();
         }
@@ -142,6 +155,10 @@ public class Table<T> extends Component {
 
         public void setObject(T object) {
             this.object = object;
+        }
+
+        public Collection<Cell<T, ?>> getCells() {
+            return Collections.unmodifiableCollection(cellByColumn.values());
         }
 
         public <V> Cell<T, V> getCell(Column<T, V> column) {
@@ -156,6 +173,19 @@ public class Table<T> extends Component {
 
             return cell;
         }
+
+        public void removeCell(Column<T, ?> column) {
+            Cell<T, ?> cell = cellByColumn.remove(column);
+            if (cell != null) {
+                cell.setParent(null);
+            }
+        }
+
+        public void removeAllCells() {
+            for (Column<T, ?> column : cellByColumn.keySet()) {
+                removeCell(column);
+            }
+        }
     }
 
     private final List<Column<T, ?>> columns = new ArrayList<>();
@@ -165,7 +195,11 @@ public class Table<T> extends Component {
     private int maximum = 3;
 
     public List<Column<T, ?>> getColumns() {
-        return Collections.unmodifiableList(columns);
+        List<Column<T, ?>> result = columns.stream()
+                .sorted(Comparator.comparingInt(Column::getOrdinal))
+                .collect(Collectors.toList());
+
+        return Collections.unmodifiableList(result);
     }
 
     @Override
@@ -179,48 +213,60 @@ public class Table<T> extends Component {
         }
     }
 
-    public <V> Column<T, V> addColumn() {
+    public <V> Column<T, V> addColumn(Message caption, ValueResolver<T, V> valueResolver, CellComponentProvider<T, V> cellComponentProvider) {
         Column<T, V> column = new Column<>();
-        columns.add(column);
+        column.setCaption(caption);
+        column.setValueResolver(valueResolver);
+        column.setCellComponentProvider(cellComponentProvider);
+        column.setOrdinal(getColumns().size());
         column.setParent(this);
 
-        return column;
-    }
-
-    public <V> Column<T, V> addColumn(Message caption) {
-        Column<T, V> column = addColumn();
-        column.setCaption(caption);
+        boolean successful = columns.add(column);
+        Assert.isTrue(successful);
 
         return column;
     }
 
     public <V> Column<T, V> addColumn(Message caption, ValueResolver<T, V> valueResolver) {
-        Column<T, V> column = addColumn();
-        column.setCaption(caption);
-        column.setValueResolver(valueResolver);
-
-        return column;
+        return addColumn(caption, valueResolver, null);
     }
 
-    public <V> Column<T, V> addColumn(Message caption, ValueResolver<T, V> valueResolver, CellComponentProvider<T, V> cellComponentProvider) {
-        Column<T, V> column = addColumn(caption, valueResolver);
-        column.setCellComponentProvider(cellComponentProvider);
-
-        return column;
+    public <V> Column<T, V> addColumn(Message caption) {
+        return addColumn(caption, null, null);
     }
 
-    private Row<T> addRow(T object) {
+    public <V> Column<T, V> addColumn() {
+        return addColumn(null);
+    }
+
+    private void appendRow(T object) {
         Row<T> row = new Row<>();
         row.setObject(object);
         rows.add(row);
         row.setParent(this);
+    }
+
+    private Row<T> removeRow(int index) {
+        Row<T> row = rows.remove(index);
+        row.setParent(null);
+        row.removeAllCells();
         return row;
     }
 
+    private void removeAllRows() {
+        while (rows.size() > 0) {
+            Row<T> row = removeRow(0);
+//            TODO LOG row removed
+        }
+    }
+
     public List<Row<T>> getRows() {
+        removeAllRows();
+
         DataProvider<T> dataProvider = getDataProvider();
-        rows.clear();
-        dataProvider.fetch(0, getMaximum()).forEach(this::addRow);
+        if (dataProvider != null) {
+            dataProvider.fetch(0, getMaximum()).forEach(this::appendRow);
+        }
 
         return rows;
     }
