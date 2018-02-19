@@ -143,13 +143,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     }
 
     public View getView(String path) {
-        path = StringUtils.removeEnd(path, "/action");
-        path = StringUtils.removeEnd(path, "/upload");
         return viewByPath.get(path);
-    }
-
-    public View getView(WebRequest request) {
-        return getView(WebRequestUtils.getPath(request));
     }
 
     private View getOrCreateView(String path) {

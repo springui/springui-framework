@@ -4,10 +4,10 @@ import com.springui.event.Action;
 import com.springui.ui.Component;
 import com.springui.ui.UI;
 import com.springui.util.WebRequestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.support.WebRequestDataBinder;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,7 +21,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class UIActionController extends AbstractUIController {
 
-    public ModelAndView handleRequest(WebRequest request) throws Exception {
+    @Autowired
+    private ViewMappingRegistry viewMappingRegistry;
+
+    public String handleRequest(WebRequest request) throws Exception {
         UI ui = UI.forRequest(request);
 
         bindUi(ui, request);
@@ -32,32 +35,29 @@ public class UIActionController extends AbstractUIController {
         Component component = ui.getComponent(componentId);
         component.performAction(new Action(request, componentId, event));
 
-        ModelAndView modelAndView = new ModelAndView();
-
         String redirectUrl = ui.getRedirectUrl(request);
         if (!StringUtils.isEmpty(redirectUrl)) {
-            modelAndView.setViewName("redirect:" + redirectUrl);
+            return redirectUrl;
         } else {
-            View view = ui.getView(request);
+            String path = WebRequestUtils.getPath(request);
+            path = path.substring(0, path.length() - "/action".length());
+            View view = ui.getView(path);
             Assert.notNull(view);
-            String path = ui.getPath(view.getClass());
             MultiValueMap<String, String> queryParams = view.getQueryParams();
             if (queryParams != null) {
-                String viewName = UriComponentsBuilder.fromPath("redirect:" + path)
+                redirectUrl = UriComponentsBuilder.fromPath(path)
                         .queryParams(queryParams)
                         .toUriString();
-                modelAndView.setViewName(viewName);
-                return modelAndView;
+                return redirectUrl;
             } else {
-                modelAndView.setViewName("redirect:" + path);
+                return path;
             }
         }
-
-        return modelAndView;
     }
 
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return handleRequest(new ServletWebRequest(request, response));
+        String redirectUrl = handleRequest(new ServletWebRequest(request, response));
+        return new ModelAndView(String.format("redirect:%s", redirectUrl));
     }
 }
