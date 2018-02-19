@@ -1,13 +1,12 @@
 package com.springui.event;
 
+import com.springui.ui.UI;
 import org.springframework.web.context.request.WebRequest;
 
 /**
  * @author Stephan Grundner
  */
 public class Action {
-
-    public static final String REDIRECT_URL = Action.class.getName() + "#redirectUrl";
 
     private final WebRequest request;
     private final String componentId;
@@ -21,8 +20,12 @@ public class Action {
         return event;
     }
 
-    public void redirectTo(String redirectUrl) {
-        request.setAttribute(REDIRECT_URL, redirectUrl, WebRequest.SCOPE_REQUEST);
+    /**
+     * Use {@link com.springui.ui.UI#redirectTo(String)} instead.
+     */
+    @Deprecated
+    public void redirectTo(String url) {
+        UI.forRequest(request).redirectTo(url);
     }
 
     public Action(WebRequest request, String componentId, String event) {

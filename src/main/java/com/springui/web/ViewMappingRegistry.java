@@ -21,10 +21,16 @@ public class ViewMappingRegistry {
         registrations.put(path, viewClass);
     }
 
-    public Class<? extends View> lookup(String path) {
-//        return registrations.lookup(path);
+    public Class<? extends View> findViewClass(String path) {
         return registrations.get(path);
     }
+
+//    public String findPath(Class<? extends View> viewClass) {
+//        return registrations.entrySet().stream()
+//                .filter(it -> it.getValue().isAssignableFrom(viewClass))
+//                .map(Map.Entry::getKey)
+//                .findFirst().orElse(null);
+//    }
 
     public Map<String, Class<? extends View>> getMappings() {
         return Collections.unmodifiableMap(registrations);

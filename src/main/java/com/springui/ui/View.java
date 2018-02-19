@@ -15,5 +15,5 @@ public interface View {
         throw new IllegalStateException("View is no component");
     }
 
-    void activated(WebRequest request);
+    void refresh(WebRequest request);
 }

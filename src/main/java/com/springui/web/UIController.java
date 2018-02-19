@@ -57,7 +57,6 @@ public abstract class UIController {
     protected final UI createUi(WebRequest request) {
         UI ui = UI.forRequest(request);
         if (ui == null) {
-//            ui = applicationContext.getBean(UI.class);
             ui = BeanFactoryUtils.getPrototypeBean(applicationContext, UI.class);
             init(ui, request);
         }
@@ -100,18 +99,19 @@ public abstract class UIController {
                              HttpServletResponse response,
                              Model model) {
 
-        ui.activate(request);
+        ui.process(request);
 
         model.addAttribute("self", ui);
 
         CacheControl noStore = CacheControl.noStore();
         response.addHeader("Cache-Control", noStore.getHeaderValue());
 
-        return TemplateUtils.resolveTemplate(request, themeResolver, ui);
-    }
+        String redirectUrl = ui.getRedirectUrl(request);
+        if (!StringUtils.isEmpty(redirectUrl)) {
+            return "redirect:" + redirectUrl;
+        }
 
-    protected String respond(UI ui) {
-        return "redirect:" + ui.getRequestUrl();
+        return TemplateUtils.resolveTemplate(request, themeResolver, ui);
     }
 
     @PostMapping(path = "**/action")
@@ -124,14 +124,12 @@ public abstract class UIController {
         Component component = ui.getComponent(componentId);
         component.performAction(new Action(request, componentId, event));
 
-        String redirectUrl;
-
-        redirectUrl = (String) request.getAttribute(Action.REDIRECT_URL, WebRequest.SCOPE_REQUEST);
+        String redirectUrl = ui.getRedirectUrl(request);
         if (!StringUtils.isEmpty(redirectUrl)) {
             return "redirect:" + redirectUrl;
         }
 
-        return respond(ui);
+        return "redirect:";
     }
 
     @PostMapping(path = "**/upload")
@@ -152,6 +150,6 @@ public abstract class UIController {
             }
         }
 
-        return respond(ui);
+        return "redirect:";
     }
 }

@@ -22,7 +22,7 @@ public abstract class AbstractView implements View {
 
     protected abstract void init(WebRequest request);
 
-    public void activated(WebRequest request) {
+    public void refresh(WebRequest request) {
         if (!initialized) {
             initialized = true;
             init(request);

@@ -39,4 +39,9 @@ public class HttpServletRequestUtils {
 
         return url;
     }
+
+    public static String getPath(HttpServletRequest request) {
+        UrlPathHelper pathHelper = new UrlPathHelper();
+        return pathHelper.getPathWithinApplication(request);
+    }
 }

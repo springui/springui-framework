@@ -174,16 +174,19 @@ public class Table<T> extends Component {
             return cell;
         }
 
-        public void removeCell(Column<T, ?> column) {
-            Cell<T, ?> cell = cellByColumn.remove(column);
-            if (cell != null) {
-                cell.setParent(null);
-            }
-        }
+//        public void removeCell(Column<T, ?> column) {
+//            Cell<T, ?> cell = cellByColumn.remove(column);
+//            if (cell != null) {
+//                cell.setParent(null);
+//            }
+//        }
 
         public void removeAllCells() {
-            for (Column<T, ?> column : cellByColumn.keySet()) {
-                removeCell(column);
+            Iterator<Cell<T, ?>> i = cellByColumn.values().iterator();
+            while (i.hasNext()) {
+                Cell<T, ?> cell = i.next();
+                cell.setParent(null);
+                i.remove();
             }
         }
     }
@@ -192,7 +195,7 @@ public class Table<T> extends Component {
     private final List<Row<T>> rows = new ArrayList<>();
     private DataProvider<T> dataProvider;
 
-    private int maximum = 3;
+    private int maximum = Integer.MAX_VALUE;
 
     public List<Column<T, ?>> getColumns() {
         List<Column<T, ?>> result = columns.stream()

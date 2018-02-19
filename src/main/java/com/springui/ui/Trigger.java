@@ -15,7 +15,7 @@ public class Trigger extends Component {
     }
 
     public Trigger(String defaultMessage, ActionListener actionListener) {
-        this(new Message(defaultMessage), actionListener);
+        this(new Message("", defaultMessage), actionListener);
     }
 
     public Trigger() { }

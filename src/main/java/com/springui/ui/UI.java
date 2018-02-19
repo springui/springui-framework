@@ -16,7 +16,6 @@ import org.springframework.ui.context.Theme;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.util.UrlPathHelper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import java.util.Map;
 public class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
 
     public static final String ATTRIBUTE_NAME = "ui";
+    public static final String REDIRECT_URL = UI.class.getName() + "#redirectUrl";
 
     public static UI forRequest(WebRequest request) {
         return (UI) request.getAttribute(ATTRIBUTE_NAME, WebRequest.SCOPE_SESSION);
@@ -48,9 +48,6 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     private ViewMappingRegistry viewMappingRegistry;
     private final Map<String, View> viewByPath = new HashMap<>();
-//    private View activeView;
-
-    private String requestUrl;
 
     private final Map<String, Component> components = new HashMap<>();
 
@@ -100,7 +97,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     private View getOrCreateView(String path) {
         ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
         path = PathUtils.normalize(path);
-        Class<? extends View> viewClass = viewMappingRegistry.lookup(path);
+        Class<? extends View> viewClass = viewMappingRegistry.findViewClass(path);
 
         if (viewClass != null) {
             View view = viewByPath.get(path);
@@ -123,36 +120,34 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         setComponent(component);
     }
 
-    private UrlPathHelper pathHelper = new UrlPathHelper();
-
-    public void activate(WebRequest request) {
+    public void process(WebRequest request) {
         if (request == null) {
             setViewComponent(null);
             return;
         }
 
-        String path = pathHelper.getPathWithinApplication(WebRequestUtils.toServletRequest(request));
+        String path = WebRequestUtils.getPath(request);
         path = PathUtils.normalize(path);
-
         View view = getOrCreateView(path);
         if (view != null) {
-            String url = WebRequestUtils.getUrl(request);
-            setRequestUrl(url);
 
-            view.activated(request);
+            view.refresh(request);
 
             setViewComponent(view.getComponent());
         }
-
-
     }
 
-    public String getRequestUrl() {
-        return requestUrl;
+    public String getRedirectUrl(WebRequest request) {
+        return (String) request.getAttribute(REDIRECT_URL, WebRequest.SCOPE_REQUEST);
     }
 
-    private void setRequestUrl(String requestUrl) {
-        this.requestUrl = requestUrl;
+    public void setRedirectUrl(WebRequest request, String redirectUrl) {
+        request.setAttribute(REDIRECT_URL, redirectUrl, WebRequest.SCOPE_REQUEST);
+    }
+
+    public void redirectTo(String url) {
+        WebRequest request = WebRequestUtils.getCurrentWebRequest();
+        setRedirectUrl(request, url);
     }
 
     public void init(WebRequest request) { }

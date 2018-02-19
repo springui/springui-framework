@@ -23,8 +23,8 @@ public interface DataProvider<T> {
     }
 
     default T getItem(Object key) {
-        return fetch().filter(it -> Objects.equals(getKey(it), key))
-                .findFirst().
-                        orElse(null);
+        return fetch()
+                .filter(it -> Objects.equals(getKey(it), key))
+                .findFirst().orElse(null);
     }
 }

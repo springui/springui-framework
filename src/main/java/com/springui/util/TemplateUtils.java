@@ -30,7 +30,7 @@ public class TemplateUtils {
     }
 
     public static String resolveTemplate(ThemeResolver themeResolver, Component component) {
-        WebRequest request = WebRequestUtils.getCurrentRequest();
+        WebRequest request = WebRequestUtils.getCurrentWebRequest();
         return resolveTemplate(request, themeResolver, component);
     }
 }

@@ -21,6 +21,23 @@ public final class WebRequestUtils {
         }
     }
 
+    public static WebRequest toWebRequest(RequestAttributes requestAttributes) {
+        if (requestAttributes instanceof WebRequest) {
+            return (WebRequest) requestAttributes;
+        }
+
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            return HttpServletRequestUtils.toWebRequest(((ServletRequestAttributes) requestAttributes).getRequest());
+        }
+
+        throw new IllegalArgumentException();
+    }
+
+    public static WebRequest getCurrentWebRequest() {
+        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+        return toWebRequest(requestAttributes);
+    }
+
     private static String getQueryString(ServletWebRequest request) {
         return HttpServletRequestUtils.getQueryString((HttpServletRequest) request.getNativeRequest());
     }
@@ -58,18 +75,16 @@ public final class WebRequestUtils {
         }
     }
 
-    public static WebRequest getCurrentRequest() {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
+    public static String getPath(ServletWebRequest request) {
+        return HttpServletRequestUtils.getPath((HttpServletRequest) request.getNativeRequest());
+    }
 
-        if (requestAttributes instanceof WebRequest) {
-            return (WebRequest) requestAttributes;
+    public static String getPath(WebRequest request) {
+        if (request instanceof ServletWebRequest) {
+            return getPath((ServletWebRequest) request);
+        } else {
+            throw new IllegalArgumentException();
         }
-
-        if (requestAttributes instanceof ServletRequestAttributes) {
-            return HttpServletRequestUtils.toWebRequest(((ServletRequestAttributes) requestAttributes).getRequest());
-        }
-
-        return null;
     }
 
     public static MultiValueMap<String, String> getQueryParams(WebRequest request) {

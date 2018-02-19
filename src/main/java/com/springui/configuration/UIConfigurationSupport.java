@@ -2,7 +2,10 @@ package com.springui.configuration;
 
 import com.springui.thymeleaf.UIDialect;
 import com.springui.ui.UI;
-import com.springui.web.*;
+import com.springui.web.AnnotationConfigViewMappingRegistry;
+import com.springui.web.RootUIController;
+import com.springui.web.UIController;
+import com.springui.web.ViewMappingRegistry;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -17,7 +20,6 @@ import org.springframework.session.SessionRepository;
 import org.springframework.ui.context.ThemeSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
 
@@ -33,13 +35,6 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-    }
-
-    @Bean
-    protected UIDialect componentDialect() {
-        UIDialect dialect = new UIDialect();
-
-        return dialect;
     }
 
     @Bean
@@ -75,6 +70,11 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     }
 
     @Bean
+    protected UIDialect uiDialect() {
+        return new UIDialect();
+    }
+
+    @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnMissingBean(UI.class)
     protected UI ui() {
@@ -86,10 +86,5 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     @ConditionalOnMissingBean(UIController.class)
     protected UIController uiController() {
         return new RootUIController();
-    }
-
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addWebRequestInterceptor(new UIRequestInterceptor());
     }
 }
