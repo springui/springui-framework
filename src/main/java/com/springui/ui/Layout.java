@@ -31,7 +31,7 @@ public final class Layout extends ComponentsContainer<Component> {
     public Component setComponent(String name, Component component) {
         Component result = removeComponent(name);
         if (component != null) {
-            MapUtils.putValueOnce(components, name, component);
+            MapUtils.putOnce(components, name, component);
             component.setParent(this);
         }
 

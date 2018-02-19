@@ -68,6 +68,13 @@ public class UIConfigurationSupport implements ApplicationContextAware {
     }
 
     @Bean
+    @Scope("prototype")
+    @ConditionalOnMissingBean(ViewRegistry.class)
+    protected ViewRegistry viewRegistry() {
+        return new ViewRegistry();
+    }
+
+    @Bean
     protected UIDialect uiDialect() {
         return new UIDialect();
     }

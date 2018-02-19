@@ -71,7 +71,7 @@ public class Form extends ComponentsContainer<Form.FieldContainer> {
             FieldContainer fieldContainer =
                     fieldContainerFactory.createFieldContainer(field);
             fieldContainer.setParent(this);
-            MapUtils.putValueOnce(fields, field, fieldContainer);
+            MapUtils.putOnce(fields, field, fieldContainer);
 
             return true;
         }

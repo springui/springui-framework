@@ -8,7 +8,7 @@ import com.springui.util.WebRequestUtils;
 import com.springui.web.View;
 import com.springui.web.ViewMappingRegistry;
 import com.springui.web.ViewNotFoundException;
-import org.apache.commons.lang3.StringUtils;
+import com.springui.web.ViewRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -93,7 +93,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     private Theme theme;
 
     private ViewMappingRegistry viewMappingRegistry;
-    private final Map<String, View> viewByPath = new HashMap<>();
+    private ViewRegistry viewRegistry;
 
     private final Map<String, Component> components = new HashMap<>();
 
@@ -136,33 +136,14 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return viewMappingRegistry;
     }
 
-    @Deprecated
-    public void registerViewClass(String path, Class<? extends View> viewClass) {
-        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
-        viewMappingRegistry.register(path, viewClass);
-    }
-
-    public View getView(String path) {
-        return viewByPath.get(path);
-    }
-
-    private View getOrCreateView(String path) {
-        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
-        path = PathUtils.normalize(path);
-        Class<? extends View> viewClass = viewMappingRegistry.findViewClass(path);
-
-        if (viewClass != null) {
-            View view = getView(path);
-            if (view == null) {
-                view = BeanFactoryUtils.getPrototypeBean(applicationContext, viewClass);
-                viewByPath.put(path, view);
-            }
-
-            return view;
+    public ViewRegistry getViewRegistry() {
+        if (viewRegistry == null) {
+            viewRegistry = BeanFactoryUtils.getPrototypeBean(applicationContext, ViewRegistry.class);
         }
 
-        throw new ViewNotFoundException(path);
+        return viewRegistry;
     }
+
 
     public void process(WebRequest request) {
         if (request == null) {
@@ -171,21 +152,30 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
         String path = WebRequestUtils.getPath(request);
         path = PathUtils.normalize(path);
-        View view = getOrCreateView(path);
-        if (view != null) {
-            view.request(request);
-        }
-    }
 
-    public String getPath(Class<? extends View> viewClass) {
-        return getViewMappingRegistry().findPath(viewClass);
+        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
+        Class<? extends View> viewClass = viewMappingRegistry.findViewClass(path);
+        if (viewClass == null) {
+            throw new ViewNotFoundException(path);
+        }
+
+        ViewRegistry viewRegistry = getViewRegistry();
+        ViewRegistry.Registration registration = viewRegistry.findRegistration(path);
+        if (registration == null) {
+            View view = BeanFactoryUtils.getPrototypeBean(applicationContext, viewClass);
+            registration = viewRegistry.registerView(path, view);
+        }
+
+        registration.setOriginalRequestUrl(WebRequestUtils.getUrl(request));
+        View view = registration.getView();
+        view.request(request);
     }
 
     public String getRedirectUrl(WebRequest request) {
         return (String) request.getAttribute(REDIRECT_URL, WebRequest.SCOPE_REQUEST);
     }
 
-    public void setRedirectUrl(WebRequest request, String redirectUrl) {
+    private static void setRedirectUrl(WebRequest request, String redirectUrl) {
         request.setAttribute(REDIRECT_URL, redirectUrl, WebRequest.SCOPE_REQUEST);
     }
 

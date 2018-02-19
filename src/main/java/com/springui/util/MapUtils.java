@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public final class MapUtils {
 
-    public static <K, V> void putValueOnce(Map<K, V> map, K key, V value) {
+    public static <K, V> void putOnce(Map<K, V> map, K key, V value) {
         if (map.containsKey(key)) {
             throw new IllegalStateException(String.format("Key [%s] already exists", key));
         }
