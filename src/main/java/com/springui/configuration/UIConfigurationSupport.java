@@ -104,7 +104,7 @@ public class UIConfigurationSupport implements ApplicationContextAware {
         SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
         handlerMapping.setOrder(0);
         handlerMapping.setAlwaysUseFullPath(true);
-        handlerMapping.setUseTrailingSlashMatch(true);
+//        handlerMapping.setUseTrailingSlashMatch(true);
         Properties mappings = new Properties();
         viewMappingRegistry.getMappings().forEach((path, viewClass) -> {
             mappings.put(path, uiRequestController);

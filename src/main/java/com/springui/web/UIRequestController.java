@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.http.CacheControl;
 import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.ThemeSource;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,6 +55,12 @@ public class UIRequestController extends AbstractUIController {
         BindingResult bindingResult = dataBinder.getBindingResult();
 
         ModelAndView modelAndView = new ModelAndView();
+
+        String redirectUrl = ui.getRedirectUrl(request);
+        if (!StringUtils.isEmpty(redirectUrl)) {
+            modelAndView.setViewName("redirect:" + redirectUrl);
+            return modelAndView;
+        }
 
         // Required!
         modelAndView.addObject("org.springframework.validation.BindingResult.ui", bindingResult);

@@ -24,7 +24,7 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
         return component;
     }
 
-    protected void setComponent(C component) {
+    public void setComponent(C component) {
         this.component = component;
 
         if (component != null) {

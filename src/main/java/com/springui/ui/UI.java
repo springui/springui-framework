@@ -5,8 +5,10 @@ import com.springui.util.BeanFactoryUtils;
 import com.springui.util.HttpServletRequestUtils;
 import com.springui.util.PathUtils;
 import com.springui.util.WebRequestUtils;
+import com.springui.web.View;
 import com.springui.web.ViewMappingRegistry;
 import com.springui.web.ViewNotFoundException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -140,13 +142,23 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         viewMappingRegistry.register(path, viewClass);
     }
 
+    public View getView(String path) {
+        path = StringUtils.removeEnd(path, "/action");
+        path = StringUtils.removeEnd(path, "/upload");
+        return viewByPath.get(path);
+    }
+
+    public View getView(WebRequest request) {
+        return getView(WebRequestUtils.getPath(request));
+    }
+
     private View getOrCreateView(String path) {
         ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
         path = PathUtils.normalize(path);
         Class<? extends View> viewClass = viewMappingRegistry.findViewClass(path);
 
         if (viewClass != null) {
-            View view = viewByPath.get(path);
+            View view = getView(path);
             if (view == null) {
                 view = BeanFactoryUtils.getPrototypeBean(applicationContext, viewClass);
                 viewByPath.put(path, view);
@@ -167,8 +179,12 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         path = PathUtils.normalize(path);
         View view = getOrCreateView(path);
         if (view != null) {
-            view.process(request);
+            view.request(request);
         }
+    }
+
+    public String getPath(Class<? extends View> viewClass) {
+        return getViewMappingRegistry().findPath(viewClass);
     }
 
     public String getRedirectUrl(WebRequest request) {

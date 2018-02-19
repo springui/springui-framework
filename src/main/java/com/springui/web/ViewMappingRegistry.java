@@ -1,6 +1,5 @@
 package com.springui.web;
 
-import com.springui.ui.View;
 import org.springframework.util.Assert;
 
 import java.util.Collections;
@@ -25,12 +24,12 @@ public class ViewMappingRegistry {
         return registrations.get(path);
     }
 
-//    public String findPath(Class<? extends View> viewClass) {
-//        return registrations.entrySet().stream()
-//                .filter(it -> it.getValue().isAssignableFrom(viewClass))
-//                .map(Map.Entry::getKey)
-//                .findFirst().orElse(null);
-//    }
+    public String findPath(Class<? extends View> viewClass) {
+        return registrations.entrySet().stream()
+                .filter(it -> it.getValue().isAssignableFrom(viewClass))
+                .map(Map.Entry::getKey)
+                .findFirst().orElse(null);
+    }
 
     public Map<String, Class<? extends View>> getMappings() {
         return Collections.unmodifiableMap(registrations);

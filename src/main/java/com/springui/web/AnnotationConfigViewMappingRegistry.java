@@ -1,6 +1,5 @@
 package com.springui.web;
 
-import com.springui.ui.View;
 import com.springui.util.BeanUtils;
 import com.springui.util.ClassLoaderUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
