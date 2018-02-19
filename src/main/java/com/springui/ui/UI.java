@@ -2,6 +2,7 @@ package com.springui.ui;
 
 import com.springui.i18n.MessageSourceProvider;
 import com.springui.util.BeanFactoryUtils;
+import com.springui.util.HttpServletRequestUtils;
 import com.springui.util.PathUtils;
 import com.springui.util.WebRequestUtils;
 import com.springui.web.ViewMappingRegistry;
@@ -13,15 +14,15 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
-import org.springframework.util.Assert;
+import org.springframework.ui.context.ThemeSource;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.ThemeResolver;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.*;
 
 /**
  * @author Stephan Grundner
@@ -29,11 +30,53 @@ import java.util.Map;
 @Template("{theme}/ui/ui")
 public class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
 
+    public static class Script {
+
+        String type;
+        String src;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public String getSrc() {
+            return src;
+        }
+
+        public void setSrc(String src) {
+            this.src = src;
+        }
+
+        public Script(String type, String src) {
+            this.type = type;
+            this.src = src;
+        }
+
+        public Script(String src) {
+            this.src = src;
+        }
+
+        public Script() { }
+    }
+
     public static final String ATTRIBUTE_NAME = "ui";
     public static final String REDIRECT_URL = UI.class.getName() + "#redirectUrl";
 
     public static UI forRequest(WebRequest request) {
         return (UI) request.getAttribute(ATTRIBUTE_NAME, WebRequest.SCOPE_SESSION);
+    }
+
+    public static UI forRequest(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            return (UI) session.getAttribute(ATTRIBUTE_NAME);
+        }
+
+        return null;
     }
 
     public static UI forCurrentSession() {
@@ -51,7 +94,8 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     private final Map<String, View> viewByPath = new HashMap<>();
 
     private final Map<String, Component> components = new HashMap<>();
-    private final Map<String, Object> data = new HashMap<>();
+
+    private final Set<Script> additionalScripts = new LinkedHashSet<>();
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -67,6 +111,14 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     }
 
     public Theme getTheme() {
+        if (theme == null) {
+            ThemeSource themeSource = applicationContext.getBean(ThemeSource.class);
+            ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
+            HttpServletRequest request = HttpServletRequestUtils.getCurrentRequest();
+            String themeName = themeResolver.resolveThemeName(request);
+            return themeSource.getTheme(themeName);
+        }
+
         return theme;
     }
 
@@ -80,16 +132,6 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         }
 
         return viewMappingRegistry;
-    }
-
-    @Deprecated
-    public String getActionPath() {
-        return "action";
-    }
-
-    @Deprecated
-    public String getUploadPath() {
-        return "upload";
     }
 
     @Deprecated
@@ -142,7 +184,13 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         setRedirectUrl(request, url);
     }
 
-    public void init(WebRequest request) { }
+    private void bindTo(WebRequest request) {
+        request.setAttribute(ATTRIBUTE_NAME, this, WebRequest.SCOPE_SESSION);
+    }
+
+    public void init(WebRequest request) {
+        bindTo(request);
+    }
 
     @Override
     public final void setParent(Component parent) {
@@ -151,10 +199,6 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     public Locale getLocale() {
         return LocaleContextHolder.getLocale();
-    }
-
-    public void bindTo(WebRequest request) {
-        request.setAttribute(ATTRIBUTE_NAME, this, WebRequest.SCOPE_SESSION);
     }
 
     public Map<String, Component> getComponents() {
@@ -192,16 +236,15 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return false;
     }
 
-    public Object getData(String key) {
-        return data.get(key);
+    public Set<Script> getAdditionalScripts() {
+        return Collections.unmodifiableSet(additionalScripts);
     }
 
-    public Object setData(String key, Object data) {
-        Assert.hasText(key, "[key] must not be empty");
-        if (data == null) {
-            return this.data.remove(key);
-        } else {
-            return this.data.put(key, data);
-        }
+    public boolean addScript(Script script) {
+        return additionalScripts.add(script);
+    }
+
+    public boolean removeScript(Script script) {
+        return additionalScripts.remove(script);
     }
 }

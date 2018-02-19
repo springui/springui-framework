@@ -7,9 +7,10 @@
         <span th:text="${self.caption?.value} ?: _">
             <i class="fa fa-upload"></i>
         </span>
-        <input type="file" class="hidden"
+        <input type="file" class="_hidden"
                th:name="${token}"
-               th:data-action="@{__${self.ui.uploadPath}__(component=${self.id},token=${token})}">
+               th_data-action="@{__${self.ui.uploadPath}__(component=${self.id},token=${token})}"
+               th:data-action="${#urls.upload(self,token)}">
     </div>
 </th:block>
 </html>

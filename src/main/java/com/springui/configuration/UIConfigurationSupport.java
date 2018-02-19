@@ -2,10 +2,7 @@ package com.springui.configuration;
 
 import com.springui.thymeleaf.UIDialect;
 import com.springui.ui.UI;
-import com.springui.web.AnnotationConfigViewMappingRegistry;
-import com.springui.web.RootUIController;
-import com.springui.web.UIController;
-import com.springui.web.ViewMappingRegistry;
+import com.springui.web.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,21 +11,22 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.annotation.Order;
 import org.springframework.session.MapSessionRepository;
 import org.springframework.session.SessionRepository;
 import org.springframework.ui.context.ThemeSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import org.springframework.web.servlet.ThemeResolver;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.servlet.theme.FixedThemeResolver;
+
+import java.util.Properties;
 
 /**
  * @author Stephan Grundner
  */
 @ComponentScan("com.springui")
 @EnableConfigurationProperties
-public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements ApplicationContextAware {
+public class UIConfigurationSupport implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
@@ -82,9 +80,39 @@ public class UIConfigurationSupport extends WebMvcConfigurerAdapter implements A
     }
 
     @Bean
-    @Order(0)
-    @ConditionalOnMissingBean(UIController.class)
-    protected UIController uiController() {
-        return new RootUIController();
+    protected UIRequestController uiRequestController() {
+        return new UIRequestController();
+    }
+
+    @Bean
+    protected UIActionController uiActionController() {
+        return new UIActionController();
+    }
+
+    @Bean
+    protected UIUploadController uiUploadController() {
+        return new UIUploadController();
+    }
+
+    @Bean
+    protected SimpleUrlHandlerMapping urlHandlerMapping(
+            ViewMappingRegistry viewMappingRegistry,
+            UIRequestController uiRequestController,
+            UIActionController uiActionController,
+            UIUploadController uiUploadController) {
+
+        SimpleUrlHandlerMapping handlerMapping = new SimpleUrlHandlerMapping();
+        handlerMapping.setOrder(0);
+        handlerMapping.setAlwaysUseFullPath(true);
+        handlerMapping.setUseTrailingSlashMatch(true);
+        Properties mappings = new Properties();
+        viewMappingRegistry.getMappings().forEach((path, viewClass) -> {
+            mappings.put(path, uiRequestController);
+            mappings.put(path + "/action", uiActionController);
+            mappings.put(path + "/upload", uiUploadController);
+        });
+        handlerMapping.setMappings(mappings);
+
+        return handlerMapping;
     }
 }
