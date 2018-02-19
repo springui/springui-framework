@@ -20,7 +20,7 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
                 .iterator();
     }
 
-    public final C getComponent() {
+    public C getComponent() {
         return component;
     }
 

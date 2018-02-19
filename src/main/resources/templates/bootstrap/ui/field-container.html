@@ -3,7 +3,7 @@
       th:remove="tag">
 
 <div th:fragment="default" class="form-group">
-    <label th:for="${self.field.id}" th:text="${self.field?.caption?.value}">Label</label>
+    <label th:for="${self.field.id}" th:text="${self.field?.caption?.text}">Label</label>
     <th:block ui:replace="${self.field}" />
 </div>
 

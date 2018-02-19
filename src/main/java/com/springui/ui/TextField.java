@@ -1,5 +1,7 @@
 package com.springui.ui;
 
+import com.springui.i18n.Message;
+
 /**
  * @author Stephan Grundner
  */
@@ -17,4 +19,10 @@ public class TextField extends Field<String> {
     protected void valueChanged(String newValue, String oldValue) {
         value = newValue;
     }
+
+    public TextField(Message caption) {
+        super(caption);
+    }
+
+    public TextField() { }
 }

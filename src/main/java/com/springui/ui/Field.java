@@ -61,5 +61,9 @@ public abstract class Field<T> extends Component {
         return valueChangeListeners.remove(valueChangeListener);
     }
 
-    public Field() { }
+    protected Field(Message caption) {
+        setCaption(caption);
+    }
+
+    protected Field() { }
 }

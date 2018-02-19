@@ -5,19 +5,29 @@ import org.springframework.web.context.request.WebRequest;
 /**
  * @author Stephan Grundner
  */
-public abstract class AbstractView implements View {
+public abstract class AbstractNestedView implements View {
 
-    private Component component;
+    private SingleComponentContainer<Component> container;
 
     private boolean initialized = false;
 
     @Override
     public final Component getComponent() {
-        return component;
+        return getContainer().getComponent();
     }
 
     protected final void setComponent(Component component) {
-        this.component = component;
+        getContainer().setComponent(component);
+    }
+
+    protected abstract SingleComponentContainer<Component> createContainer();
+
+    protected final SingleComponentContainer<Component> getContainer() {
+        if (container == null) {
+            container = createContainer();
+        }
+
+        return container;
     }
 
     protected abstract void init(WebRequest request);
@@ -28,6 +38,6 @@ public abstract class AbstractView implements View {
             init(request);
         }
         UI ui = UI.forRequest(request);
-        ui.setRootComponent(component);
+        ui.setRootComponent(container);
     }
 }

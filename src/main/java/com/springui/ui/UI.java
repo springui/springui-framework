@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
+import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.WebRequest;
@@ -50,6 +51,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     private final Map<String, View> viewByPath = new HashMap<>();
 
     private final Map<String, Component> components = new HashMap<>();
+    private final Map<String, Object> data = new HashMap<>();
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -80,10 +82,12 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return viewMappingRegistry;
     }
 
+    @Deprecated
     public String getActionPath() {
         return "action";
     }
 
+    @Deprecated
     public String getUploadPath() {
         return "upload";
     }
@@ -112,17 +116,8 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         throw new ViewNotFoundException(path);
     }
 
-    protected Component getViewComponent() {
-        throw new UnsupportedOperationException();
-    }
-
-    protected void setViewComponent(Component component) {
-        setComponent(component);
-    }
-
     public void process(WebRequest request) {
         if (request == null) {
-            setViewComponent(null);
             return;
         }
 
@@ -130,10 +125,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         path = PathUtils.normalize(path);
         View view = getOrCreateView(path);
         if (view != null) {
-
-            view.refresh(request);
-
-            setViewComponent(view.getComponent());
+            view.process(request);
         }
     }
 
@@ -173,6 +165,14 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return components.get(componentId);
     }
 
+    public Component getRootComponent() {
+        return super.getComponent();
+    }
+
+    public void setRootComponent(Component component) {
+        super.setComponent(component);
+    }
+
     protected boolean attach(Component component) {
         if (components.put(component.getId(), component) == null) {
 //            component.setUi(this);
@@ -190,5 +190,18 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         }
 
         return false;
+    }
+
+    public Object getData(String key) {
+        return data.get(key);
+    }
+
+    public Object setData(String key, Object data) {
+        Assert.hasText(key, "[key] must not be empty");
+        if (data == null) {
+            return this.data.remove(key);
+        } else {
+            return this.data.put(key, data);
+        }
     }
 }
