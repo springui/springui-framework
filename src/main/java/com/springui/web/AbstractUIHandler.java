@@ -9,8 +9,10 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,20 +20,20 @@ import java.util.Date;
 /**
  * @author Stephan Grundner
  */
-public abstract class AbstractUIController implements Controller {
+public abstract class AbstractUIHandler extends AbstractController implements Controller {
 
-    protected WebDataBinder bindUi(UI ui, WebRequest request) {
+    protected WebDataBinder bindUi(UI ui, HttpServletRequest request) {
         ServletRequestDataBinder dataBinder = new ServletRequestDataBinder(ui, "self");
         dataBinder.setAutoGrowNestedPaths(false);
         dataBinder.setAutoGrowCollectionLimit(0);
 //        dataBinder.initDirectFieldAccess();
         dataBinder.initBeanPropertyAccess();
         initBinder(ui, dataBinder);
-        dataBinder.bind(WebRequestUtils.toServletRequest(request));
+        dataBinder.bind(request);
         return dataBinder;
     }
 
-    protected void initBinder(UI ui, WebDataBinder webDataBinder) {
+    protected void initBinder(UI ui, ServletRequestDataBinder webDataBinder) {
         ui.getComponents().forEach((id, component) -> {
             if (component instanceof Field) {
 
@@ -47,10 +49,15 @@ public abstract class AbstractUIController implements Controller {
         });
     }
 
-    protected void initBinder(WebDataBinder webDataBinder) {
+    protected void initBinder(ServletRequestDataBinder webDataBinder) {
         Object target = webDataBinder.getTarget();
         if (target instanceof UI) {
             initBinder((UI) target, webDataBinder);
         }
+    }
+
+    public AbstractUIHandler() {
+        setSynchronizeOnSession(true);
+//        setRequireSession(true);
     }
 }

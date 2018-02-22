@@ -17,9 +17,11 @@ public class Urls {
 
     public String action(HttpServletRequest request, Component component) {
         String path = pathHelper.getPathWithinApplication(request);
+        String returnUrl = HttpServletRequestUtils.getUrl(request);
         return UriComponentsBuilder.fromPath(path)
-                .pathSegment("action")
+//                .pathSegment("action")
                 .queryParam("component", component.getId())
+                .queryParam("return-to", returnUrl)
                 .toUriString();
     }
 

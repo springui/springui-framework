@@ -3,13 +3,12 @@
       th:remove="tag">
 
 <th:block th:with="token=${#ids.seq('upload')}">
-    <div class="btn btn-primary btn-file">
+    <div class="btn btn-primary" style="position:relative;overflow:hidden;">
         <span th:text="${self.caption?.value} ?: _">
-            <i class="fa fa-upload"></i>
+            <i class="fa fa-upload"></i>&nbsp;
         </span>
-        <input type="file" class="_hidden"
+        <input type="file" style="position:absolute;opacity:0;right:0;top:0;"
                th:name="${token}"
-               th_data-action="@{__${self.ui.uploadPath}__(component=${self.id},token=${token})}"
                th:data-action="${#urls.upload(self,token)}">
     </div>
 </th:block>

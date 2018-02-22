@@ -1,7 +1,10 @@
 package com.springui.util;
 
-import com.springui.ui.Component;
+import com.springui.ui.Template;
+import com.springui.web.TemplateProvider;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.PropertyPlaceholderHelper;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ThemeResolver;
 
@@ -13,24 +16,25 @@ import java.util.Properties;
  */
 public class TemplateUtils {
 
-    public static String resolveTemplate(String theme, Component component) {
+    public static String resolveTemplate(String theme, TemplateProvider templateProvider) {
         PropertyPlaceholderHelper placeholderHelper =
                 new PropertyPlaceholderHelper("{", "}");
         Properties properties = new Properties();
         properties.setProperty("theme", theme);
-        String template = component.getTemplate();
+
+        String template = templateProvider.getTemplate();
+        if (StringUtils.isEmpty(template)) {
+            Template annotation = AnnotationUtils
+                    .findAnnotation(templateProvider.getClass(), Template.class);
+            template = (String) AnnotationUtils.getValue(annotation, "name");
+        }
+
         template = placeholderHelper.replacePlaceholders(template, properties);
         template = SlashUtils.removeLeadingAndTrailingSlashes(template);
         return template;
     }
 
-    public static String resolveTemplate(WebRequest request, ThemeResolver themeResolver, Component component) {
-        HttpServletRequest servletRequest = WebRequestUtils.toServletRequest(request);
-        return resolveTemplate(themeResolver.resolveThemeName(servletRequest), component);
-    }
-
-    public static String resolveTemplate(ThemeResolver themeResolver, Component component) {
-        WebRequest request = WebRequestUtils.getCurrentWebRequest();
-        return resolveTemplate(request, themeResolver, component);
+    public static String resolveTemplate(HttpServletRequest request, ThemeResolver themeResolver, TemplateProvider templateProvider) {
+        return resolveTemplate(themeResolver.resolveThemeName(request), templateProvider);
     }
 }

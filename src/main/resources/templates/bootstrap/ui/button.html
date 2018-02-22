@@ -4,6 +4,7 @@
 <a href="#" class="btn btn-primary component"
    th:classappend="${#strings.setJoin(self.styles, ' ')}"
    th:data-events="'click'"
+   th_data-action="${#urls.action(self)}"
    th:data-action="${#urls.action(self)}">
     <th:block th:text="${self.caption?.text}" />
 </a>

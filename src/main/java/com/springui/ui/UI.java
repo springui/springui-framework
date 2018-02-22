@@ -1,14 +1,13 @@
 package com.springui.ui;
 
 import com.springui.i18n.MessageSourceProvider;
-import com.springui.util.BeanFactoryUtils;
-import com.springui.util.HttpServletRequestUtils;
-import com.springui.util.PathUtils;
-import com.springui.util.WebRequestUtils;
-import com.springui.web.View;
-import com.springui.web.ViewMappingRegistry;
-import com.springui.web.ViewNotFoundException;
-import com.springui.web.ViewRegistry;
+import com.springui.util.*;
+import com.springui.view.View;
+import com.springui.view.ViewMappingRegistry;
+import com.springui.view.ViewMappingRegistryFactory;
+import com.springui.web.TemplateProvider;
+import com.springui.web.UIContext;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -17,10 +16,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
 import org.springframework.ui.context.ThemeSource;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.util.AntPathMatcher;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ThemeResolver;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,7 +31,7 @@ import java.util.*;
  * @author Stephan Grundner
  */
 @Template("{theme}/ui/ui")
-public class UI extends SingleComponentContainer<Component> implements ApplicationContextAware, MessageSourceProvider {
+public class UI implements ApplicationContextAware, MessageSourceProvider, TemplateProvider {
 
     public static class Script {
 
@@ -68,32 +69,32 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     public static final String ATTRIBUTE_NAME = "ui";
     public static final String REDIRECT_URL = UI.class.getName() + "#redirectUrl";
 
-    public static UI forRequest(WebRequest request) {
-        return (UI) request.getAttribute(ATTRIBUTE_NAME, WebRequest.SCOPE_SESSION);
-    }
-
     public static UI forRequest(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            return (UI) session.getAttribute(ATTRIBUTE_NAME);
-        }
-
-        return null;
+        UIContext context = UIContext.forSession(request);
+        return context.getUi(request);
     }
 
+    public static UI forRequest(WebRequest request) {
+        return forRequest(WebRequestUtils.toServletRequest(request));
+    }
+
+    @Deprecated
     public static UI forCurrentSession() {
-        RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
-        return (UI) requestAttributes.getAttribute(ATTRIBUTE_NAME, RequestAttributes.SCOPE_SESSION);
+        return forRequest(HttpServletRequestUtils.getCurrentRequest());
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(UI.class);
 
     private ApplicationContext applicationContext;
+    private UrlPathHelper pathHelper = new UrlPathHelper();
 
+    private String template;
     private Theme theme;
 
+    private Component rootComponent;
+
     private ViewMappingRegistry viewMappingRegistry;
-    private ViewRegistry viewRegistry;
+    private final Map<String, View> viewByPath = new HashMap<>();
 
     private final Map<String, Component> components = new HashMap<>();
 
@@ -112,13 +113,19 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
         return getApplicationContext();
     }
 
+    @Override
+    public String getTemplate() {
+        return template;
+    }
+
+    protected void setTemplate(String template) {
+        this.template = template;
+    }
+
     public Theme getTheme() {
         if (theme == null) {
-            ThemeSource themeSource = applicationContext.getBean(ThemeSource.class);
-            ThemeResolver themeResolver = applicationContext.getBean(ThemeResolver.class);
             HttpServletRequest request = HttpServletRequestUtils.getCurrentRequest();
-            String themeName = themeResolver.resolveThemeName(request);
-            return themeSource.getTheme(themeName);
+            return RequestContextUtils.getTheme(request);
         }
 
         return theme;
@@ -130,49 +137,68 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     public ViewMappingRegistry getViewMappingRegistry() {
         if (viewMappingRegistry == null) {
-            viewMappingRegistry = applicationContext.getBean(ViewMappingRegistry.class);
+            ViewMappingRegistryFactory viewMappingRegistryFactory =
+                    applicationContext.getBean(ViewMappingRegistryFactory.class);
+            viewMappingRegistry = viewMappingRegistryFactory.createViewMappingRegistry(this);
         }
 
         return viewMappingRegistry;
     }
 
-    public ViewRegistry getViewRegistry() {
-        if (viewRegistry == null) {
-            viewRegistry = BeanFactoryUtils.getPrototypeBean(applicationContext, ViewRegistry.class);
-        }
-
-        return viewRegistry;
+    public UIContext getContext() {
+        HttpServletRequest request =
+                HttpServletRequestUtils.getCurrentRequest();
+        return UIContext.forSession(request);
     }
 
+    public String getPath() {
+        UIContext context = getContext();
+        return context.getPath(this);
+    }
 
-    public void process(WebRequest request) {
+    private View getOrCreateView(HttpServletRequest request) {
+        String fullPath = pathHelper.getPathWithinApplication(request);
+        String uiPath = this.getPath();
+        uiPath = PathUtils.normalize(uiPath);
+        String viewPath = StringUtils.removeStart(fullPath, uiPath);
+        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
+        ViewMappingRegistry.Mapping mapping = viewMappingRegistry.findMapping(viewPath);
+        if (mapping != null) {
+            AntPathMatcher pathMatcher = new AntPathMatcher();
+            String path = pathHelper.getPathWithinApplication(request);
+            String tail = pathMatcher.extractPathWithinPattern(mapping.getPattern(), path);
+            path = StringUtils.removeEnd(path, tail);
+            View view = viewByPath.get(path);
+            if (view == null) {
+                view = BeanFactoryUtils.getPrototypeBean(applicationContext, mapping.getViewClass());
+                MapUtils.putOnce(viewByPath, path, view);
+            }
+
+            return view;
+        }
+
+        return null;
+    }
+
+    public void process(HttpServletRequest request) {
         if (request == null) {
             return;
         }
 
-        String path = WebRequestUtils.getPath(request);
-        path = PathUtils.normalize(path);
-
-        ViewMappingRegistry viewMappingRegistry = getViewMappingRegistry();
-        Class<? extends View> viewClass = viewMappingRegistry.findViewClass(path);
-        if (viewClass == null) {
-            throw new ViewNotFoundException(path);
+        String path = pathHelper.getPathWithinApplication(request);
+        View view = getOrCreateView(request);
+        if (view == null) {
+            throw new RuntimeException("Unable to create view for path [" + path + "]");
         }
-
-        ViewRegistry viewRegistry = getViewRegistry();
-        ViewRegistry.Registration registration = viewRegistry.findRegistration(path);
-        if (registration == null) {
-            View view = BeanFactoryUtils.getPrototypeBean(applicationContext, viewClass);
-            registration = viewRegistry.registerView(path, view);
-        }
-
-        registration.setOriginalRequestUrl(WebRequestUtils.getUrl(request));
-        View view = registration.getView();
-        view.request(request);
+        view.request(new ServletWebRequest(request));
     }
 
     public String getRedirectUrl(WebRequest request) {
         return (String) request.getAttribute(REDIRECT_URL, WebRequest.SCOPE_REQUEST);
+    }
+
+    public String getRedirectUrl(HttpServletRequest request) {
+        return getRedirectUrl(HttpServletRequestUtils.toWebRequest(request));
     }
 
     private static void setRedirectUrl(WebRequest request, String redirectUrl) {
@@ -185,16 +211,12 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     }
 
     private void bindTo(WebRequest request) {
-        request.setAttribute(ATTRIBUTE_NAME, this, WebRequest.SCOPE_SESSION);
+        HttpSession session = WebRequestUtils.toServletRequest(request).getSession();
+        session.setAttribute(ATTRIBUTE_NAME, this);
     }
 
     public void init(WebRequest request) {
         bindTo(request);
-    }
-
-    @Override
-    public final void setParent(Component parent) {
-        throw new RuntimeException("UI must not have a parent");
     }
 
     public Locale getLocale() {
@@ -210,17 +232,17 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
     }
 
     public Component getRootComponent() {
-        return super.getComponent();
+        return rootComponent;
     }
 
-    public void setRootComponent(Component component) {
-        super.setComponent(component);
+    public void setRootComponent(Component rootComponent) {
+        this.rootComponent = rootComponent;
+        rootComponent.walk(this::attach);
     }
 
     protected boolean attach(Component component) {
         if (components.put(component.getId(), component) == null) {
-//            component.setUi(this);
-            component.attached();
+            component.setUi(this);
             return true;
         }
 
@@ -229,7 +251,7 @@ public class UI extends SingleComponentContainer<Component> implements Applicati
 
     protected boolean detach(Component component) {
         if (components.remove(component.getId(), component)) {
-            component.detached();
+            component.setUi(null);
             return true;
         }
 

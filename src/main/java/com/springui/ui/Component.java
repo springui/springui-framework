@@ -3,6 +3,7 @@ package com.springui.ui;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
 import com.springui.i18n.Message;
+import com.springui.web.TemplateProvider;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 /**
  * @author Stephan Grundner
  */
-public abstract class Component {
+public abstract class Component implements TemplateProvider {
 
     private String id;
     private String template;
@@ -24,6 +25,8 @@ public abstract class Component {
     private int tabIndex;
     private Message caption;
     private Message message;
+
+    private UI ui;
 
     private final Set<String> styles = new LinkedHashSet<>();
 
@@ -42,12 +45,6 @@ public abstract class Component {
     }
 
     public String getTemplate() {
-        if (StringUtils.isEmpty(template)) {
-            Template annotation = AnnotationUtils
-                    .findAnnotation(this.getClass(), Template.class);
-            return (String) AnnotationUtils.getValue(annotation, "name");
-        }
-
         return template;
     }
 
@@ -55,29 +52,26 @@ public abstract class Component {
         this.template = template;
     }
 
-    protected Component findRoot() {
-        if (parent != null) {
-            return parent.findRoot();
-        } else {
-            return this;
-        }
-    }
-
     public UI getUi() {
-        UI ui = UI.forCurrentSession();
-        if (ui == null) {
-            Component root = findRoot();
-            if (root instanceof UI) {
-                ui = (UI) root;
-            }
-        }
-
         return ui;
     }
 
-    protected void attached() {}
+    protected void setUi(UI ui) {
+        this.ui = ui;
+    }
 
-    protected void detached() {}
+    private UI findUi() {
+        Component component = this;
+        while (component != null) {
+            UI ui = component.ui;
+            if (ui != null) {
+                return ui;
+            }
+            component = component.parent;
+        }
+
+        return null;
+    }
 
     protected void walk(ComponentVisitor visitor) {
         visitor.visit(this);
@@ -90,10 +84,20 @@ public abstract class Component {
     protected void setParent(Component parent) {
         this.parent = parent;
 
-        Component root = findRoot();
-        if (root instanceof UI) {
-            walk(((UI) root)::attach);
+        if (parent != null) {
+            UI ui = findUi();
+            if (ui != null) {
+                ui.attach(this);
+            }
+        } else {
+            if (ui != null) {
+                ui.detach(this);
+            }
         }
+    }
+
+    public boolean isAttached() {
+        return getUi() != null;
     }
 
     public boolean isDisabled() {

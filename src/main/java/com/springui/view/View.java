@@ -1,4 +1,4 @@
-package com.springui.web;
+package com.springui.view;
 
 import com.springui.ui.Component;
 import org.springframework.util.MultiValueMap;

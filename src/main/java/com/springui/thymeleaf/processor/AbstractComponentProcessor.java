@@ -48,14 +48,6 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
             Theme theme = ui.getTheme();
             template = TemplateUtils.resolveTemplate(theme.getName(), component);
 
-//            IEngineConfiguration configuration = context.getConfiguration();
-//            TemplateResolution resolution = configuration.getTemplateResolvers().stream()
-//                .map(it -> it.resolveTemplate(configuration, null, template, null))
-//                .filter(Objects::nonNull)
-//                .findFirst().orElse(null);
-//            ITemplateResource resource = resolution.getTemplateResource();
-//            boolean exists = resource.exists();
-
             if (StringUtils.isEmpty(template)) {
                 throw new TemplateProcessingException(String.format("Unable to resolve template for expression %s",
                         expression.getStringRepresentation()));

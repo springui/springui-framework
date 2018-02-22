@@ -15,7 +15,7 @@ import java.lang.annotation.*;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Documented
-public @interface ViewMapping {
+public @interface UIMapping {
 
     @AliasFor("path")
     String[] value() default {};

@@ -1,8 +1,7 @@
-package com.springui.web;
+package com.springui.view;
 
 import com.springui.ui.Component;
 import com.springui.ui.UI;
-import com.springui.web.View;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.WebRequest;
 
