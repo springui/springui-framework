@@ -3,7 +3,6 @@ package com.springui.view;
 import com.springui.ui.Component;
 import com.springui.ui.SingleComponentContainer;
 import com.springui.ui.UI;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.web.context.request.WebRequest;
 public abstract class AbstractNestedView implements View {
 
     private SingleComponentContainer<Component> container;
-    private MultiValueMap<String, String> queryParams;
 
     private boolean initialized = false;
 
@@ -33,15 +31,6 @@ public abstract class AbstractNestedView implements View {
         }
 
         return container;
-    }
-
-    @Override
-    public MultiValueMap<String, String> getQueryParams() {
-        return queryParams;
-    }
-
-    public void setQueryParams(MultiValueMap<String, String> queryParams) {
-        this.queryParams = queryParams;
     }
 
     protected abstract void init(WebRequest request);

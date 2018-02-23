@@ -1,7 +1,6 @@
 package com.springui.view;
 
 import com.springui.ui.Component;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -16,8 +15,6 @@ public interface View {
 
         throw new IllegalStateException("View is no component");
     }
-
-    MultiValueMap<String, String> getQueryParams();
 
     void request(WebRequest request);
 }

@@ -3,7 +3,6 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/pagination")
 public class Pagination extends Component {
 
     private int pages;

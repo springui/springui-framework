@@ -3,12 +3,9 @@ package com.springui.web;
 import com.springui.ui.DateField;
 import com.springui.ui.Field;
 import com.springui.ui.UI;
-import com.springui.util.WebRequestUtils;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.mvc.Controller;
 
@@ -26,6 +23,8 @@ public abstract class AbstractUIHandler extends AbstractController implements Co
         ServletRequestDataBinder dataBinder = new ServletRequestDataBinder(ui, "self");
         dataBinder.setAutoGrowNestedPaths(false);
         dataBinder.setAutoGrowCollectionLimit(0);
+//        dataBinder.setIgnoreInvalidFields(true);
+        dataBinder.setIgnoreUnknownFields(true);
 //        dataBinder.initDirectFieldAccess();
         dataBinder.initBeanPropertyAccess();
         initBinder(ui, dataBinder);

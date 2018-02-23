@@ -33,7 +33,12 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
     }
 
     @Override
-    public final void walk(ComponentVisitor visitor) {
+    protected final void addComponent(C component) {
+        setComponent(component);
+    }
+
+    @Override
+    public void walk(ComponentVisitor visitor) {
         super.walk(visitor);
         if (component != null) {
             component.walk(visitor);

@@ -5,17 +5,14 @@ import com.springui.i18n.Message;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/text")
 public class Text extends Component {
 
     private Message message;
 
-    @Override
     public Message getMessage() {
         return message;
     }
 
-    @Override
     public void setMessage(Message message) {
         this.message = message;
     }

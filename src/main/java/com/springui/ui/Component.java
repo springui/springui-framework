@@ -3,8 +3,6 @@ package com.springui.ui;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
 import com.springui.i18n.Message;
-import com.springui.web.TemplateProvider;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.Collections;
@@ -15,16 +13,15 @@ import java.util.UUID;
 /**
  * @author Stephan Grundner
  */
-public abstract class Component implements TemplateProvider {
+public abstract class Component {
 
     private String id;
-    private String template;
+//    private String template;
     private Component parent;
 
     private boolean disabled;
-    private int tabIndex;
     private Message caption;
-    private Message message;
+//    private Message message;
 
     private UI ui;
 
@@ -44,19 +41,23 @@ public abstract class Component implements TemplateProvider {
         this.id = id;
     }
 
-    public String getTemplate() {
-        return template;
-    }
+//    public String getTemplate() {
+//        return template;
+//    }
 
-    public void setTemplate(String template) {
-        this.template = template;
-    }
+//    protected void setTemplate(String template) {
+//        this.template = template;
+//    }
 
     public UI getUi() {
         return ui;
     }
 
-    protected void setUi(UI ui) {
+    /**
+     * Only accessible from {@link UI}.
+     * @see UI#setRootComponent(Component)
+     */
+    void setUi(UI ui) {
         this.ui = ui;
     }
 
@@ -73,7 +74,7 @@ public abstract class Component implements TemplateProvider {
         return null;
     }
 
-    protected void walk(ComponentVisitor visitor) {
+    public void walk(ComponentVisitor visitor) {
         visitor.visit(this);
     }
 
@@ -81,13 +82,14 @@ public abstract class Component implements TemplateProvider {
         return parent;
     }
 
-    protected void setParent(Component parent) {
+    protected final void setParent(Component parent) {
         this.parent = parent;
 
         if (parent != null) {
             UI ui = findUi();
             if (ui != null) {
-                ui.attach(this);
+                walk(ui::attach);
+//                ui.attach(this);
             }
         } else {
             if (ui != null) {
@@ -108,14 +110,6 @@ public abstract class Component implements TemplateProvider {
         this.disabled = disabled;
     }
 
-    public int getTabIndex() {
-        return tabIndex;
-    }
-
-    public void setTabIndex(int tabIndex) {
-        this.tabIndex = tabIndex;
-    }
-
     public Message getCaption() {
         return caption;
     }
@@ -124,13 +118,13 @@ public abstract class Component implements TemplateProvider {
         this.caption = caption;
     }
 
-    public Message getMessage() {
-        return message;
-    }
-
-    public void setMessage(Message message) {
-        this.message = message;
-    }
+//    public Message getMessage() {
+//        return message;
+//    }
+//
+//    public void setMessage(Message message) {
+//        this.message = message;
+//    }
 
     public Set<String> getStyles() {
         return Collections.unmodifiableSet(styles);

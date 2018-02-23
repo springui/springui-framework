@@ -6,7 +6,6 @@ import com.springui.i18n.Message;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/button")
 public class Trigger extends Component {
 
     public Trigger(Message caption, ActionListener actionListener) {

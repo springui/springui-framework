@@ -5,7 +5,7 @@ import com.springui.util.*;
 import com.springui.view.View;
 import com.springui.view.ViewMappingRegistry;
 import com.springui.view.ViewMappingRegistryFactory;
-import com.springui.web.TemplateProvider;
+import com.springui.web.ErrorHandler;
 import com.springui.web.UIContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -15,23 +15,19 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.context.Theme;
-import org.springframework.ui.context.ThemeSource;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/ui")
-public class UI implements ApplicationContextAware, MessageSourceProvider, TemplateProvider {
+public abstract class UI implements ApplicationContextAware, MessageSourceProvider {
 
     public static class Script {
 
@@ -66,7 +62,6 @@ public class UI implements ApplicationContextAware, MessageSourceProvider, Templ
         public Script() { }
     }
 
-    public static final String ATTRIBUTE_NAME = "ui";
     public static final String REDIRECT_URL = UI.class.getName() + "#redirectUrl";
 
     public static UI forRequest(HttpServletRequest request) {
@@ -88,15 +83,16 @@ public class UI implements ApplicationContextAware, MessageSourceProvider, Templ
     private ApplicationContext applicationContext;
     private UrlPathHelper pathHelper = new UrlPathHelper();
 
-    private String template;
     private Theme theme;
 
     private Component rootComponent;
+    private ErrorHandler errorHandler;
 
     private ViewMappingRegistry viewMappingRegistry;
     private final Map<String, View> viewByPath = new HashMap<>();
 
     private final Map<String, Component> components = new HashMap<>();
+    private final Deque<Overlay> overlays = new LinkedList<>();
 
     private final Set<Script> additionalScripts = new LinkedHashSet<>();
 
@@ -111,15 +107,6 @@ public class UI implements ApplicationContextAware, MessageSourceProvider, Templ
 
     public MessageSource getMessageSource() {
         return getApplicationContext();
-    }
-
-    @Override
-    public String getTemplate() {
-        return template;
-    }
-
-    protected void setTemplate(String template) {
-        this.template = template;
     }
 
     public Theme getTheme() {
@@ -210,14 +197,7 @@ public class UI implements ApplicationContextAware, MessageSourceProvider, Templ
         setRedirectUrl(request, url);
     }
 
-    private void bindTo(WebRequest request) {
-        HttpSession session = WebRequestUtils.toServletRequest(request).getSession();
-        session.setAttribute(ATTRIBUTE_NAME, this);
-    }
-
-    public void init(WebRequest request) {
-        bindTo(request);
-    }
+    public abstract void init(WebRequest request);
 
     public Locale getLocale() {
         return LocaleContextHolder.getLocale();
@@ -256,6 +236,30 @@ public class UI implements ApplicationContextAware, MessageSourceProvider, Templ
         }
 
         return false;
+    }
+
+    public Collection<Overlay> getOverlays() {
+        return Collections.unmodifiableCollection(overlays);
+    }
+
+    public void displayOverlay(Overlay overlay) {
+        overlays.remove(overlay);
+        overlays.addFirst(overlay);
+
+        overlay.walk(this::attach);
+    }
+
+    public void hideOverlay(Overlay overlay) {
+        overlays.remove(overlay);
+        detach(overlay);
+    }
+
+    public ErrorHandler getErrorHandler() {
+        return errorHandler;
+    }
+
+    public void setErrorHandler(ErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
     }
 
     public Set<Script> getAdditionalScripts() {

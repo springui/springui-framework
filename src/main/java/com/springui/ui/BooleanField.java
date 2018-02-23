@@ -3,7 +3,6 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/boolean-field")
 public class BooleanField extends Field<Boolean> {
 
     private Boolean value;

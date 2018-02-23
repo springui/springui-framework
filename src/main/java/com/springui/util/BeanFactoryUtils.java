@@ -9,6 +9,10 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+
 /**
  * @author Stephan Grundner
  */
@@ -60,5 +64,10 @@ public class BeanFactoryUtils {
         }
 
         return beanFactory.getBean(type, args);
+    }
+
+    public static <T> Collection<T> getSingletonBeans(ListableBeanFactory beanFactory, Class<T> type) {
+        Map<String, T> beans = beanFactory.getBeansOfType(type, false, true);
+        return Collections.unmodifiableCollection(beans.values());
     }
 }

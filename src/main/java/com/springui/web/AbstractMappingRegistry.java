@@ -1,7 +1,5 @@
 package com.springui.web;
 
-import com.springui.ui.UI;
-
 /**
  * @author Stephan Grundner
  */

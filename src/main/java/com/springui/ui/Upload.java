@@ -6,15 +6,12 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * @author Stephan Grundner
  */
-@Template(Upload.DEFAULT)
 public class Upload extends Component {
 
     public interface UploadHandler {
 
         void receive(WebRequest request, MultipartFile multipartFile);
     }
-
-    public static final String DEFAULT = "{theme}/ui/upload";
 
     private UploadHandler handler;
 

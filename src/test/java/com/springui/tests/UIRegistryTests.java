@@ -19,6 +19,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.request.WebRequest;
 
 /**
  * @author Stephan Grundner
@@ -53,6 +54,8 @@ public class UIRegistryTests {
 
     private static class TestUI extends UI {
 
+        @Override
+        public void init(WebRequest request) { }
     }
 
     @Autowired

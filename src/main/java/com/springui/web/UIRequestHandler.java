@@ -13,13 +13,15 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.ThemeResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Stephan Grundner
@@ -35,7 +37,9 @@ public class UIRequestHandler extends AbstractUIHandler {
     @Autowired
     private ThemeResolver themeResolver;
 
-    @ModelAttribute(UI.ATTRIBUTE_NAME)
+    @Autowired
+    private List<TemplateResolver> templateResolvers;
+
     protected UI createUi(HttpServletRequest request) {
         UI ui = UI.forRequest(request);
         if (ui == null) {
@@ -59,7 +63,7 @@ public class UIRequestHandler extends AbstractUIHandler {
         String event = params.getFirst("event");
         String returnUrl = params.getFirst("return-to");
         Component component = ui.getComponent(componentId);
-        component.performAction(new Action(webRequest, componentId, event));
+        component.performAction(new Action(componentId, event));
 
         String redirectUrl = ui.getRedirectUrl(webRequest);
         if (!StringUtils.isEmpty(redirectUrl)) {
@@ -90,7 +94,16 @@ public class UIRequestHandler extends AbstractUIHandler {
         BindingResult bindingResult = dataBinder.getBindingResult();
         modelAndView.addObject("org.springframework.validation.BindingResult.ui", bindingResult);
 
-        String template = TemplateUtils.resolveTemplate(request, themeResolver, ui);
+        String theme = themeResolver.resolveThemeName(request);
+//        String template = TemplateUtils.resolveTemplate(request, themeResolver, ui);
+        String template = templateResolvers.stream()
+                .sorted(Comparator.comparingInt(TemplateResolver::getPriority))
+                .filter(it -> it.accept(theme))
+                .map(it -> it.resolveTemplate(theme, ui))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+
         modelAndView.setViewName(template);
         modelAndView.addObject("self", ui);
 
@@ -115,11 +128,20 @@ public class UIRequestHandler extends AbstractUIHandler {
             ui = createUi(request);
         }
 
-        String requestMethod = request.getMethod();
-        if ("POST".equalsIgnoreCase(requestMethod)) {
-            handlePostRequest(ui, request, response);
-        } else if ("GET".equalsIgnoreCase(requestMethod)) {
-            return handleGetRequest(ui, request, response);
+        try {
+            String requestMethod = request.getMethod();
+            if ("POST".equalsIgnoreCase(requestMethod)) {
+                handlePostRequest(ui, request, response);
+            } else if ("GET".equalsIgnoreCase(requestMethod)) {
+                return handleGetRequest(ui, request, response);
+            }
+        } catch (Exception e) {
+            ErrorHandler errorHandler = ui.getErrorHandler();
+            if (errorHandler != null) {
+                errorHandler.handleError(request, response, e);
+            } else {
+                throw e;
+            }
         }
 
         return null;

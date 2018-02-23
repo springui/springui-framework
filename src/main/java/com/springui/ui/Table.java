@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/table")
 public class Table<T> extends Component {
 
     public interface CellComponentProvider<T, V> {
@@ -138,7 +137,6 @@ public class Table<T> extends Component {
         }
     }
 
-    @Template("{theme}/ui/table-row")
     public static class Row<T> extends Component {
 
         private T object;

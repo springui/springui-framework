@@ -37,7 +37,7 @@ dependencies {
 //    compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
 
-    compile group: 'org.springframework.session', name: 'spring-session', version: springSessionVersion
+//    compile group: 'org.springframework.session', name: 'spring-session', version: springSessionVersion
 
     compile group: 'org.thymeleaf', name: 'thymeleaf', version: '3.0.1.RELEASE'
     compile group: 'org.thymeleaf', name: 'thymeleaf-spring4', version: '3.0.6.RELEASE'

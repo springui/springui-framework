@@ -1,12 +1,12 @@
 package com.springui.configuration;
 
 import com.springui.thymeleaf.UIDialect;
+import com.springui.ui.UI;
 import com.springui.view.AnnotationConfigViewMappingRegistryFactory;
 import com.springui.view.ViewMappingRegistryFactory;
-import com.springui.web.AnnotationConfigUIMappingRegistry;
-import com.springui.web.UIMappingRegistry;
-import com.springui.web.UIRequestHandler;
+import com.springui.web.*;
 import org.apache.tomcat.util.http.LegacyCookieProcessor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
@@ -15,9 +15,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.session.MapSessionRepository;
-import org.springframework.session.SessionRepository;
-import org.springframework.session.config.annotation.web.http.EnableSpringHttpSession;
 import org.springframework.ui.context.ThemeSource;
 import org.springframework.ui.context.support.ResourceBundleThemeSource;
 import org.springframework.web.servlet.ThemeResolver;
@@ -30,8 +27,9 @@ import java.util.Properties;
  * @author Stephan Grundner
  */
 @ComponentScan("com.springui")
-@EnableSpringHttpSession
+//@EnableSpringHttpSession
 @EnableConfigurationProperties
+@ConditionalOnBean({UIMappingRegistry.class, UI.class})
 public class UIConfigurationSupport implements ApplicationContextAware {
 
     private ApplicationContext applicationContext;
@@ -67,11 +65,11 @@ public class UIConfigurationSupport implements ApplicationContextAware {
         };
     }
 
-    @Bean
-    @ConditionalOnMissingBean(SessionRepository.class)
-    protected SessionRepository sessionRepository() {
-        return new MapSessionRepository();
-    }
+//    @Bean
+//    @ConditionalOnMissingBean(SessionRepository.class)
+//    protected SessionRepository sessionRepository() {
+//        return new MapSessionRepository();
+//    }
 
     @Bean
     protected UIDialect uiDialect() {
@@ -79,13 +77,13 @@ public class UIConfigurationSupport implements ApplicationContextAware {
     }
 
     @Bean
-    @ConditionalOnMissingBean(UIMappingRegistry.class)
+    @ConditionalOnMissingBean
     protected UIMappingRegistry uiMappingRegistry() {
         return new AnnotationConfigUIMappingRegistry();
     }
 
     @Bean
-    @ConditionalOnMissingBean(ViewMappingRegistryFactory.class)
+    @ConditionalOnMissingBean
     protected ViewMappingRegistryFactory viewMappingRegistryFactory() {
         return new AnnotationConfigViewMappingRegistryFactory();
     }
@@ -93,6 +91,21 @@ public class UIConfigurationSupport implements ApplicationContextAware {
     @Bean
     protected UIRequestHandler uiRequestHandler() {
         return new UIRequestHandler();
+    }
+
+    @Bean
+    protected CustomLayoutTemplateResolver customLayoutTemplateResolver() {
+        return new CustomLayoutTemplateResolver();
+    }
+
+    @Bean
+    protected AnnotationConfigTemplateResolver annotationConfigTemplateResolver() {
+        return new AnnotationConfigTemplateResolver();
+    }
+
+    @Bean
+    protected TemplateResolver templateResolver() {
+        return new BootstrapTemplateResolver();
     }
 
     @Bean

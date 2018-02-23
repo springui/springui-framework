@@ -5,6 +5,8 @@ package com.springui.ui;
  */
 public abstract class ComponentsContainer<C extends Component> extends Component implements Iterable<C> {
 
+    protected abstract void addComponent(C component);
+
     @Override
     public void walk(ComponentVisitor visitor) {
         super.walk(visitor);

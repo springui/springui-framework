@@ -5,7 +5,6 @@ import com.springui.i18n.Message;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/text-field")
 public class TextField extends Field<String> {
 
     private String value;

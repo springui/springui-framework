@@ -3,7 +3,6 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/multiline-text-field")
 public class MultilineTextField extends TextField {
 
     private int columns;

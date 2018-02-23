@@ -2,7 +2,6 @@ package com.springui.view;
 
 import com.springui.ui.Component;
 import com.springui.ui.UI;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -11,7 +10,6 @@ import org.springframework.web.context.request.WebRequest;
 public abstract class AbstractView implements View {
 
     private Component component;
-    private MultiValueMap<String, String> queryParams;
 
     private boolean initialized = false;
 
@@ -22,15 +20,6 @@ public abstract class AbstractView implements View {
 
     protected final void setComponent(Component component) {
         this.component = component;
-    }
-
-    @Override
-    public MultiValueMap<String, String> getQueryParams() {
-        return queryParams;
-    }
-
-    public void setQueryParams(MultiValueMap<String, String> queryParams) {
-        this.queryParams = queryParams;
     }
 
     protected abstract void init(WebRequest request);

@@ -1,7 +1,6 @@
 package com.springui.ui;
 
 import com.springui.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -10,24 +9,9 @@ import java.util.Set;
 /**
  * @author Stephan Grundner
  */
-@Template(MultiSelect.DEFAULT)
 public class MultiSelect<T> extends Select<T> {
 
-    public static final String DEFAULT = "{theme}/ui/multi-select-default";
-    public static final String CHECK_BOXES = "{theme}/ui/multi-select-with-check-boxes";
-
     private Set<String> selectedKeys;
-
-    @Override
-    public String getTemplate() {
-        String template = super.getTemplate();
-
-        if (StringUtils.isEmpty(template)) {
-            template = "ui/list-select";
-        }
-
-        return template;
-    }
 
     public Set<String> getSelectedKeys() {
         if (selectedKeys == null) {

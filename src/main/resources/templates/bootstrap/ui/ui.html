@@ -35,14 +35,13 @@
 
 </head>
 <body>
-
 <form th:with="ui=${self}" th:object="${ui}" method="post" enctype="multipart/form-data">
+    <th:block th:each="overlay : ${self.overlays}">
+        <th:block ui:replace="${overlay}" />
+    </th:block>
+
     <th:block ui:replace="${self.rootComponent}" />
 </form>
-
-<footer>
-    <span th:text="${_s}">_s</span>
-</footer>
 <script>
 $(document).ready(function() {
 

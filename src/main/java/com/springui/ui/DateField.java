@@ -5,7 +5,6 @@ import java.util.Date;
 /**
  * @author Stephan Grundner
  */
-@Template("{theme}/ui/date-field")
 public class DateField extends Field<Date> {
 
     private Date value;
