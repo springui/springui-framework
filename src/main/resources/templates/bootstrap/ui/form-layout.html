@@ -2,7 +2,11 @@
       xmlns:ui="http://www.springui/dialect/ui"
       th:remove="tag">
 
-<div th:each="fieldContainer : ${self}">
-    <th:block ui:replace="${fieldContainer}" />
-</div>
+<th:block th:fragment="components">
+    <div class="form-group" th:each="component : ${self.components}">
+        <label th:for="${component.id}" th:text="${component.caption?.text}">Label</label>
+        <th:block ui:replace="${component}" />
+    </div>
+</th:block>
+
 </html>

@@ -18,7 +18,7 @@ public class BootstrapTemplateResolver implements TemplateResolver {
                     .put(RichTextField.class, "bootstrap/ui/rich-text-field")
                     .put(BooleanField.class, "bootstrap/ui/boolean-field")
                     .put(DateField.class, "bootstrap/ui/date-field")
-                    .put(FormLayout.class, "bootstrap/ui/form-layout")
+                    .put(FormLayout.class, "bootstrap/ui/form-layout::components")
                     .put(SingleSelect.class, "bootstrap/ui/single-select-default")
                     .put(MultiSelect.class, "bootstrap/ui/multi-select-default")
                     .put(Overlay.class, "bootstrap/ui/modal")
@@ -44,16 +44,31 @@ public class BootstrapTemplateResolver implements TemplateResolver {
         return "bootstrap/ui/ui";
     }
 
-    @Override
-    public String resolveTemplate(String theme, Component component) {
-        String template = mapping.get(component.getClass());
-//        if (component instanceof MultiSelect) {
-//            return "bootstrap/ui/multi-select-with-check-boxes";
+//    protected String resolveTemplate(FormLayout.ComponentContainer container) {
+//        Component component = container.getComponent();
+//        if (component instanceof BooleanField) {
+//            return "bootstrap/ui/form-layout::boolean";
 //        }
 //
-//        if (component instanceof SingleSelect) {
-//            return "bootstrap/ui/single-select-with-radio-buttons";
-//        }
+//        return "bootstrap/ui/form-layout::default";
+//    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Component> String resolveTemplate(Class<T> componentClass) {
+        String template = mapping.get(componentClass);
+        if (template == null) {
+            Class<?> superClass = componentClass.getSuperclass();
+            if (Component.class.isAssignableFrom(superClass)) {
+                return resolveTemplate((Class<T>) superClass);
+            }
+        }
+
+        return template;
+    }
+
+    @Override
+    public String resolveTemplate(String theme, Component component) {
+        String template = resolveTemplate(component.getClass());
 
         return template;
     }
