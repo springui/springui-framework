@@ -95,6 +95,7 @@ public abstract class UI implements ApplicationContextAware, MessageSourceProvid
     private final Deque<Overlay> overlays = new LinkedList<>();
 
     private final Set<Script> additionalScripts = new LinkedHashSet<>();
+    private final Map<String, Object> attributes = new HashMap<>();
 
     public ApplicationContext getApplicationContext() {
         return applicationContext;
@@ -217,7 +218,9 @@ public abstract class UI implements ApplicationContextAware, MessageSourceProvid
 
     public void setRootComponent(Component rootComponent) {
         this.rootComponent = rootComponent;
-        rootComponent.walk(this::attach);
+        if (rootComponent != null) {
+            rootComponent.walk(this::attach);
+        }
     }
 
     protected boolean attach(Component component) {
@@ -272,5 +275,13 @@ public abstract class UI implements ApplicationContextAware, MessageSourceProvid
 
     public boolean removeScript(Script script) {
         return additionalScripts.remove(script);
+    }
+
+    public Object getAttribute(String attributeName) {
+        return attributes.get(attributeName);
+    }
+
+    public void setAttribute(String attributeName, Object attributeValue) {
+        attributes.put(attributeName, attributeValue);
     }
 }

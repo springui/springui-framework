@@ -6,12 +6,12 @@ import java.util.Iterator;
 /**
  * @author Stephan Grundner
  */
-public abstract class SingleComponentContainer<C extends Component> extends ComponentsContainer<C> {
+public class SingleComponentContainer extends ComponentsContainer {
 
-    private C component;
+    private Component component;
 
     @Override
-    public final Iterator<C> iterator() {
+    public final Iterator<Component> iterator() {
         if (component == null) {
             return Collections.emptyIterator();
         }
@@ -20,11 +20,11 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
                 .iterator();
     }
 
-    public C getComponent() {
+    public Component getComponent() {
         return component;
     }
 
-    public void setComponent(C component) {
+    public void setComponent(Component component) {
         this.component = component;
 
         if (component != null) {
@@ -33,7 +33,7 @@ public abstract class SingleComponentContainer<C extends Component> extends Comp
     }
 
     @Override
-    protected final void addComponent(C component) {
+    protected final void addComponent(Component component) {
         setComponent(component);
     }
 

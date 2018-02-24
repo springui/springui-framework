@@ -30,6 +30,6 @@ public abstract class AbstractView implements View {
             init(request);
         }
         UI ui = UI.forRequest(request);
-        ui.setRootComponent(component);
+        ui.setRootComponent(getComponent());
     }
 }

@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @author Stephan Grundner
  */
-public class FormLayout extends ComponentsContainer<Component> implements Layout {
+public class FormLayout extends ComponentsContainer implements Layout {
 
     private final Set<Component> components = new LinkedHashSet<>();
 

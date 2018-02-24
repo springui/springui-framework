@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Stephan Grundner
  */
-public final class CustomLayout extends ComponentsContainer<Component> implements Layout {
+public final class CustomLayout extends ComponentsContainer implements Layout {
 
     private String template;
     private final Map<String, Component> components = new HashMap<>();
