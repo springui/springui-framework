@@ -5,28 +5,32 @@ package com.springui.ui;
  */
 public class CustomSingleComponentLayout extends SingleComponentContainer {
 
+    private String componentName;
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
     public final CustomLayout getLayout() {
         return (CustomLayout) super.getComponent();
     }
 
-//    private void replace(SingleComponentContainer oldOne, SingleComponentContainer newOne) {
-//        if (oldOne != null && newOne != null) {
-//            newOne.setComponent(oldOne.getComponent());
-//        }
-//    }
-
-    public final void setLayout(CustomLayout layout) {
-//        replace(getDecoratingContainer(), decoratingContainer);
+    public final void setLayout(CustomLayout layout, String componentName) {
         super.setComponent(layout);
+        this.componentName = componentName;
     }
 
     @Override
     public final Component getComponent() {
-        return getLayout().getComponent("main");
+        return getLayout().getComponent(getComponentName());
     }
 
     @Override
     public final void setComponent(Component component) {
-        getLayout().addComponent("main", component);
+        getLayout().addComponent(getComponentName(), component);
     }
 }
