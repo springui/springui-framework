@@ -13,6 +13,7 @@ public class BootstrapTemplateResolver implements TemplateResolver {
     private static final Map<Class<? extends Component>, String> mapping =
             MapBuilder.<Class<? extends Component>, String>createHashMap()
                     .put(SingleComponentContainer.class, "bootstrap/ui/single-component-container")
+                    .put(CustomSingleComponentLayout.class, "bootstrap/ui/custom-single-component-layout")
                     .put(Text.class, "bootstrap/ui/text")
                     .put(TextField.class, "bootstrap/ui/text-field")
                     .put(MultilineTextField.class, "bootstrap/ui/multiline-text-field")

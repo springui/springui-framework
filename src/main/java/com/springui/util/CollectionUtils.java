@@ -13,5 +13,14 @@ public final class CollectionUtils {
         return i.hasNext() ? i.next() : null;
     }
 
+    public static <E> E getFirst(Iterable<E> iterable) {
+        if (iterable != null) {
+            Iterator<E> iterator = iterable.iterator();
+            return iterator.hasNext() ? iterator.next() : null;
+        }
+
+        return null;
+    }
+
     private CollectionUtils() {}
 }
