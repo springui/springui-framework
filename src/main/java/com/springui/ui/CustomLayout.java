@@ -33,7 +33,7 @@ public final class CustomLayout extends AbstractComponentsContainer implements L
         return components.get(name);
     }
 
-    public Component addComponent(String name, AbstractComponent component) {
+    public Component addComponent(String name, Component component) {
         Component result = removeComponent(name);
         if (component != null) {
             MapUtils.putOnce(components, name, component);
@@ -44,7 +44,7 @@ public final class CustomLayout extends AbstractComponentsContainer implements L
     }
 
     @Override
-    public void addComponent(AbstractComponent component) {
+    public void addComponent(Component component) {
         addComponent(null, component);
     }
 

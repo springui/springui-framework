@@ -1,6 +1,6 @@
 package com.springui.web;
 
-import com.springui.ui.AbstractComponent;
+import com.springui.ui.Component;
 import com.springui.ui.CustomLayout;
 import com.springui.ui.UI;
 import com.springui.util.SlashUtils;
@@ -32,7 +32,7 @@ public class CustomLayoutTemplateResolver implements TemplateResolver {
     }
 
     @Override
-    public String resolveTemplate(String theme, AbstractComponent component) {
+    public String resolveTemplate(String theme, Component component) {
         if (component instanceof CustomLayout) {
             Properties properties = new Properties();
             properties.setProperty("theme", theme);

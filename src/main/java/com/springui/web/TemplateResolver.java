@@ -1,6 +1,6 @@
 package com.springui.web;
 
-import com.springui.ui.AbstractComponent;
+import com.springui.ui.Component;
 import com.springui.ui.UI;
 
 /**
@@ -12,5 +12,5 @@ public interface TemplateResolver {
     boolean accept(String theme);
 
     String resolveTemplate(String theme, UI ui);
-    String resolveTemplate(String theme, AbstractComponent component);
+    String resolveTemplate(String theme, Component component);
 }

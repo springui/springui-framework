@@ -17,7 +17,7 @@ public class FormLayout extends AbstractComponentsContainer implements Layout {
     }
 
     @Override
-    public void addComponent(AbstractComponent component) {
+    public void addComponent(Component component) {
         components.add(component);
     }
 

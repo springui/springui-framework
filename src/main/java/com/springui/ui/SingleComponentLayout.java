@@ -26,7 +26,7 @@ public class SingleComponentLayout extends AbstractComponentsContainer implement
     }
 
     @Override
-    public void setComponent(AbstractComponent component) {
+    public void setComponent(Component component) {
         this.component = component;
 
         if (component != null) {
@@ -35,7 +35,7 @@ public class SingleComponentLayout extends AbstractComponentsContainer implement
     }
 
     @Override
-    public final void addComponent(AbstractComponent component) {
+    public final void addComponent(Component component) {
         setComponent(component);
     }
 

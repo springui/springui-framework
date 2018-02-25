@@ -1,6 +1,6 @@
 package com.springui.view;
 
-import com.springui.ui.AbstractComponent;
+import com.springui.ui.Component;
 import org.springframework.web.context.request.WebRequest;
 
 /**
@@ -8,9 +8,9 @@ import org.springframework.web.context.request.WebRequest;
  */
 public interface View {
 
-    default AbstractComponent getComponent() {
-        if (this instanceof AbstractComponent) {
-            return (AbstractComponent) this;
+    default Component getComponent() {
+        if (this instanceof Component) {
+            return (Component) this;
         }
 
         throw new IllegalStateException("View is no component");

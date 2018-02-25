@@ -30,7 +30,7 @@ public class CustomSingleComponentLayout extends SingleComponentLayout {
     }
 
     @Override
-    public final void setComponent(AbstractComponent component) {
+    public final void setComponent(Component component) {
         getLayout().addComponent(getComponentName(), component);
     }
 }

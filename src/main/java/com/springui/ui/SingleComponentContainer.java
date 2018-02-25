@@ -3,8 +3,8 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-public interface SingleComponentContainer {
-    Component getComponent();
+public interface SingleComponentContainer extends ComponentsContainer {
 
-    void setComponent(AbstractComponent component);
+    Component getComponent();
+    void setComponent(Component component);
 }

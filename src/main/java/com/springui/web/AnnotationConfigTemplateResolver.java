@@ -1,6 +1,6 @@
 package com.springui.web;
 
-import com.springui.ui.AbstractComponent;
+import com.springui.ui.Component;
 import com.springui.ui.Template;
 import com.springui.ui.UI;
 import com.springui.util.SlashUtils;
@@ -49,7 +49,7 @@ public class AnnotationConfigTemplateResolver implements TemplateResolver {
     }
 
     @Override
-    public String resolveTemplate(String theme, AbstractComponent component) {
+    public String resolveTemplate(String theme, Component component) {
         return findTemplate(theme, component);
     }
 }

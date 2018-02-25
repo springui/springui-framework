@@ -5,5 +5,5 @@ package com.springui.ui;
  */
 public interface ComponentsContainer extends Component, Iterable<Component> {
 
-    void addComponent(AbstractComponent component);
+    void addComponent(Component component);
 }

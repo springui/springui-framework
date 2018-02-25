@@ -56,11 +56,11 @@ public class BootstrapTemplateResolver implements TemplateResolver {
 //    }
 
     @SuppressWarnings("unchecked")
-    private <T extends AbstractComponent> String resolveTemplate(Class<T> componentClass) {
+    private <T extends Component> String resolveTemplate(Class<T> componentClass) {
         String template = mapping.get(componentClass);
         if (template == null) {
             Class<?> superClass = componentClass.getSuperclass();
-            if (AbstractComponent.class.isAssignableFrom(superClass)) {
+            if (Component.class.isAssignableFrom(superClass)) {
                 return resolveTemplate((Class<T>) superClass);
             }
         }
@@ -69,7 +69,7 @@ public class BootstrapTemplateResolver implements TemplateResolver {
     }
 
     @Override
-    public String resolveTemplate(String theme, AbstractComponent component) {
+    public String resolveTemplate(String theme, Component component) {
         String template = resolveTemplate(component.getClass());
 
         return template;
