@@ -40,6 +40,10 @@ public class DataBinder<T> {
         return binding;
     }
 
+    public <V> DataBinding<T, V> bind(Field<V> field, ValueResolver<T, V> resolver) {
+        return bind(field, resolver, null);
+    }
+
     public <V> boolean unbind(DataBinding<T, V> binding) {
         if (bindings.remove(binding)) {
             Field<V> field = binding.getField();

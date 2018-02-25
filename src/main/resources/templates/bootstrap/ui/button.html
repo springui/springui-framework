@@ -4,6 +4,6 @@
 <a href="#" class="btn btn-primary component"
    th:data-events="'click'"
    th:data-action="${#urls.action(self)}">
-    <th:block th:text="${self.caption?.text}" />
+    <th:block th:utext="${self.caption?.text}" />
 </a>
 </html>

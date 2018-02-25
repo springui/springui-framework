@@ -3,6 +3,8 @@ package com.springui.ui;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
 import com.springui.i18n.Message;
+import com.springui.util.CollectionUtils;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -17,6 +19,7 @@ public abstract class AbstractComponent implements Component {
     private Component parent;
     private boolean disabled;
     private Message caption;
+    private final Set<String> styles = new LinkedHashSet<>();
 
     private UI ui;
 
@@ -112,6 +115,18 @@ public abstract class AbstractComponent implements Component {
     @Override
     public void setCaption(Message caption) {
         this.caption = caption;
+    }
+
+    @Override
+    public String getStyle() {
+        return CollectionUtils.getFirst(styles);
+    }
+
+    @Override
+    public void setStyle(String style) {
+        styles.clear();
+        boolean success = styles.add(style);
+        Assert.isTrue(success);
     }
 
     @Override

@@ -28,6 +28,9 @@ public interface Component {
     Message getCaption();
     void setCaption(Message caption);
 
+    String getStyle();
+    void setStyle(String style);
+
     Set<ActionListener> getActionListeners();
     void addActionListener(ActionListener actionListener);
     void performAction(Action action);

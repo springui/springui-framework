@@ -22,5 +22,9 @@ public class Trigger extends AbstractComponent {
         this(new Message((String) null, defaultMessage), actionListener);
     }
 
+    public Trigger(ActionListener actionListener) {
+        this((Message) null, actionListener);
+    }
+
     public Trigger() { }
 }
