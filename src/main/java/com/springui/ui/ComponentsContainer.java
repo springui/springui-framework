@@ -3,15 +3,7 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-public abstract class ComponentsContainer extends Component implements Iterable<Component> {
+public interface ComponentsContainer extends Component, Iterable<Component> {
 
-    protected abstract void addComponent(Component component);
-
-    @Override
-    public void walk(ComponentVisitor visitor) {
-        super.walk(visitor);
-        for (Component component : this) {
-            visitor.visit(component);
-        }
-    }
+    void addComponent(AbstractComponent component);
 }

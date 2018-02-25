@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 /**
  * @author Stephan Grundner
  */
-public class Table<T> extends Component {
+public class Table<T> extends AbstractComponent {
 
     public interface CellComponentProvider<T, V> {
 
-        Component getCellComponent(Cell<T, V> cell);
+        AbstractComponent getCellComponent(Cell<T, V> cell);
     }
 
-    public static class Column<T, V> extends Component {
+    public static class Column<T, V> extends AbstractComponent {
 
         public enum Alignment {
             LEFT,
@@ -57,7 +57,7 @@ public class Table<T> extends Component {
             if (cellComponentProvider == null) {
                 cellComponentProvider = new CellComponentProvider<T, V>() {
                     @Override
-                    public Component getCellComponent(Cell<T, V> cell) {
+                    public AbstractComponent getCellComponent(Cell<T, V> cell) {
                         return new Text("", cell.getValueAsText());
                     }
                 };
@@ -86,7 +86,7 @@ public class Table<T> extends Component {
         }
     }
 
-    public static class Cell<T, V> extends Component {
+    public static class Cell<T, V> extends AbstractComponent {
 
         private Column<T ,V> column;
         private Row<T> row;
@@ -114,7 +114,8 @@ public class Table<T> extends Component {
                 Row<T> row = getRow();
                 T object = row.getObject();
 
-                ApplicationContext applicationContext = getUi().getApplicationContext();
+                UI ui = getUi();
+                ApplicationContext applicationContext = ui.getApplicationContext();
                 ConversionService conversionService = applicationContext.getBean(ConversionService.class);
                 V value = valueResolver.resolve(object);
 
@@ -131,13 +132,13 @@ public class Table<T> extends Component {
         public Component getComponent() {
             CellComponentProvider<T, V> componentProvider = getColumn().getCellComponentProvider();
 
-            Component component = componentProvider.getCellComponent(this);
+            AbstractComponent component = componentProvider.getCellComponent(this);
             component.setParent(this);
             return component;
         }
     }
 
-    public static class Row<T> extends Component {
+    public static class Row<T> extends AbstractComponent {
 
         private T object;
         private final Map<Column<T, ?>, Cell<T, ?>> cellByColumn = new IdentityHashMap<>();
@@ -172,19 +173,20 @@ public class Table<T> extends Component {
             return cell;
         }
 
-//        public void removeCell(Column<T, ?> column) {
-//            Cell<T, ?> cell = cellByColumn.remove(column);
-//            if (cell != null) {
-//                cell.setParent(null);
-//            }
-//        }
-
         public void removeAllCells() {
             Iterator<Cell<T, ?>> i = cellByColumn.values().iterator();
             while (i.hasNext()) {
                 Cell<T, ?> cell = i.next();
                 cell.setParent(null);
                 i.remove();
+            }
+        }
+
+        @Override
+        public void walk(ComponentVisitor visitor) {
+            super.walk(visitor);
+            for (Cell<T, ?> cell : getCells()) {
+                cell.walk(visitor);
             }
         }
     }

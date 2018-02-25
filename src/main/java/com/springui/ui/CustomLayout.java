@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Stephan Grundner
  */
-public final class CustomLayout extends ComponentsContainer implements Layout {
+public final class CustomLayout extends AbstractComponentsContainer implements Layout {
 
     private String template;
     private final Map<String, Component> components = new HashMap<>();
@@ -33,7 +33,7 @@ public final class CustomLayout extends ComponentsContainer implements Layout {
         return components.get(name);
     }
 
-    public Component addComponent(String name, Component component) {
+    public Component addComponent(String name, AbstractComponent component) {
         Component result = removeComponent(name);
         if (component != null) {
             MapUtils.putOnce(components, name, component);
@@ -44,7 +44,7 @@ public final class CustomLayout extends ComponentsContainer implements Layout {
     }
 
     @Override
-    protected void addComponent(Component component) {
+    public void addComponent(AbstractComponent component) {
         addComponent(null, component);
     }
 

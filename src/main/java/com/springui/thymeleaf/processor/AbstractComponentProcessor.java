@@ -1,5 +1,6 @@
 package com.springui.thymeleaf.processor;
 
+import com.springui.ui.AbstractComponent;
 import com.springui.ui.Component;
 import com.springui.ui.CustomLayout;
 import com.springui.ui.UI;
@@ -49,8 +50,8 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
             return;
         }
 
-        if (result instanceof Component) {
-            Component component = (Component) result;
+        if (result instanceof AbstractComponent) {
+            AbstractComponent component = (AbstractComponent) result;
 //            UI ui = component.getUi();
 
             HttpServletRequest request = getRequest(context);

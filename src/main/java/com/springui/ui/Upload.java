@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 /**
  * @author Stephan Grundner
  */
-public class Upload extends Component {
+public class Upload extends AbstractComponent {
 
     public interface UploadHandler {
 

@@ -12,7 +12,7 @@ public class BootstrapTemplateResolver implements TemplateResolver {
 
     private static final Map<Class<? extends Component>, String> mapping =
             MapBuilder.<Class<? extends Component>, String>createHashMap()
-                    .put(SingleComponentContainer.class, "bootstrap/ui/single-component-container")
+                    .put(SingleComponentLayout.class, "bootstrap/ui/single-component-container")
                     .put(CustomSingleComponentLayout.class, "bootstrap/ui/custom-single-component-layout")
                     .put(Text.class, "bootstrap/ui/text")
                     .put(TextField.class, "bootstrap/ui/text-field")
@@ -56,11 +56,11 @@ public class BootstrapTemplateResolver implements TemplateResolver {
 //    }
 
     @SuppressWarnings("unchecked")
-    private <T extends Component> String resolveTemplate(Class<T> componentClass) {
+    private <T extends AbstractComponent> String resolveTemplate(Class<T> componentClass) {
         String template = mapping.get(componentClass);
         if (template == null) {
             Class<?> superClass = componentClass.getSuperclass();
-            if (Component.class.isAssignableFrom(superClass)) {
+            if (AbstractComponent.class.isAssignableFrom(superClass)) {
                 return resolveTemplate((Class<T>) superClass);
             }
         }
@@ -69,7 +69,7 @@ public class BootstrapTemplateResolver implements TemplateResolver {
     }
 
     @Override
-    public String resolveTemplate(String theme, Component component) {
+    public String resolveTemplate(String theme, AbstractComponent component) {
         String template = resolveTemplate(component.getClass());
 
         return template;

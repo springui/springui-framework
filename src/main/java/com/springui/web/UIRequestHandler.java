@@ -62,8 +62,8 @@ public class UIRequestHandler extends AbstractUIHandler {
         String componentId = params.getFirst("component");
         String event = params.getFirst("event");
         String returnUrl = params.getFirst("return-to");
-        Component component = ui.getComponent(componentId);
-        component.performAction(new Action(componentId, event));
+
+        ui.performAction(new Action(componentId, event));
 
         String redirectUrl = ui.getRedirectUrl(webRequest);
         if (!StringUtils.isEmpty(redirectUrl)) {

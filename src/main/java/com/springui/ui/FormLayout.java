@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @author Stephan Grundner
  */
-public class FormLayout extends ComponentsContainer implements Layout {
+public class FormLayout extends AbstractComponentsContainer implements Layout {
 
     private final Set<Component> components = new LinkedHashSet<>();
 
@@ -17,7 +17,7 @@ public class FormLayout extends ComponentsContainer implements Layout {
     }
 
     @Override
-    public void addComponent(Component component) {
+    public void addComponent(AbstractComponent component) {
         components.add(component);
     }
 

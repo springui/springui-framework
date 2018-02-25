@@ -8,23 +8,23 @@ import org.springframework.web.context.request.WebRequest;
  */
 public abstract class AbstractDecoratedView implements View {
 
-    private Component component;
+    private AbstractComponent component;
     private UI ui;
 
     protected UI getUi() {
         return ui;
     }
 
-    protected abstract SingleComponentContainer getContainer();
+    protected abstract SingleComponentLayout getContainer();
 
     private boolean initialized = false;
 
     @Override
-    public final Component getComponent() {
+    public final AbstractComponent getComponent() {
         return component;
     }
 
-    protected final void setComponent(Component component) {
+    protected final void setComponent(AbstractComponent component) {
         this.component = component;
     }
 
@@ -38,7 +38,7 @@ public abstract class AbstractDecoratedView implements View {
         UI ui = UI.forRequest(request);
         this.ui = ui;
 
-        SingleComponentContainer container = getContainer();
+        SingleComponentLayout container = getContainer();
         container.setComponent(getComponent());
         ui.setRootComponent(container);
     }

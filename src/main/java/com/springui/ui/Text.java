@@ -5,7 +5,7 @@ import com.springui.i18n.Message;
 /**
  * @author Stephan Grundner
  */
-public class Text extends Component {
+public class Text extends AbstractComponent {
 
     private Message message;
 

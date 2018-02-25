@@ -1,5 +1,6 @@
 package com.springui.ui;
 
+import com.springui.event.Action;
 import com.springui.i18n.MessageSourceProvider;
 import com.springui.util.*;
 import com.springui.view.View;
@@ -200,6 +201,12 @@ public abstract class UI implements ApplicationContextAware, MessageSourceProvid
 
     public abstract void init(WebRequest request);
 
+    public void performAction(Action action) {
+        String componentId = action.getComponentId();
+        Component component = getComponent(componentId);
+        component.performAction(action);
+    }
+
     public Locale getLocale() {
         return LocaleContextHolder.getLocale();
     }
@@ -234,7 +241,7 @@ public abstract class UI implements ApplicationContextAware, MessageSourceProvid
 
     protected boolean detach(Component component) {
         if (components.remove(component.getId(), component)) {
-            component.setUi(null);
+//            component.setUi(null);
             return true;
         }
 

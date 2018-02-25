@@ -1,6 +1,6 @@
 package com.springui.view;
 
-import com.springui.ui.Component;
+import com.springui.ui.AbstractComponent;
 import com.springui.ui.UI;
 import org.springframework.web.context.request.WebRequest;
 
@@ -9,16 +9,16 @@ import org.springframework.web.context.request.WebRequest;
  */
 public abstract class AbstractView implements View {
 
-    private Component component;
+    private AbstractComponent component;
 
     private boolean initialized = false;
 
     @Override
-    public final Component getComponent() {
+    public final AbstractComponent getComponent() {
         return component;
     }
 
-    protected final void setComponent(Component component) {
+    protected final void setComponent(AbstractComponent component) {
         this.component = component;
     }
 

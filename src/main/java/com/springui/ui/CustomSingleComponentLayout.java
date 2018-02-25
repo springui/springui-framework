@@ -3,7 +3,7 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-public class CustomSingleComponentLayout extends SingleComponentContainer {
+public class CustomSingleComponentLayout extends SingleComponentLayout {
 
     private String componentName;
 
@@ -30,7 +30,7 @@ public class CustomSingleComponentLayout extends SingleComponentContainer {
     }
 
     @Override
-    public final void setComponent(Component component) {
+    public final void setComponent(AbstractComponent component) {
         getLayout().addComponent(getComponentName(), component);
     }
 }

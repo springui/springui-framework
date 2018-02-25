@@ -11,7 +11,7 @@ import java.util.Set;
 /**
  * @author Stephan Grundner
  */
-public abstract class Field<T> extends Component {
+public abstract class Field<T> extends AbstractComponent {
 
     private Message placeholder;
     private Message help;

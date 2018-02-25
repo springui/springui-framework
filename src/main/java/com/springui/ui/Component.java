@@ -3,152 +3,32 @@ package com.springui.ui;
 import com.springui.event.Action;
 import com.springui.event.ActionListener;
 import com.springui.i18n.Message;
-import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * @author Stephan Grundner
  */
-public abstract class Component {
+public interface Component {
 
-    private String id;
-//    private String template;
-    private Component parent;
+    String getId();
+    void setId(String id);
 
-    private boolean disabled;
-    private Message caption;
-//    private Message message;
+    UI getUi();
+    void setUi(UI ui);
 
-    private UI ui;
+    void walk(ComponentVisitor visitor);
 
-    private final Set<String> styles = new LinkedHashSet<>();
+    Component getParent();
+    void setParent(Component parent);
 
-    private final Set<ActionListener> actionListeners = new LinkedHashSet<>();
+    boolean isDisabled();
+    void setDisabled(boolean disabled);
 
-    public String getId() {
-        if (StringUtils.isEmpty(id)) {
-            id = UUID.randomUUID().toString();
-        }
+    Message getCaption();
+    void setCaption(Message caption);
 
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-//    public String getTemplate() {
-//        return template;
-//    }
-
-//    protected void setTemplate(String template) {
-//        this.template = template;
-//    }
-
-    public UI getUi() {
-        return ui;
-    }
-
-    /**
-     * Only accessible from {@link UI}.
-     * @see UI#setRootComponent(Component)
-     */
-    void setUi(UI ui) {
-        this.ui = ui;
-    }
-
-    private UI findUi() {
-        Component component = this;
-        while (component != null) {
-            UI ui = component.ui;
-            if (ui != null) {
-                return ui;
-            }
-            component = component.parent;
-        }
-
-        return null;
-    }
-
-    public void walk(ComponentVisitor visitor) {
-        visitor.visit(this);
-    }
-
-    public Component getParent() {
-        return parent;
-    }
-
-    protected final void setParent(Component parent) {
-        this.parent = parent;
-
-        if (parent != null) {
-            UI ui = findUi();
-            if (ui != null) {
-                walk(ui::attach);
-//                ui.attach(this);
-            }
-        } else {
-            if (ui != null) {
-                ui.detach(this);
-            }
-        }
-    }
-
-    public boolean isAttached() {
-        return getUi() != null;
-    }
-
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    public Message getCaption() {
-        return caption;
-    }
-
-    public void setCaption(Message caption) {
-        this.caption = caption;
-    }
-
-//    public Message getMessage() {
-//        return message;
-//    }
-//
-//    public void setMessage(Message message) {
-//        this.message = message;
-//    }
-
-    public Set<String> getStyles() {
-        return Collections.unmodifiableSet(styles);
-    }
-
-    public boolean addStyle(String style) {
-        return styles.add(style);
-    }
-
-    public boolean removeStyle(String style) {
-        return styles.remove(style);
-    }
-
-    public Set<ActionListener> getActionListeners() {
-        return Collections.unmodifiableSet(actionListeners);
-    }
-
-    public void addActionListener(ActionListener actionListener) {
-        actionListeners.add(actionListener);
-    }
-
-    public void performAction(Action action) {
-        for (ActionListener actionListener : actionListeners) {
-            actionListener.performAction(action);
-        }
-    }
+    Set<ActionListener> getActionListeners();
+    void addActionListener(ActionListener actionListener);
+    void performAction(Action action);
 }

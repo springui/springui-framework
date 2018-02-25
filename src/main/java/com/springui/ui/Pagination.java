@@ -3,7 +3,7 @@ package com.springui.ui;
 /**
  * @author Stephan Grundner
  */
-public class Pagination extends Component {
+public class Pagination extends AbstractComponent {
 
     private int pages;
     private int index;
