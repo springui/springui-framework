@@ -5,10 +5,8 @@ import com.springui.event.ActionListener;
 import com.springui.i18n.Message;
 import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Stephan Grundner
@@ -68,6 +66,14 @@ public abstract class AbstractComponent implements Component {
         }
     }
 
+    private UI findUi() {
+        if (ui == null && parent != null) {
+            return parent.getUi();
+        }
+
+        return ui;
+    }
+
     @Override
     public void setParent(Component parent) {
         if (this.parent != parent) {
@@ -79,6 +85,11 @@ public abstract class AbstractComponent implements Component {
         if (parent == null) {
             if (ui != null) {
                 ui.detach(this);
+            }
+        } else {
+            UI ui = findUi();
+            if (ui != null) {
+                ui.attach(this);
             }
         }
     }
@@ -104,7 +115,7 @@ public abstract class AbstractComponent implements Component {
     }
 
     @Override
-    public Set<ActionListener> getActionListeners() {
+    public final Set<ActionListener> getActionListeners() {
         return Collections.unmodifiableSet(actionListeners);
     }
 
@@ -113,10 +124,12 @@ public abstract class AbstractComponent implements Component {
         actionListeners.add(actionListener);
     }
 
+    public void addActionListener(String event, ActionListener actionListener) {
+        actionListeners.add(actionListener);
+    }
+
     @Override
     public void performAction(Action action) {
-        for (ActionListener actionListener : actionListeners) {
-            actionListener.performAction(action);
-        }
+        actionListeners.forEach(it -> it.performAction(action));
     }
 }

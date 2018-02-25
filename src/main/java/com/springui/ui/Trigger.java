@@ -13,8 +13,13 @@ public class Trigger extends AbstractComponent {
         addActionListener(actionListener);
     }
 
+    public Trigger(String messageCode, String defaultMessage, ActionListener actionListener) {
+        this(new Message(messageCode, defaultMessage), actionListener);
+    }
+
+    @Deprecated
     public Trigger(String defaultMessage, ActionListener actionListener) {
-        this(new Message("", defaultMessage), actionListener);
+        this(new Message((String) null, defaultMessage), actionListener);
     }
 
     public Trigger() { }
