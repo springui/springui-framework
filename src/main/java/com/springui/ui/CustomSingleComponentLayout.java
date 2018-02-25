@@ -15,11 +15,11 @@ public class CustomSingleComponentLayout extends SingleComponentLayout {
         this.componentName = componentName;
     }
 
-    public final CustomLayout getLayout() {
-        return (CustomLayout) super.getComponent();
+    public final ComponentsMapContainer getLayout() {
+        return (ComponentsMapContainer) super.getComponent();
     }
 
-    public final void setLayout(CustomLayout layout, String componentName) {
+    public final void setLayout(ComponentsMapContainer layout, String componentName) {
         super.setComponent(layout);
         this.componentName = componentName;
     }

@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author Stephan Grundner
  */
-public final class CustomLayout extends AbstractComponentsContainer implements Layout {
+public final class ComponentsMapContainer extends AbstractComponentsContainer implements Layout {
 
     private String template;
     private final Map<String, Component> components = new HashMap<>();
@@ -68,7 +68,7 @@ public final class CustomLayout extends AbstractComponentsContainer implements L
         }
     }
 
-    public CustomLayout(String template) {
+    public ComponentsMapContainer(String template) {
         Assert.hasLength(template, "[template] must not be null");
         this.template = template;
     }

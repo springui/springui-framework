@@ -14,6 +14,7 @@ public class BootstrapTemplateResolver implements TemplateResolver {
             MapBuilder.<Class<? extends Component>, String>createHashMap()
                     .put(SingleComponentLayout.class, "bootstrap/ui/single-component-container")
                     .put(CustomSingleComponentLayout.class, "bootstrap/ui/custom-single-component-layout")
+                    .put(FlowLayout.class, "bootstrap/ui/vertical-flow-layout")
                     .put(Text.class, "bootstrap/ui/text")
                     .put(TextField.class, "bootstrap/ui/text-field")
                     .put(MultilineTextField.class, "bootstrap/ui/multiline-text-field")

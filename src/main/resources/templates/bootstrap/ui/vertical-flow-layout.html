@@ -1,0 +1,9 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui/dialect/ui"
+      th:remove="tag">
+<div class="row">
+    <div class="col" th:each="component : ${self}">
+        <th:block ui:replace="${component}" />
+    </div>
+</div>
+</html>

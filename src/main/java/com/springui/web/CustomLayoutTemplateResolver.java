@@ -1,7 +1,7 @@
 package com.springui.web;
 
 import com.springui.ui.Component;
-import com.springui.ui.CustomLayout;
+import com.springui.ui.ComponentsMapContainer;
 import com.springui.ui.UI;
 import com.springui.util.SlashUtils;
 import org.springframework.util.PropertyPlaceholderHelper;
@@ -33,10 +33,10 @@ public class CustomLayoutTemplateResolver implements TemplateResolver {
 
     @Override
     public String resolveTemplate(String theme, Component component) {
-        if (component instanceof CustomLayout) {
+        if (component instanceof ComponentsMapContainer) {
             Properties properties = new Properties();
             properties.setProperty("theme", theme);
-            String template = ((CustomLayout) component).getTemplate();
+            String template = ((ComponentsMapContainer) component).getTemplate();
             template = placeholderHelper.replacePlaceholders(template, properties);
             template = SlashUtils.removeLeadingAndTrailingSlashes(template);
             return template;
