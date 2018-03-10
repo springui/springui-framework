@@ -1,31 +1,33 @@
 package com.springui.ui;
 
-import com.springui.event.Action;
-import com.springui.event.ActionListener;
-
 /**
  * @author Stephan Grundner
  */
-public class Overlay extends SingleComponentLayout {
+@Template("{theme}/overlay")
+public class Overlay extends AbstractSingleComponentContainer {
 
-    private Trigger close;
+    private final Button close = new Button();
 
-    public Trigger getClose() {
+    public Button getClose() {
         return close;
     }
 
     @Override
+    public void setParent(Component parent) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void walk(ComponentVisitor visitor) {
-        super.walk(visitor);
         close.walk(visitor);
+        super.walk(visitor);
     }
 
     public Overlay() {
-        close = new Trigger();
         close.addActionListener(new ActionListener() {
             @Override
-            public void performAction(Action action) {
-                getUi().hideOverlay(Overlay.this);
+            public void perform(Action action) {
+                action.getRequest().getUi().removeOverlay(Overlay.this);
             }
         });
     }

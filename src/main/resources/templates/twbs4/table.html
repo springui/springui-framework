@@ -1,0 +1,18 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
+      th:remove="tag">
+<table class="table">
+    <thead>
+    <tr>
+        <th:block th:each="column : ${self.columns}">
+            <th:block ui:replace="${column}" />
+        </th:block>
+    </tr>
+    </thead>
+    <tbody>
+    <th:block th:each="row : ${self.rows}">
+        <th:block ui:replace="${row}" />
+    </th:block>
+    </tbody>
+</table>
+</html>

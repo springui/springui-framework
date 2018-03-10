@@ -1,0 +1,9 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
+      th:remove="tag">
+<tr>
+    <td th:each="column : ${self.table.columns}" th:align="${column.alignment}">
+        <th:block ui:replace="${self.getCell(column)}"/>
+    </td>
+</tr>
+</html>

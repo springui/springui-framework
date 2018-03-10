@@ -1,0 +1,21 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
+      th:remove="tag">
+<div class="modal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" th:text="${self.caption?.text} ?: _">Title</h5>
+                <button type="submit" class="close component" aria-label="Close"
+                   th:remove="${self.close == null} ? all : _"
+                   th:formaction="${#urls.action(self.close)}">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <th:block ui:replace="${overlay.content}" />
+            </div>
+        </div>
+    </div>
+</div>
+</html>

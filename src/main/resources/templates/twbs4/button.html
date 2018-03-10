@@ -1,5 +1,8 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
       th:remove="tag">
-
+<button class="btn btn-primary"
+        th:formaction="${#urls.action(self)}">
+    [[${self.caption?.text}]]
+</button>
 </html>

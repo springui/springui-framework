@@ -1,9 +1,10 @@
 package com.springui.util;
 
 import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author Stephan Grundner
@@ -19,14 +20,13 @@ public final class MapUtils {
         Assert.isNull(replaced, String.format("Value for key [%s] was replaced", key));
     }
 
-    public static <K, V> K findKey(Map<K, V> map, V value) {
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (Objects.equals(entry.getValue(), value)) {
-                return entry.getKey();
-            }
+    public static <K, V> MultiValueMap<K, V> toMap(K key, V[] values) {
+        MultiValueMap<K, V> map = new LinkedMultiValueMap<>(values.length);
+        for (V value : values) {
+            map.add(key, value);
         }
 
-        return null;
+        return map;
     }
 
     private MapUtils() {}

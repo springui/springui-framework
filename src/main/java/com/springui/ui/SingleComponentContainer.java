@@ -5,6 +5,6 @@ package com.springui.ui;
  */
 public interface SingleComponentContainer extends ComponentsContainer {
 
-    Component getComponent();
-    void setComponent(Component component);
+    Component getContent();
+    void setContent(Component content);
 }

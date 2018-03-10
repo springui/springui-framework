@@ -1,34 +1,33 @@
 package com.springui.ui;
 
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
  * @author Stephan Grundner
  */
-public class FormLayout extends AbstractComponentsContainer implements Layout {
+@Template("{theme}/form-layout")
+public class FormLayout extends AbstractComponentsContainer {
 
-    private final Set<Component> components = new LinkedHashSet<>();
-
-    public Set<Component> getComponents() {
-        return Collections.unmodifiableSet(components);
-    }
+    private Set<Component> components = new LinkedHashSet<>();
 
     @Override
     public void addComponent(Component component) {
-        components.add(component);
+        if (components.add(component)) {
+
+        }
     }
 
     @Override
-    public Iterator<Component> iterator() {
-        return components.iterator();
+    public void removeComponent(Component component) {
+        if (components.remove(component)) {
+
+        }
     }
 
     @Override
     public void walk(ComponentVisitor visitor) {
-        super.walk(visitor);
+        visitor.visit(this);
         components.forEach(visitor::visit);
     }
 }

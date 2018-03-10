@@ -23,32 +23,32 @@ public class DataBinder<T> {
         fromObject();
     }
 
-    public <V> DataBinding<T, V> bind(Field<V> field, ValueResolver<T, V> resolver, ValueApplier<T, V> applier) {
+    public <V> DataBinding<T, V> bind(Field<V> field, ValueReader<T, V> reader, ValueWriter<T, V> writer) {
         DataBinding<T, V> binding = new DataBinding<>(this, field);
-        binding.setResolver(resolver);
-        binding.setApplier(applier);
+        binding.setReader(reader);
+        binding.setWriter(writer);
 
-        binding.setChangeListener(change -> binding.apply());
-        field.addValueChangeListener(binding.getChangeListener());
+//        binding.setChangeListener(change -> binding.apply());
+//        field.addValueChangeListener(binding.getChangeListener());
 
         bindings.add(binding);
 
         if (object != null) {
-            binding.resolve();
+            binding.read();
         }
 
         return binding;
     }
 
-    public <V> DataBinding<T, V> bind(Field<V> field, ValueResolver<T, V> resolver) {
-        return bind(field, resolver, null);
+    public <V> DataBinding<T, V> bind(Field<V> field, ValueReader<T, V> reader) {
+        return bind(field, reader, null);
     }
 
     public <V> boolean unbind(DataBinding<T, V> binding) {
         if (bindings.remove(binding)) {
             Field<V> field = binding.getField();
-            field.removeValueChangeListener(binding.getChangeListener());
-            binding.setChangeListener(null);
+//            field.removeValueChangeListener(binding.getChangeListener());
+//            binding.setChangeListener(null);
 
             return true;
         }
@@ -57,11 +57,11 @@ public class DataBinder<T> {
     }
 
     public void fromObject() {
-        bindings.forEach(DataBinding::resolve);
+        bindings.forEach(DataBinding::read);
     }
 
     public void toObject() {
-        bindings.forEach(DataBinding::apply);
+        bindings.forEach(DataBinding::write);
     }
 
     public DataBinder(T object) {

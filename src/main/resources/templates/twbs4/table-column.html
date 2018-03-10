@@ -1,5 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
       th:remove="tag">
-
+<th th:align="${self.alignment}"
+    th:text="${self.caption?.text} ?: _">
+</th>
 </html>

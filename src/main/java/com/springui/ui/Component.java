@@ -1,8 +1,6 @@
 package com.springui.ui;
 
-import com.springui.event.Action;
-import com.springui.event.ActionListener;
-import com.springui.i18n.Message;
+import com.springui.web.UIRequest;
 
 import java.util.Set;
 
@@ -11,27 +9,54 @@ import java.util.Set;
  */
 public interface Component {
 
+    static void performAction(Action action) {
+        Component component = action.getComponent();
+        for (ActionListener actionListener : component.getActionListeners()) {
+            actionListener.perform(action);
+        }
+    }
+
+    class Action {
+
+        private final UIRequest request;
+        private final Component component;
+        private final String[] events;
+
+        public UIRequest getRequest() {
+            return request;
+        }
+
+        public Component getComponent() {
+            return component;
+        }
+
+        public String[] getEvents() {
+            return events;
+        }
+
+        public Action(UIRequest request, Component component, String[] events) {
+            this.request = request;
+            this.component = component;
+            this.events = events;
+        }
+    }
+
+    interface ActionListener {
+
+        void perform(Action action);
+    }
+
     String getId();
-    void setId(String id);
 
     UI getUi();
     void setUi(UI ui);
 
-    void walk(ComponentVisitor visitor);
-
     Component getParent();
     void setParent(Component parent);
 
-    boolean isDisabled();
-    void setDisabled(boolean disabled);
-
-    Message getCaption();
-    void setCaption(Message caption);
-
-    String getStyle();
-    void setStyle(String style);
-
     Set<ActionListener> getActionListeners();
-    void addActionListener(ActionListener actionListener);
-    void performAction(Action action);
+    boolean addActionListener(ActionListener actionListener);
+    boolean removeActionListener(ActionListener actionListener);
+
+    void walk(ComponentVisitor visitor);
 }

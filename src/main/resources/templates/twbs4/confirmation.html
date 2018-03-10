@@ -1,0 +1,12 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
+      th:remove="tag">
+
+
+<div class="pull-right">
+    <th:block ui:replace="${confirm}" />
+    <th:block ui:replace="${decline}" />
+    <th:block ui:replace="${close}" />
+</div>
+
+</html>

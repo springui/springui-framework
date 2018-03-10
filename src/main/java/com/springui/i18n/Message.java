@@ -1,6 +1,5 @@
 package com.springui.i18n;
 
-import com.springui.ui.UI;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -11,31 +10,18 @@ import java.util.Locale;
  */
 public class Message {
 
-    private MessageSourceProvider sourceProvider;
+    private MessageSource source;
 
     private String code;
     private Object[] args;
     private String defaultText;
 
-    public MessageSourceProvider getSourceProvider() {
-        if (sourceProvider == null) {
-            sourceProvider = UI.forCurrentSession();
-        }
-
-        return sourceProvider;
+    public MessageSource getSource() {
+        return source;
     }
 
-    public void setSourceProvider(MessageSourceProvider sourceProvider) {
-        this.sourceProvider = sourceProvider;
-    }
-
-    private MessageSource getSource() {
-        MessageSourceProvider sourceProvider = getSourceProvider();
-        if (sourceProvider != null) {
-            return sourceProvider.getMessageSource();
-        }
-
-        return null;
+    public void setSource(MessageSource source) {
+        this.source = source;
     }
 
     public String getCode() {
@@ -55,10 +41,6 @@ public class Message {
     }
 
     private Locale getLocale() {
-        if (sourceProvider != null) {
-            return sourceProvider.getLocale();
-        }
-
         return LocaleContextHolder.getLocale();
     }
 
@@ -66,10 +48,6 @@ public class Message {
         MessageSource source = getSource();
         if (source != null) {
             Locale locale = getLocale();
-            if (locale == null) {
-                locale = LocaleContextHolder.getLocale();
-            }
-
             return source.getMessage(code, args, defaultText, locale);
         }
 
@@ -84,31 +62,31 @@ public class Message {
         this.defaultText = defaultText;
     }
 
-    public Message(MessageSourceProvider sourceProvider, String code, Object[] args, String defaultText) {
-        this.sourceProvider = sourceProvider;
+    public Message(MessageSource source, String code, Object[] args, String defaultText) {
+        this.source = source;
         this.code = code;
         this.args = args;
         this.defaultText = defaultText;
+    }
+
+    public Message(MessageSource source, String code, String defaultText) {
+        this(source, code, null, defaultText);
+    }
+
+    public Message(MessageSource source, String code) {
+        this(source, code, null, null);
     }
 
     public Message(String code, Object[] args, String defaultText) {
         this(null, code, args, defaultText);
     }
 
-    public Message(MessageSourceProvider sourceProvider, String code, String defaultText) {
-        this(sourceProvider, code, null, defaultText);
-    }
-
     public Message(String code, String defaultText) {
         this(null, code, null, defaultText);
     }
 
-    public Message(MessageSourceProvider sourceProvider, String code) {
-        this(sourceProvider, code, null, null);
-    }
-
     public Message(String code) {
-        this((MessageSourceProvider) null, code);
+        this((MessageSource) null, code);
     }
 
     public Message() {}

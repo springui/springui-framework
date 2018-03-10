@@ -1,14 +1,11 @@
 package com.springui.ui;
 
-import com.springui.event.Action;
-import com.springui.event.ActionListener;
 import com.springui.i18n.Message;
-import com.springui.util.CollectionUtils;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * @author Stephan Grundner
@@ -16,42 +13,34 @@ import java.util.stream.Collectors;
 public abstract class AbstractComponent implements Component {
 
     private String id;
-    private Component parent;
-    private boolean disabled;
-    private Message caption;
-    private final Set<String> styles = new LinkedHashSet<>();
-
     private UI ui;
+    private Component parent;
+
+    private Message caption;
 
     private final Set<ActionListener> actionListeners = new LinkedHashSet<>();
 
     @Override
     public String getId() {
-        if (StringUtils.isEmpty(id)) {
+        if (id == null) {
             id = UUID.randomUUID().toString();
         }
 
         return id;
     }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
     public UI getUi() {
         return ui;
     }
 
-    @Override
     public void setUi(UI ui) {
-        this.ui = ui;
-    }
+        if (ui != null) {
+            if (!ui.getComponents().containsKey(getId())) {
+                throw new IllegalStateException();
+            }
+        }
 
-    @Override
-    public void walk(ComponentVisitor visitor) {
-        visitor.visit(this);
+        this.ui = ui;
     }
 
     @Override
@@ -59,92 +48,52 @@ public abstract class AbstractComponent implements Component {
         return parent;
     }
 
-    private void parentChanged(Component currentParent, Component newParent) {
-        if (currentParent != null) {
-
-            if (newParent != null) {
-                throw new IllegalStateException(toString() + " already has a parent.");
+    protected Component findRoot() {
+        Component component = this;
+        do {
+            Component parent = component.getParent();
+            if (parent == null) {
+                return component;
             }
-
-        }
-    }
-
-    private UI findUi() {
-        if (ui == null && parent != null) {
-            return parent.getUi();
-        }
-
-        return ui;
+            component = parent;
+        } while (true);
     }
 
     @Override
     public void setParent(Component parent) {
-        if (this.parent != parent) {
-            parentChanged(this.parent, parent);
-        }
-
         this.parent = parent;
 
-        if (parent == null) {
+        Component root = findRoot();
+        if (root instanceof UI) {
+            ((UI) root).attach(this);
+        } else {
+            UI ui = getUi();
             if (ui != null) {
                 ui.detach(this);
             }
-        } else {
-            UI ui = findUi();
-            if (ui != null) {
-                ui.attach(this);
-            }
         }
     }
 
-    @Override
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    @Override
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
-    @Override
     public Message getCaption() {
         return caption;
     }
 
-    @Override
     public void setCaption(Message caption) {
         this.caption = caption;
     }
 
     @Override
-    public String getStyle() {
-        return CollectionUtils.getFirst(styles);
-    }
-
-    @Override
-    public void setStyle(String style) {
-        styles.clear();
-        boolean success = styles.add(style);
-        Assert.isTrue(success);
-    }
-
-    @Override
-    public final Set<ActionListener> getActionListeners() {
+    public Set<ActionListener> getActionListeners() {
         return Collections.unmodifiableSet(actionListeners);
     }
 
     @Override
-    public void addActionListener(ActionListener actionListener) {
-        actionListeners.add(actionListener);
-    }
-
-    public void addActionListener(String event, ActionListener actionListener) {
-        actionListeners.add(actionListener);
+    public boolean addActionListener(ActionListener actionListener) {
+        return actionListeners.add(actionListener);
     }
 
     @Override
-    public void performAction(Action action) {
-        actionListeners.forEach(it -> it.performAction(action));
+    public boolean removeActionListener(ActionListener actionListener) {
+        return actionListeners.remove(actionListener);
     }
 }

@@ -22,4 +22,9 @@ public class Upload extends AbstractComponent {
     public void setHandler(UploadHandler handler) {
         this.handler = handler;
     }
+
+    @Override
+    public void walk(ComponentVisitor visitor) {
+        visitor.visit(this);
+    }
 }

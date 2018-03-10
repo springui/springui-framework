@@ -1,9 +1,0 @@
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:ui="http://www.springui/dialect/ui"
-      th:remove="tag">
-<a href="#" class="btn btn-primary component"
-   th:data-events="'click'"
-   th:data-action="${#urls.action(self)}">
-    <th:block th:utext="${self.caption?.text}" />
-</a>
-</html>

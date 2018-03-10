@@ -5,6 +5,7 @@ import com.springui.i18n.Message;
 /**
  * @author Stephan Grundner
  */
+@Template("{theme}/text")
 public class Text extends AbstractComponent {
 
     private Message message;
@@ -17,32 +18,8 @@ public class Text extends AbstractComponent {
         this.message = message;
     }
 
-    public String getValue() {
-        return message.getText();
+    @Override
+    public void walk(ComponentVisitor visitor) {
+        visitor.visit(this);
     }
-
-    public void setDefaultValue(String defaultValue) {
-        message.setDefaultText(defaultValue);
-    }
-
-    public Text(Message message) {
-        this.message = message;
-    }
-
-    public Text(String messageCode, Object[] messageArgs, String defaultValue) {
-        message = new Message();
-        message.setCode(messageCode);
-        message.setArgs(messageArgs);
-        message.setDefaultText(defaultValue);
-    }
-
-    public Text(String messageCode, String defaultValue) {
-        this(messageCode, null, defaultValue);
-    }
-
-    public Text(String messageCode) {
-        this(messageCode, null, String.format("??%s??", messageCode));
-    }
-
-    public Text() { }
 }
