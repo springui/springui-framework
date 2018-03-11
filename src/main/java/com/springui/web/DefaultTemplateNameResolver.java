@@ -3,6 +3,7 @@ package com.springui.web;
 import com.springui.ui.Component;
 import com.springui.ui.Template;
 import com.springui.ui.Layout;
+import com.springui.ui.layout.CustomLayout;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.ui.context.Theme;
 import org.springframework.util.PropertyPlaceholderHelper;
@@ -29,8 +30,8 @@ public class DefaultTemplateNameResolver implements TemplateNameResolver {
         Properties properties = new Properties();
         properties.setProperty("theme", theme.getName());
 
-        if (component instanceof Layout) {
-            String templateName = ((Layout) component).getTemplateName();
+        if (component instanceof CustomLayout) {
+            String templateName = ((CustomLayout) component).getTemplateName();
             templateName = placeholderHelper.replacePlaceholders(templateName, properties);
             if (StringUtils.hasLength(templateName)) {
                 return templateName;
