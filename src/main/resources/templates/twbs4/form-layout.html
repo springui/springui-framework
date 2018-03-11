@@ -1,0 +1,11 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
+      th:remove="tag">
+
+<th:block th:fragment="components">
+    <div class="form-group" th:each="component : ${self.components}">
+        <label th:for="${component.id}" th:text="${component.caption?.text}">Label</label>
+        <th:block ui:replace="${component}" />
+    </div>
+</th:block>
+</html>

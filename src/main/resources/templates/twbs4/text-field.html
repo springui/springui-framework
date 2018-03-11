@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
+      th:remove="tag">
+<input type="text" class="form-control"
+       th:id="${self.id}"
+       th_disabled="${self.disabled} ? disabled : _"
+       th:field="*{components[__${self.id}__].value}">
+</html>
