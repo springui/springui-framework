@@ -1,5 +1,8 @@
-package com.springui.ui;
+package com.springui.ui.view;
 
+import com.springui.ui.Component;
+import com.springui.ui.UI;
+import com.springui.ui.View;
 import com.springui.web.UIRequest;
 
 /**

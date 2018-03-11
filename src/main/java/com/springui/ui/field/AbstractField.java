@@ -1,4 +1,7 @@
-package com.springui.ui;
+package com.springui.ui.field;
+
+import com.springui.ui.AbstractComponent;
+import com.springui.ui.Field;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;

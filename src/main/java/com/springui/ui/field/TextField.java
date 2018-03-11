@@ -1,4 +1,7 @@
-package com.springui.ui;
+package com.springui.ui.field;
+
+import com.springui.ui.ComponentVisitor;
+import com.springui.ui.Template;
 
 /**
  * @author Stephan Grundner

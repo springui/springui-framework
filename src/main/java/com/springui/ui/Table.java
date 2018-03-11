@@ -3,6 +3,9 @@ package com.springui.ui;
 import com.springui.data.DataProvider;
 import com.springui.data.ValueReader;
 import com.springui.i18n.Message;
+import com.springui.ui.AbstractComponent;
+import com.springui.ui.ComponentVisitor;
+import com.springui.ui.Template;
 import com.springui.ui.table.*;
 import org.springframework.util.Assert;
 

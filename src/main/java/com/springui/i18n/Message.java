@@ -10,6 +10,13 @@ import java.util.Locale;
  */
 public class Message {
 
+    public static Message fromText(String text) {
+        Message message = new Message();
+        message.setDefaultText(text);
+
+        return message;
+    }
+
     private MessageSource source;
 
     private String code;

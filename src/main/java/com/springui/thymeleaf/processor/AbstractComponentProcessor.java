@@ -2,7 +2,7 @@ package com.springui.thymeleaf.processor;
 
 import com.springui.beans.BeanFactoryUtils;
 import com.springui.ui.Component;
-import com.springui.ui.ComponentsMapLayout;
+import com.springui.ui.layout.CustomLayout;
 import com.springui.ui.Layout;
 import com.springui.web.TemplateNameResolver;
 import com.springui.web.TemplateUtils;
@@ -97,8 +97,8 @@ public abstract class AbstractComponentProcessor extends AbstractAttributeTagPro
                         expression.getStringRepresentation()));
             }
 
-            if (component instanceof ComponentsMapLayout) {
-                ComponentsMapLayout container = (ComponentsMapLayout) component;
+            if (component instanceof CustomLayout) {
+                CustomLayout container = (CustomLayout) component;
                 for (String componentName : container.getComponentNames()) {
                     Component containerComponent = container.getComponent(componentName);
                     structureHandler.setLocalVariable(componentName, containerComponent);

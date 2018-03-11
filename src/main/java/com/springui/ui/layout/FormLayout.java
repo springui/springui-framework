@@ -1,4 +1,6 @@
-package com.springui.ui;
+package com.springui.ui.layout;
+
+import com.springui.ui.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -9,7 +11,7 @@ import java.util.Set;
  * @author Stephan Grundner
  */
 @Template("{theme}/form-layout")
-public class FormLayout extends AbstractComponentsContainer {
+public class FormLayout extends AbstractComponentsContainer implements Layout {
 
     private Set<Component> components = new LinkedHashSet<>();
 

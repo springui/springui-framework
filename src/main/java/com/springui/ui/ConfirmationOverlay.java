@@ -1,16 +1,27 @@
 package com.springui.ui;
 
 import com.springui.i18n.Message;
+import com.springui.ui.layout.CustomLayout;
 
 /**
  * @author Stephan Grundner
  */
 public class ConfirmationOverlay extends Overlay {
 
-    private ComponentsMapLayout layout;
+    private CustomLayout layout;
+
+    private Message message;
 
     private final Button confirm = new Button();
     private final Button decline = new Button();
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
+    }
 
     public Button getConfirm() {
         return confirm;
@@ -21,7 +32,7 @@ public class ConfirmationOverlay extends Overlay {
     }
 
     public ConfirmationOverlay() {
-        layout = new ComponentsMapLayout("{theme}/confirmation");
+        layout = new CustomLayout("{theme}/confirmation");
 
         confirm.setCaption(new Message("ui.confirmation.confirm", "OK"));
         layout.addComponent("confirm", confirm);

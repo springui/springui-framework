@@ -5,6 +5,4 @@ package com.springui.ui;
  */
 public interface Layout {
 
-    String getTemplateName();
-    void setTemplateName(String templateName);
 }

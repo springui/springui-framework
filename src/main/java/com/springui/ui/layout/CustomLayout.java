@@ -1,5 +1,6 @@
-package com.springui.ui;
+package com.springui.ui.layout;
 
+import com.springui.ui.*;
 import com.springui.util.MapUtils;
 
 import java.util.*;
@@ -7,7 +8,7 @@ import java.util.*;
 /**
  * @author Stephan Grundner
  */
-public class ComponentsMapLayout extends AbstractComponentsContainer implements Layout {
+public class CustomLayout extends AbstractComponentsContainer implements Layout {
 
     private Map<String, Component> components = new HashMap<>();
     private String templateName;
@@ -72,9 +73,9 @@ public class ComponentsMapLayout extends AbstractComponentsContainer implements 
         this.templateName = templateName;
     }
 
-    public ComponentsMapLayout(String templateName) {
+    public CustomLayout(String templateName) {
         this.templateName = templateName;
     }
 
-    public ComponentsMapLayout() { }
+    public CustomLayout() { }
 }

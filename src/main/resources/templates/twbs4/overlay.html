@@ -5,7 +5,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" th:text="${self.caption?.text} ?: _">Title</h5>
+                <h5 class="modal-title" th:text="${self.caption?.text} ?: _"></h5>
                 <button type="submit" class="close component" aria-label="Close"
                    th:remove="${self.close == null} ? all : _"
                    th:formaction="${#urls.action(self.close)}">
