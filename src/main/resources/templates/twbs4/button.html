@@ -1,7 +1,9 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
       th:remove="tag">
-<button class="btn btn-primary"
+<button class="btn"
+        th:data-color="${self.color}"
+        th:data-size="${self.size}"
         th:formaction="${#urls.action(self)}">
     [[${self.caption?.text}]]
 </button>

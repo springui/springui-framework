@@ -20,6 +20,9 @@ public abstract class AbstractComponent implements Component {
 
     private final Set<ActionListener> actionListeners = new LinkedHashSet<>();
 
+    private Color color;
+    private Size size = Size.NORMAL;
+
     @Override
     public String getId() {
         if (id == null) {
@@ -95,5 +98,25 @@ public abstract class AbstractComponent implements Component {
     @Override
     public boolean removeActionListener(ActionListener actionListener) {
         return actionListeners.remove(actionListener);
+    }
+
+    @Override
+    public Color getColor() {
+        return color;
+    }
+
+    @Override
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    @Override
+    public Size getSize() {
+        return size;
+    }
+
+    @Override
+    public void setSize(Size size) {
+        this.size = size;
     }
 }

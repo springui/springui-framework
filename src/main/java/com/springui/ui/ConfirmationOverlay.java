@@ -35,13 +35,16 @@ public class ConfirmationOverlay extends Overlay {
         layout = new CustomLayout("{theme}/confirmation");
 
         confirm.setCaption(new Message("ui.confirmation.confirm", "OK"));
+        confirm.setColor(Color.SUCCESS);
         layout.addComponent("confirm", confirm);
 
         decline.setCaption(new Message("ui.confirmation.decline", "Decline"));
+        decline.setColor(Color.DANGER);
         layout.addComponent("decline", decline);
 
         Button close = getClose();
         close.setCaption(new Message("ui.confirmation.close", "Close"));
+        close.setColor(Color.SECONDARY);
         layout.addComponent("close", close);
 
         setContent(layout);

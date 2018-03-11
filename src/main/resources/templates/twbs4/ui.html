@@ -19,9 +19,11 @@
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote-bs4.css" rel="stylesheet">-->
 
     <!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker3.min.css">-->
+
 </head>
 
-<body>
+<body style="display:none;">
+
 <form th:object="${ui}" method="post" enctype="multipart/form-data">
 
     <th:block th:each="overlay : ${ui.overlays}">
@@ -30,6 +32,7 @@
 
     <th:block ui:replace="${ui.content}" />
 </form>
+<script src="/twbs4/js/components.js" ></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" ></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" ></script>
@@ -43,6 +46,9 @@
 <script>
 $(document).ready(function() {
     $('.modal').modal();
+
+    // Avoid flickering!
+    $("body").show();
 });
 </script>
 </body>

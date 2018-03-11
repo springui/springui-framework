@@ -46,6 +46,19 @@ public interface Component {
         void perform(Action action);
     }
 
+    enum Color {
+        PRIMARY,
+        SECONDARY,
+        SUCCESS,
+        DANGER
+    }
+
+    enum Size {
+        SMALL,
+        NORMAL,
+        LARGE
+    }
+
     String getId();
 
     UI getUi();
@@ -57,6 +70,12 @@ public interface Component {
     Set<ActionListener> getActionListeners();
     boolean addActionListener(ActionListener actionListener);
     boolean removeActionListener(ActionListener actionListener);
+
+    Color getColor();
+    void setColor(Color color);
+
+    Size getSize();
+    void setSize(Size size);
 
     void walk(ComponentVisitor visitor);
 }

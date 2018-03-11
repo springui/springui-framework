@@ -4,6 +4,8 @@
 <div class="progress">
     <div class="progress-bar"
          role="progressbar"
+         th:data-color="${self.color}"
+         th:data-size="${self.size}"
          th:style="'width: __${self.value * 100}__%;'"
          th:aria-valuenow="${self.value * 100}"
          aria-valuemin="0"
