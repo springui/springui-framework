@@ -4,6 +4,7 @@
 <button class="btn"
         th:data-color="${self.color}"
         th:data-size="${self.size}"
+        th:data-description="${self.description?.text}"
         th:formaction="${#urls.action(self)}">
     [[${self.caption?.text}]]
 </button>

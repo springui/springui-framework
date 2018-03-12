@@ -4,6 +4,7 @@
 <div class="progress">
     <div class="progress-bar"
          role="progressbar"
+         th:data-description="${self.description?.text}"
          th:data-color="${self.color}"
          th:data-size="${self.size}"
          th:style="'width: __${self.value * 100}__%;'"

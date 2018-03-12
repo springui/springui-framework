@@ -22,4 +22,14 @@ $(document).ready(function() {
                         color == 'SUCCESS' ? 'bg-success' : (
                         color == 'SECONDARY' ? 'bg-secondary' : 'bg-primary')));
     });
+
+    $('[data-description]').each(function() {
+        var component = $(this);
+        var description = component.data('description');
+        var tagName = component.prop("tagName").toLowerCase();
+        switch (tagName) {
+        default:
+            component.attr('title', description);
+        }
+    });
 });

@@ -1,5 +1,6 @@
 package com.springui.ui;
 
+import com.springui.i18n.Message;
 import com.springui.web.UIRequest;
 
 import java.util.Set;
@@ -76,6 +77,9 @@ public interface Component {
 
     Size getSize();
     void setSize(Size size);
+
+    Message getDescription();
+    void setDescription(Message decription);
 
     void walk(ComponentVisitor visitor);
 }

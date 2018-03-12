@@ -22,6 +22,7 @@ public abstract class AbstractComponent implements Component {
 
     private Color color;
     private Size size = Size.NORMAL;
+    private Message description;
 
     @Override
     public String getId() {
@@ -118,5 +119,14 @@ public abstract class AbstractComponent implements Component {
     @Override
     public void setSize(Size size) {
         this.size = size;
+    }
+
+    @Override
+    public Message getDescription() {
+        return description;
+    }
+
+    public void setDescription(Message description) {
+        this.description = description;
     }
 }

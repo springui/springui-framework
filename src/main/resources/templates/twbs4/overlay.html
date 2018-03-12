@@ -3,7 +3,7 @@
       th:remove="tag">
 <div class="modal" tabindex="-1" role="dialog" data-backdrop="static">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content" th:data-description="${self.description?.text}">
             <div class="modal-header">
                 <h5 class="modal-title" th:text="${self.caption?.text} ?: _"></h5>
                 <button type="submit" class="close component" aria-label="Close"

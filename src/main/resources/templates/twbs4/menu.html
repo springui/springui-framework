@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:ui="http://www.springui.com/thymeleaf/dialect/ui"
       th:remove="tag">
-<div class="btn-group">
+<div class="btn-group" th:data-description="${self.description?.text}">
     <button type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         [[${self.caption?.text}]]
     </button>
