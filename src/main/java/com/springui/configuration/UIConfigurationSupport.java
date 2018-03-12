@@ -1,8 +1,12 @@
 package com.springui.configuration;
 
+import com.springui.beans.UIScope;
 import com.springui.thymeleaf.UIDialect;
 import com.springui.web.DefaultTemplateNameResolver;
 import com.springui.web.servlet.ViewMappingHandlerMapping;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +22,7 @@ import org.springframework.web.servlet.theme.FixedThemeResolver;
  */
 @ComponentScan("com.springui")
 @EnableConfigurationProperties
-public class UIConfigurationSupport {
+public class UIConfigurationSupport implements BeanFactoryPostProcessor {
 
 //    @Bean
 //    public EmbeddedServletContainerCustomizer customizer() {
@@ -66,5 +70,10 @@ public class UIConfigurationSupport {
     @Bean
     protected UIDialect uiDialect() {
         return new UIDialect();
+    }
+
+    @Override
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+        beanFactory.registerScope("ui", new UIScope());
     }
 }

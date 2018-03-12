@@ -28,6 +28,7 @@ public class UI extends AbstractSingleComponentContainer {
         return forSession(session, UI::new);
     }
 
+    private Map<String, Object> attributes = new HashMap<>();
     private Map<String, Component> components = new HashMap<>();
     private Deque<Overlay> overlays = new LinkedList<>();
 
@@ -37,6 +38,18 @@ public class UI extends AbstractSingleComponentContainer {
 
     public final void setTitle(Message title) {
         setCaption(title);
+    }
+
+    public Set<String> getAttributeNames() {
+        return Collections.unmodifiableSet(attributes.keySet());
+    }
+
+    public Object getAttribute(String name) {
+        return attributes.get(name);
+    }
+
+    public Object setAttribute(String name, Object value) {
+        return attributes.put(name, value);
     }
 
     public Map<String, Component> getComponents() {
