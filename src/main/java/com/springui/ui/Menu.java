@@ -1,4 +1,4 @@
-package com.springui.ui.menu;
+package com.springui.ui;
 
 import com.springui.i18n.Message;
 import com.springui.ui.AbstractComponent;

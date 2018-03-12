@@ -1,5 +1,6 @@
 package com.springui.ui;
 
+import com.springui.ui.Component;
 import com.springui.web.UIRequest;
 
 /**

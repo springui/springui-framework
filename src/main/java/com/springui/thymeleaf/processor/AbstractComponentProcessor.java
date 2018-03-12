@@ -2,7 +2,7 @@ package com.springui.thymeleaf.processor;
 
 import com.springui.beans.BeanFactoryUtils;
 import com.springui.ui.Component;
-import com.springui.ui.layout.CustomLayout;
+import com.springui.ui.CustomLayout;
 import com.springui.ui.Layout;
 import com.springui.web.TemplateNameResolver;
 import com.springui.web.TemplateUtils;

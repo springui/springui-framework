@@ -2,6 +2,7 @@ package com.springui.ui;
 
 import com.springui.data.DataProvider;
 import com.springui.data.ValueReader;
+import com.springui.ui.AbstractComponent;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

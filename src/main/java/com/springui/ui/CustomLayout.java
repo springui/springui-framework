@@ -1,6 +1,5 @@
-package com.springui.ui.layout;
+package com.springui.ui;
 
-import com.springui.ui.*;
 import com.springui.util.MapUtils;
 
 import java.util.*;

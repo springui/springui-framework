@@ -1,8 +1,4 @@
-package com.springui.ui.menu;
-
-import com.springui.ui.AbstractComponent;
-import com.springui.ui.ComponentVisitor;
-import com.springui.ui.Template;
+package com.springui.ui;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;

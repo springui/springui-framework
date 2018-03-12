@@ -1,6 +1,4 @@
-package com.springui.ui.layout;
-
-import com.springui.ui.*;
+package com.springui.ui;
 
 import java.util.Collection;
 import java.util.Collections;

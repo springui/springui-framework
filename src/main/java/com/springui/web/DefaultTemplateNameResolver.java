@@ -2,8 +2,7 @@ package com.springui.web;
 
 import com.springui.ui.Component;
 import com.springui.ui.Template;
-import com.springui.ui.Layout;
-import com.springui.ui.layout.CustomLayout;
+import com.springui.ui.CustomLayout;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.ui.context.Theme;
 import org.springframework.util.PropertyPlaceholderHelper;

@@ -3,10 +3,6 @@ package com.springui.ui;
 import com.springui.data.DataProvider;
 import com.springui.data.ValueReader;
 import com.springui.i18n.Message;
-import com.springui.ui.AbstractComponent;
-import com.springui.ui.ComponentVisitor;
-import com.springui.ui.Template;
-import com.springui.ui.table.*;
 import org.springframework.util.Assert;
 
 import java.util.*;
@@ -17,6 +13,122 @@ import java.util.stream.Collectors;
  */
 @Template("{theme}/table")
 public class Table<T> extends AbstractComponent {
+
+    public interface CellFactory<T> {
+
+        Component createCell(Column<T, ?> column, Row<T> row);
+    }
+
+    @Template("{theme}/table-column")
+    public static class Column<T, V> extends AbstractComponent {
+
+        public enum Alignment {
+            LEFT,
+            CENTER,
+            RIGHT
+        }
+
+        private ValueReader<T, V> valueResolver;
+        private CellFactory<T> cellFactory;
+        private Alignment alignment = Alignment.LEFT;
+        private int ordinal;
+
+        public ValueReader<T, V> getValueResolver() {
+            return valueResolver;
+        }
+
+        public void setValueResolver(ValueReader<T, V> valueResolver) {
+            this.valueResolver = valueResolver;
+        }
+
+        public CellFactory<T> getCellFactory() {
+            if (cellFactory == null) {
+                cellFactory = (column, row) -> {
+                    Text cell = new Text();
+                    ValueReader<T, ?> valueResolver = column.getValueResolver();
+                    if (valueResolver != null) {
+                        Object value = valueResolver.read(row.getObject());
+                        cell.setMessage(new Message((String) null, value.toString()));
+                    }
+
+                    return cell;
+                };
+            }
+
+            return cellFactory;
+        }
+
+        public void setCellFactory(CellFactory<T> cellFactory) {
+            this.cellFactory = cellFactory;
+        }
+
+        public Alignment getAlignment() {
+            return alignment;
+        }
+
+        public void setAlignment(Alignment alignment) {
+            this.alignment = alignment;
+        }
+
+        public int getOrdinal() {
+            return ordinal;
+        }
+
+        public void setOrdinal(int ordinal) {
+            this.ordinal = ordinal;
+        }
+
+        public void walk(ComponentVisitor visitor) {
+            visitor.visit(this);
+        }
+    }
+
+    @Template("{theme}/table-row")
+    public static class Row<T> extends AbstractComponent {
+
+        private final Table<T> table;
+        private T object;
+
+        private final Map<Column<T, ?>, Component> cellByColumn = new IdentityHashMap<>();
+
+        public Table<T> getTable() {
+            return table;
+        }
+
+        public T getObject() {
+            return object;
+        }
+
+        public void setObject(T object) {
+            this.object = object;
+        }
+
+        public Component getCell(Column<T, ?> column) {
+            Component cell = cellByColumn.get(column);
+            if (cell == null) {
+                CellFactory<T> cellFactory = column.getCellFactory();
+                cell = cellFactory.createCell(column, Row.this);
+                cellByColumn.put(column, cell);
+            }
+
+            return cell;
+        }
+
+        @Override
+        public void walk(ComponentVisitor visitor) {
+            visitor.visit(this);
+            cellByColumn.values().forEach(cell -> cell.walk(visitor));
+        }
+
+        public Row(Table<T> table) {
+            this.table = table;
+        }
+    }
+
+    public interface RowFactory<T> {
+
+        Row<T> createRow(Table<T> table);
+    }
 
     private final List<Column<T, ?>> columns = new ArrayList<>();
 

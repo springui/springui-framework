@@ -1,9 +1,5 @@
-package com.springui.ui.layout;
+package com.springui.ui;
 
-import com.springui.ui.AbstractComponentsContainer;
-import com.springui.ui.Component;
-import com.springui.ui.ComponentVisitor;
-import com.springui.ui.Layout;
 import org.springframework.util.Assert;
 
 import java.util.LinkedHashSet;
